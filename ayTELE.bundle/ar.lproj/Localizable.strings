@@ -132,3 +132,8 @@
 "ARCHIVE_EDITED" = "المعدّلة";
 "ARCHIVE_DELETED" = "المحذوفة";
 "ARCHIVE_EMPTY" = "ماكو شي مسجّل لهسه.";
+
+"VOICE_CONVERT_TITLE" = "حوّل لرسالة صوتية";
+"VOICE_CONVERT_SUBTITLE" = "يحوّل ملف صوت أو فيديو لرسالة صوتية OGG/Opus وتنحفظ بالملفات.";
+"VOICE_CONVERTING" = "يحوّل…";
+"VOICE_CONVERT_FAILED" = "فشل التحويل";

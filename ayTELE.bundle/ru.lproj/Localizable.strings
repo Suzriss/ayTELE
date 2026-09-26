@@ -134,3 +134,8 @@
 "ARCHIVE_EDITED" = "Изменённые";
 "ARCHIVE_DELETED" = "Удалённые";
 "ARCHIVE_EMPTY" = "Пока ничего не записано.";
+
+"VOICE_CONVERT_TITLE" = "Конвертировать в голосовое";
+"VOICE_CONVERT_SUBTITLE" = "Превратить аудио или видео в голосовое OGG/Opus и сохранить в Файлы.";
+"VOICE_CONVERTING" = "Конвертация…";
+"VOICE_CONVERT_FAILED" = "Ошибка конвертации";

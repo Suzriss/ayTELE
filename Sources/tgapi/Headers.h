@@ -34,6 +34,11 @@
 + (NSArray<NSArray<NSString *> *> *)linesWithNode:(NSObject *)node;
 @end
 
+@interface AYVoiceConverter : NSObject
++ (void)convertURL:(NSURL *)url
+        completion:(void (^)(NSData *oggOpusData, NSTimeInterval duration, NSData *waveform, NSError *error))completion;
+@end
+
 @interface AYNotes : NSObject
 @property (class, nonatomic, readonly) NSNotificationName changedNotification;
 + (BOOL)hasNoteWithNode:(NSObject *)node;

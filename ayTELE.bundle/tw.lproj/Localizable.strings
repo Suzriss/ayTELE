@@ -134,3 +134,8 @@
 "ARCHIVE_EDITED" = "已編輯";
 "ARCHIVE_DELETED" = "已刪除";
 "ARCHIVE_EMPTY" = "尚無記錄。";
+
+"VOICE_CONVERT_TITLE" = "轉換為語音";
+"VOICE_CONVERT_SUBTITLE" = "將音訊或影片檔轉換為 OGG/Opus 語音並儲存到檔案。";
+"VOICE_CONVERTING" = "轉換中…";
+"VOICE_CONVERT_FAILED" = "轉換失敗";

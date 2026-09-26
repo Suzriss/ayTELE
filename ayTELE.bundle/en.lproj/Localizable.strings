@@ -134,3 +134,8 @@
 "ARCHIVE_EDITED" = "Edited";
 "ARCHIVE_DELETED" = "Deleted";
 "ARCHIVE_EMPTY" = "Nothing recorded yet.";
+
+"VOICE_CONVERT_TITLE" = "Convert to Voice Note";
+"VOICE_CONVERT_SUBTITLE" = "Turn an audio or video file into an OGG/Opus voice note saved to Files.";
+"VOICE_CONVERTING" = "Converting…";
+"VOICE_CONVERT_FAILED" = "Conversion failed";

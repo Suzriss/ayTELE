@@ -132,3 +132,8 @@
 "ARCHIVE_EDITED" = "Modifiés";
 "ARCHIVE_DELETED" = "Supprimés";
 "ARCHIVE_EMPTY" = "Rien d’enregistré pour l’instant.";
+
+"VOICE_CONVERT_TITLE" = "Convertir en note vocale";
+"VOICE_CONVERT_SUBTITLE" = "Transforme un fichier audio ou vidéo en note vocale OGG/Opus enregistrée dans Fichiers.";
+"VOICE_CONVERTING" = "Conversion…";
+"VOICE_CONVERT_FAILED" = "Échec de la conversion";

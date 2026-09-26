@@ -11,7 +11,7 @@
 
 #define TGLoc(key) [ayTELELocalization localizedStringForKey:(key)]
 
-@interface ayTELE ()
+@interface ayTELE () <UIDocumentPickerDelegate>
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSString *cacheSize;
 @end
@@ -192,7 +192,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		case READ_RECEIPT:
 		   return 2;
 		case MISC:
-		   return 6;
+		   return 7;
 		case FILE_FIXER:
 		   return 2;
 		case FAKE_LOCATION:
@@ -384,6 +384,17 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		cell.textLabel.text = TGLoc(@"ARCHIVE_SETTINGS_TITLE");
 		cell.detailTextLabel.text = TGLoc(@"ARCHIVE_SETTINGS_SUBTITLE");
 		cell.imageView.image = [UIImage systemImageNamed:@"magnifyingglass"];
+		cell.imageView.tintColor = [self dynamicColorBW];
+		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		cell.textLabel.numberOfLines = 0;
+		cell.detailTextLabel.numberOfLines = 0;
+		return cell;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 6) { // MISC: convert audio -> voice note
+		cell = [self normalCellFromTableView:tableView];
+		cell.textLabel.text = TGLoc(@"VOICE_CONVERT_TITLE");
+		cell.detailTextLabel.text = TGLoc(@"VOICE_CONVERT_SUBTITLE");
+		cell.imageView.image = [UIImage systemImageNamed:@"waveform"];
 		cell.imageView.tintColor = [self dynamicColorBW];
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		cell.textLabel.numberOfLines = 0;
@@ -600,6 +611,9 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		else if (indexPath.row == 5) {
 			[self showArchive];
 		}
+		else if (indexPath.row == 6) {
+			[self startVoiceConversion];
+		}
 	}
 
 	if (indexPath.section == FILE_FIXER) { // File Picker Fix
@@ -763,6 +777,59 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 - (void)showArchive {
 	AYArchiveViewController *ui = [[AYArchiveViewController alloc] initWithStyle:UITableViewStylePlain];
 	[self.navigationController pushViewController:ui animated:YES];
+}
+
+#pragma mark - Voice note conversion (#2)
+
+- (void)startVoiceConversion {
+	UIDocumentPickerViewController *picker = [[UIDocumentPickerViewController alloc]
+		initWithDocumentTypes:@[@"public.audio", @"public.movie"] inMode:UIDocumentPickerModeOpen];
+	picker.delegate = self;
+	picker.allowsMultipleSelection = NO;
+	[self presentViewController:picker animated:YES completion:nil];
+}
+
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
+	NSURL *url = urls.firstObject;
+	if (!url) return;
+
+	UIAlertController *progress = [UIAlertController alertControllerWithTitle:TGLoc(@"VOICE_CONVERTING") message:nil preferredStyle:UIAlertControllerStyleAlert];
+	[self presentViewController:progress animated:YES completion:nil];
+
+	BOOL scoped = [url startAccessingSecurityScopedResource];
+	[AYVoiceConverter convertURL:url completion:^(NSData *oggOpusData, NSTimeInterval duration, NSData *waveform, NSError *error) {
+		if (scoped) [url stopAccessingSecurityScopedResource];
+		[progress dismissViewControllerAnimated:YES completion:^{
+			if (error || oggOpusData.length == 0) {
+				[self showConversionError:error];
+				return;
+			}
+			[self exportConvertedVoice:oggOpusData sourceName:url.lastPathComponent];
+		}];
+	}];
+}
+
+- (void)exportConvertedVoice:(NSData *)oggData sourceName:(NSString *)sourceName {
+	NSString *base = sourceName.stringByDeletingPathExtension.length ? sourceName.stringByDeletingPathExtension : @"voice";
+	NSString *outName = [base stringByAppendingString:@".ogg"];
+	NSURL *outURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()] URLByAppendingPathComponent:outName];
+	NSError *writeError = nil;
+	if (![oggData writeToURL:outURL options:NSDataWritingAtomic error:&writeError]) {
+		[self showConversionError:writeError];
+		return;
+	}
+	UIDocumentPickerViewController *exporter = [[UIDocumentPickerViewController alloc]
+		initWithURL:outURL inMode:UIDocumentPickerModeExportToService];
+	exporter.delegate = self;
+	[self presentViewController:exporter animated:YES completion:nil];
+}
+
+- (void)showConversionError:(NSError *)error {
+	UIAlertController *alert = [UIAlertController alertControllerWithTitle:TGLoc(@"VOICE_CONVERT_FAILED")
+		message:error.localizedDescription
+		preferredStyle:UIAlertControllerStyleAlert];
+	[alert addAction:[UIAlertAction actionWithTitle:TGLoc(@"OK") style:UIAlertActionStyleDefault handler:nil]];
+	[self presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)showLanguageSelector {

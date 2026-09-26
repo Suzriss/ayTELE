@@ -134,3 +134,8 @@
 "ARCHIVE_EDITED" = "編集済み";
 "ARCHIVE_DELETED" = "削除済み";
 "ARCHIVE_EMPTY" = "まだ記録がありません。";
+
+"VOICE_CONVERT_TITLE" = "ボイスノートに変換";
+"VOICE_CONVERT_SUBTITLE" = "音声・動画ファイルを OGG/Opus のボイスノートに変換してファイルに保存します。";
+"VOICE_CONVERTING" = "変換中…";
+"VOICE_CONVERT_FAILED" = "変換に失敗しました";

@@ -134,3 +134,8 @@
 "ARCHIVE_EDITED" = "Đã sửa";
 "ARCHIVE_DELETED" = "Đã xóa";
 "ARCHIVE_EMPTY" = "Chưa ghi lại gì.";
+
+"VOICE_CONVERT_TITLE" = "Chuyển thành tin nhắn thoại";
+"VOICE_CONVERT_SUBTITLE" = "Chuyển tệp âm thanh hoặc video thành tin nhắn thoại OGG/Opus lưu vào Tệp.";
+"VOICE_CONVERTING" = "Đang chuyển…";
+"VOICE_CONVERT_FAILED" = "Chuyển đổi thất bại";
