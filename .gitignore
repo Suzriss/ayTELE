@@ -7,3 +7,4 @@ xcuserdata/
 .theos
 /packages
 *.ipa
+/dylib
