@@ -1,0 +1,8 @@
+Package: com.ceresify.aytele
+Name: ayTELE
+Version: 1
+Architecture: iphoneos-arm
+Description: ayTELE - Telegram tweak by Ceresify
+Maintainer: Ceresify (uussuu)
+Author: Ceresify (uussuu)
+Section: Tweaks
