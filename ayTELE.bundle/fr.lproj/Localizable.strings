@@ -100,3 +100,9 @@
 "CANCEL" = "Annuler";
 
 "AUTHOR_MESSAGE" = "Ce tweak Telegram est uniquement destiné à un usage personnel et éducatif. Nous ne sommes en aucun cas affiliés à Telegram. Toutes les marques, y compris le nom et le logo de Telegram, appartiennent à leurs propriétaires respectifs. N'utilisez pas ceci pour enfreindre les règles, faire des choses louches ou violer les conditions d'utilisation de Telegram — nous ne sommes pas responsables en cas de problème. Utilisez-le à vos risques et périls.";
+"KEEP_EDIT_HISTORY_TITLE" = "Conserver l’historique des modifications";
+"KEEP_EDIT_HISTORY_SUBTITLE" = "Conserve les anciennes versions des messages modifiés. Touchez le crayon pour les voir.";
+"EDIT_HISTORY_TITLE" = "Historique des modifications";
+"EDIT_HISTORY_COUNT" = "%ld versions";
+"EDIT_HISTORY_ORIGINAL" = "Original";
+"EDIT_HISTORY_EDITED" = "Modifié";

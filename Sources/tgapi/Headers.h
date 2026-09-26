@@ -15,6 +15,15 @@
 @interface AYDeletedMarks : NSObject
 @property (class, nonatomic, readonly) NSNotificationName changedNotification;
 + (BOOL)isDeletedWithNode:(NSObject *)node;
++ (NSString *)keyWithNode:(NSObject *)node;
+@end
+
+@interface AYEditHistory : NSObject
+@property (class, nonatomic, readonly) BOOL isEnabled;
+@property (class, nonatomic, readonly) NSNotificationName changedNotification;
++ (void)observe:(NSData *)data;
++ (BOOL)isEditedWithNode:(NSObject *)node;
++ (NSArray<NSArray<NSString *> *> *)versionsWithNode:(NSObject *)node;
 @end
 
 @interface MTRpcError : NSObject

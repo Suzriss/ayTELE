@@ -102,3 +102,10 @@
 
 
 
+
+"KEEP_EDIT_HISTORY_TITLE" = "保留编辑记录";
+"KEEP_EDIT_HISTORY_SUBTITLE" = "记录已编辑消息的旧版本。点击铅笔标记查看。";
+"EDIT_HISTORY_TITLE" = "编辑记录";
+"EDIT_HISTORY_COUNT" = "%ld 个版本";
+"EDIT_HISTORY_ORIGINAL" = "原始";
+"EDIT_HISTORY_EDITED" = "已编辑";

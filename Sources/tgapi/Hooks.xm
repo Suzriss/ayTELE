@@ -16,6 +16,9 @@
 	//customLog(@"Function id: %d", functionID);
 	
 	id(^hooked_block)(NSData *) = ^(NSData *inputData) {
+		if (AYEditHistory.isEnabled) {
+			[AYEditHistory observe:inputData];
+		}
 		if (AYDeletedFilter.isEnabled) {
 			NSData *filtered = [AYDeletedFilter filter:inputData];
 			if (filtered) inputData = filtered;
@@ -59,7 +62,7 @@
 	}
 	
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	if ([defaults boolForKey:kDisableForwardRestriction] || [defaults boolForKey:kKeepDeletedMessages]) {
+	if ([defaults boolForKey:kDisableForwardRestriction] || [defaults boolForKey:kKeepDeletedMessages] || [defaults boolForKey:kKeepEditHistory]) {
 		%orig(payload, metadata, shortMetadata, hooked_block);
 	} else {
 		%orig(payload, metadata, shortMetadata, responseParser);
@@ -102,6 +105,13 @@
 %hook _TtC12TelegramCore13Serialization
 
 - (id)parseMessage:(NSData *)data {
+	if (data && AYEditHistory.isEnabled) {
+		@try {
+			[AYEditHistory observe:data];
+		} @catch (NSException *exception) {
+			customLog2(@"Edit history observe failed: %@", exception);
+		}
+	}
 	if (data && AYDeletedFilter.isEnabled) {
 		@try {
 			NSData *filtered = [AYDeletedFilter filter:data];

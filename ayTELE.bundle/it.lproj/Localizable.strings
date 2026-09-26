@@ -103,3 +103,10 @@
 "DISCLAIMER" = "Avvertenza";
 
 "AUTHOR_MESSAGE" = "Questa modifica per Telegram è solo per uso personale ed educativo. Non siamo in alcun modo affiliati con Telegram. Tutti i marchi, incluso il nome e il logo di Telegram, appartengono ai rispettivi proprietari. Non usare questo tweak per infrangere le regole, fare i furbi o violare i termini di Telegram — non siamo responsabili se qualcosa va storto. Usalo a tuo rischio e pericolo.";
+
+"KEEP_EDIT_HISTORY_TITLE" = "Conserva cronologia modifiche";
+"KEEP_EDIT_HISTORY_SUBTITLE" = "Conserva le versioni precedenti dei messaggi modificati. Tocca la matita per vederle.";
+"EDIT_HISTORY_TITLE" = "Cronologia modifiche";
+"EDIT_HISTORY_COUNT" = "%ld versioni";
+"EDIT_HISTORY_ORIGINAL" = "Originale";
+"EDIT_HISTORY_EDITED" = "Modificato";

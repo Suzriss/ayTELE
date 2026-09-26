@@ -101,3 +101,10 @@
 "DISCLAIMER" = "Tuyên bố miễn trừ";
 
 "AUTHOR_MESSAGE" = "Bản chỉnh sửa Telegram này chỉ dành cho mục đích cá nhân và giáo dục. Chúng tôi không liên kết với Telegram. Mọi nhãn hiệu, bao gồm tên và logo Telegram, thuộc về chủ sở hữu tương ứng. Không sử dụng để vi phạm quy tắc, hành vi mờ ám hoặc điều khoản Telegram - chúng tôi không chịu trách nhiệm nếu có vấn đề phát sinh. Tự chịu rủi ro khi sử dụng.";
+
+"KEEP_EDIT_HISTORY_TITLE" = "Giữ lịch sử chỉnh sửa";
+"KEEP_EDIT_HISTORY_SUBTITLE" = "Lưu các phiên bản trước của tin nhắn đã chỉnh sửa. Chạm vào biểu tượng bút chì để xem.";
+"EDIT_HISTORY_TITLE" = "Lịch sử chỉnh sửa";
+"EDIT_HISTORY_COUNT" = "%ld phiên bản";
+"EDIT_HISTORY_ORIGINAL" = "Bản gốc";
+"EDIT_HISTORY_EDITED" = "Đã chỉnh sửa";

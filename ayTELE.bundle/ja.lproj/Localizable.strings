@@ -101,3 +101,10 @@
 "DISCLAIMER" = "免責事項";
 
 "AUTHOR_MESSAGE" = "このTweakは個人的かつ教育目的のみで提供されており、Telegram とは一切関係がありません。Telegram の名称やロゴなどの商標はそれぞれの所有者に帰属します。違反行為や規約違反に使わないでください。何か問題が発生しても開発者は責任を負いません。すべて自己責任でご使用ください。";
+
+"KEEP_EDIT_HISTORY_TITLE" = "編集履歴を保持";
+"KEEP_EDIT_HISTORY_SUBTITLE" = "編集されたメッセージの以前のバージョンを記録します。鉛筆マークをタップして表示します。";
+"EDIT_HISTORY_TITLE" = "編集履歴";
+"EDIT_HISTORY_COUNT" = "%ld 件のバージョン";
+"EDIT_HISTORY_ORIGINAL" = "元のメッセージ";
+"EDIT_HISTORY_EDITED" = "編集済み";

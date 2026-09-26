@@ -101,3 +101,10 @@
 "DISCLAIMER" = "Disclaimer";
 
 "AUTHOR_MESSAGE" = "This Telegram tweak is for personal and educational use only. We are not affiliated with Telegram in any way. All trademarks, including the Telegram name and logo, belong to their respective owners. Don’t use this to break rules, be shady, or violate Telegram’s terms—we’re not responsible if things go sideways. Use at your own risk.";
+
+"KEEP_EDIT_HISTORY_TITLE" = "Keep Edit History";
+"KEEP_EDIT_HISTORY_SUBTITLE" = "Track earlier versions of edited messages. Tap the pencil badge to view them.";
+"EDIT_HISTORY_TITLE" = "Edit History";
+"EDIT_HISTORY_COUNT" = "%ld versions";
+"EDIT_HISTORY_ORIGINAL" = "Original";
+"EDIT_HISTORY_EDITED" = "Edited";

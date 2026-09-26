@@ -51,6 +51,7 @@
 #define kDisableAllAds @"disableOnlineStatus"
 #define kDisableForwardRestriction @"disableForwardRestriction"
 #define kKeepDeletedMessages @"keepDeletedMessages"
+#define kKeepEditHistory @"keepEditHistory"
 
 #define FAKE_LOCATION_ENABLED_KEY @"ayTELEFakeLocation"
 #define FAKE_LATITUDE_KEY @"ayTELESavedLatitude"
