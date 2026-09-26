@@ -6,8 +6,8 @@
 // the entitlements Telegram was built for are gone:
 //
 // - App group: Telegram asks for "group.<bundle id>", which the profile
-//   doesn't carry. iOS returns nil and Telegram stops at launch on a black
-//   screen. Hand back a private folder inside the app's own container
+//   doesn't carry, and Telegram can't open its data at launch (black
+//   screen or crash). Hand back a private folder inside the app's own container
 //   instead, so every clone keeps its own data.
 //
 // - Keychain: Telegram passes its own access group ("C67CF9S4VU..."). The
@@ -25,27 +25,45 @@ static OSStatus (*orig_SecItemCopyMatching)(CFDictionaryRef, CFTypeRef *);
 static OSStatus (*orig_SecItemUpdate)(CFDictionaryRef, CFDictionaryRef);
 static OSStatus (*orig_SecItemDelete)(CFDictionaryRef);
 
-static NSSet<NSString *> *grantedAccessGroups;
+static NSArray<NSString *> *grantedAccessGroups;
+static NSArray<NSString *> *grantedAppGroups;
 static NSString *ownAccessGroup;
 
-static NSSet<NSString *> *loadGrantedAccessGroups() {
-	NSMutableSet *groups = [NSMutableSet set];
+static id copyEntitlement(SecTaskRef task, CFStringRef name) {
+	if (!task) return nil;
+	return CFBridgingRelease(SecTaskCopyValueForEntitlement(task, name, NULL));
+}
 
+static void loadEntitlements() {
 	SecTaskRef task = SecTaskCreateFromSelf(kCFAllocatorDefault);
-	if (!task) return groups;
 
-	NSArray *keychainGroups = CFBridgingRelease(SecTaskCopyValueForEntitlement(task, CFSTR("keychain-access-groups"), NULL));
+	NSMutableArray *accessGroups = [NSMutableArray array];
+	NSArray *keychainGroups = copyEntitlement(task, CFSTR("keychain-access-groups"));
 	if ([keychainGroups isKindOfClass:[NSArray class]]) {
-		[groups addObjectsFromArray:keychainGroups];
+		[accessGroups addObjectsFromArray:keychainGroups];
 	}
-
-	NSString *applicationIdentifier = CFBridgingRelease(SecTaskCopyValueForEntitlement(task, CFSTR("application-identifier"), NULL));
+	NSString *applicationIdentifier = copyEntitlement(task, CFSTR("application-identifier"));
 	if ([applicationIdentifier isKindOfClass:[NSString class]]) {
-		[groups addObject:applicationIdentifier];
+		[accessGroups addObject:applicationIdentifier];
 	}
+	grantedAccessGroups = accessGroups;
 
-	CFRelease(task);
-	return groups;
+	NSArray *appGroups = copyEntitlement(task, CFSTR("com.apple.security.application-groups"));
+	grantedAppGroups = [appGroups isKindOfClass:[NSArray class]] ? appGroups : @[];
+
+	if (task) CFRelease(task);
+}
+
+// Entitlements may use a trailing wildcard, e.g. "TEAMID.*".
+static BOOL isGranted(NSArray<NSString *> *granted, NSString *requested) {
+	if (![requested isKindOfClass:[NSString class]]) return NO;
+
+	for (NSString *entry in granted) {
+		if (![entry isKindOfClass:[NSString class]]) continue;
+		if ([entry isEqualToString:requested]) return YES;
+		if ([entry hasSuffix:@"*"] && [requested hasPrefix:[entry substringToIndex:entry.length - 1]]) return YES;
+	}
+	return NO;
 }
 
 // The default group of this signature: whatever a group-less item lands in.
@@ -76,12 +94,11 @@ static CFDictionaryRef copyRemappedQuery(CFDictionaryRef query) {
 
 	static dispatch_once_t token;
 	dispatch_once(&token, ^{
-		grantedAccessGroups = loadGrantedAccessGroups();
 		ownAccessGroup = loadOwnAccessGroup();
 	});
 
 	NSString *requested = (__bridge NSString *)CFDictionaryGetValue(query, kSecAttrAccessGroup);
-	if (!ownAccessGroup || [grantedAccessGroups containsObject:requested]) return NULL;
+	if (!ownAccessGroup || isGranted(grantedAccessGroups, requested)) return NULL;
 
 	CFMutableDictionaryRef remapped = CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, query);
 	CFDictionarySetValue(remapped, kSecAttrAccessGroup, (__bridge CFStringRef)ownAccessGroup);
@@ -120,13 +137,11 @@ static NSURL *fallbackGroupURL(NSString *groupIdentifier) {
 	NSString *base = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/AppGroup"];
 	NSString *path = [base stringByAppendingPathComponent:groupIdentifier];
 
-	NSFileManager *manager = [NSFileManager defaultManager];
-	if (![manager fileExistsAtPath:path]) {
-		[manager createDirectoryAtPath:path
-		   withIntermediateDirectories:YES
-		                    attributes:nil
-		                         error:nil];
-	}
+	// Telegram expects the layout of a real group container.
+	[[NSFileManager defaultManager] createDirectoryAtPath:[path stringByAppendingPathComponent:@"Library/Caches"]
+	                          withIntermediateDirectories:YES
+	                                           attributes:nil
+	                                                error:nil];
 
 	return [NSURL fileURLWithPath:path isDirectory:YES];
 }
@@ -134,9 +149,11 @@ static NSURL *fallbackGroupURL(NSString *groupIdentifier) {
 %hook NSFileManager
 
 - (NSURL *)containerURLForSecurityApplicationGroupIdentifier:(NSString *)groupIdentifier {
-	NSURL *url = %orig;
-	if (url || groupIdentifier.length == 0) {
-		return url;
+	// iOS may hand back a path even for a group the signature lacks; writing
+	// there fails and Telegram crashes opening its database. Trust the
+	// entitlements, not the return value.
+	if (groupIdentifier.length == 0 || isGranted(grantedAppGroups, groupIdentifier)) {
+		return %orig;
 	}
 
 	return fallbackGroupURL(groupIdentifier);
@@ -147,6 +164,8 @@ static NSURL *fallbackGroupURL(NSString *groupIdentifier) {
 __attribute__((constructor))
 static void initCloneFix() {
 	// Must be in place before Telegram's AppDelegate touches either.
+	loadEntitlements();
+
 	// Seed the originals so they're valid even if no image imports a symbol.
 	orig_SecItemAdd = SecItemAdd;
 	orig_SecItemCopyMatching = SecItemCopyMatching;
