@@ -177,7 +177,9 @@ class AYDeletedMarks: NSObject {
 		return messageKey(node)
 	}
 
-	private static func messageKey(_ node: NSObject) -> String? {
+	// The Postbox Message object behind a ChatMessageItemView node, via its Swift `item`.
+	// Shared with AYMessageDetails / AYNotes so the reflection traversal lives in one place.
+	static func messageObject(_ node: NSObject) -> Any? {
 		var mirror: Mirror? = Mirror(reflecting: node)
 		var item: Any?
 		while let current = mirror, item == nil {
@@ -186,7 +188,11 @@ class AYDeletedMarks: NSObject {
 		}
 		guard let item = item else { return nil }
 		let itemMirror = Mirror(reflecting: item)
-		guard let message = child(itemMirror, "message") ?? firstMessage(in: child(itemMirror, "content")),
+		return child(itemMirror, "message") ?? firstMessage(in: child(itemMirror, "content"))
+	}
+
+	private static func messageKey(_ node: NSObject) -> String? {
+		guard let message = messageObject(node),
 		      let messageId = child(Mirror(reflecting: message), "id") else { return nil }
 		let idMirror = Mirror(reflecting: messageId)
 		guard let peerId = child(idMirror, "peerId"),
@@ -222,21 +228,21 @@ class AYDeletedMarks: NSObject {
 		return nil
 	}
 
-	private static func child(_ mirror: Mirror, _ label: String) -> Any? {
+	static func child(_ mirror: Mirror, _ label: String) -> Any? {
 		for c in mirror.children where c.label == label {
 			return unwrap(c.value)
 		}
 		return nil
 	}
 
-	private static func unwrap(_ value: Any) -> Any? {
+	static func unwrap(_ value: Any) -> Any? {
 		let mirror = Mirror(reflecting: value)
 		guard mirror.displayStyle == .optional else { return value }
 		return mirror.children.first.flatMap { unwrap($0.value) }
 	}
 
 	// Int32 / Int64 or a wrapper struct around one (PeerId.Namespace, PeerId.Id).
-	private static func integer(_ value: Any?, depth: Int = 0) -> Int64? {
+	static func integer(_ value: Any?, depth: Int = 0) -> Int64? {
 		guard let value = value else { return nil }
 		switch value {
 		case let v as Int32: return Int64(v)

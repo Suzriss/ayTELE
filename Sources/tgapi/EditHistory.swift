@@ -38,19 +38,21 @@ class AYEditHistory: NSObject {
 		UserDefaults.standard.set(data, forKey: storageKey)
 	}
 
+	private typealias Entry = (key: String, text: String, date: Int32)
+
 	// Read-only scan of a decoded payload. Records every message text version it can reach.
 	@objc static func observe(_ data: NSData) {
 		guard isEnabled else { return }
 		let buffer = Buffer(nsData: data)
 		guard let object = Api.parse(buffer) else { return }
-		var found: [(key: String, text: String, date: Int32)] = []
+		var found: [Entry] = []
 		collect(object, into: &found, depth: 0)
 		guard !found.isEmpty else { return }
 		record(found)
 	}
 
 	// Walks a parsed Api object with Mirror, pulling out every Api.Message.message it finds.
-	private static func collect(_ value: Any, into found: inout [(String, String, Int32)], depth: Int) {
+	private static func collect(_ value: Any, into found: inout [Entry], depth: Int) {
 		guard depth < 10 else { return }
 		let mirror = Mirror(reflecting: value)
 		if mirror.displayStyle == .enum, let child = mirror.children.first, child.label == "message" {
@@ -65,7 +67,7 @@ class AYEditHistory: NSObject {
 		}
 	}
 
-	private static func messageEntry(_ tuple: Mirror) -> (String, String, Int32)? {
+	private static func messageEntry(_ tuple: Mirror) -> Entry? {
 		var id: Int32?
 		var text: String?
 		var peer: Any?
@@ -116,7 +118,7 @@ class AYEditHistory: NSObject {
 		return value as? Int64
 	}
 
-	private static func record(_ entries: [(key: String, text: String, date: Int32)]) {
+	private static func record(_ entries: [Entry]) {
 		lock.lock()
 		var changed = false
 		for entry in entries {

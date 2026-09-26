@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run filter tests
         run: |
-          swiftc -O -o filtertest Sources/tgapi/api_sources/*.swift Sources/tgapi/DeletedMessages.swift Sources/tgapi/EditHistory.swift ci/main.swift
+          swiftc -O -o filtertest Sources/tgapi/api_sources/*.swift Sources/tgapi/DeletedMessages.swift Sources/tgapi/EditHistory.swift Sources/tgapi/MessageDetails.swift Sources/tgapi/Notes.swift ci/main.swift
           ./filtertest
   build:
     runs-on: macos-15

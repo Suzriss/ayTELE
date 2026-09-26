@@ -17,7 +17,21 @@ func check(_ name: String, _ input: Any, _ expected: Any?) {
 // Mirrors Postbox / ChatMessageItem shapes used by AYDeletedMarks.
 struct PeerId { struct Namespace { let rawValue: Int32 }; struct Id { let rawValue: Int64 }; let namespace: Namespace; let id: Id }
 struct MessageId { let peerId: PeerId; let namespace: Int32; let id: Int32 }
-final class Message { let stableId: UInt32 = 1; let id: MessageId; init(_ id: MessageId) { self.id = id } }
+struct AuthorRef { let id: PeerId }
+struct EditedMessageAttr { let date: Int32 }
+final class Message {
+	let stableId: UInt32 = 1
+	let id: MessageId
+	let timestamp: Int32
+	let text: String
+	let author: AuthorRef?
+	let attributes: [Any]
+	let media: [Any]
+	init(_ id: MessageId, timestamp: Int32 = 0, text: String = "", author: AuthorRef? = nil, attributes: [Any] = [], media: [Any] = []) {
+		self.id = id; self.timestamp = timestamp; self.text = text
+		self.author = author; self.attributes = attributes; self.media = media
+	}
+}
 enum ChatMessageItemContent { case message(message: Message, read: Bool); case group(messages: [(Message, Bool)]) }
 final class ItemWithMessage { let context = 1; let message: Message; init(_ m: Message) { message = m } }
 final class ItemWithContent { let content: ChatMessageItemContent; init(_ c: ChatMessageItemContent) { content = c } }
@@ -101,6 +115,34 @@ obs(upd(.updateEditChannelMessage(message: tmsg(peerC, 7, "b", edit: 1200), pts:
 expect("edit: channel edited", AYEditHistory.isEdited(key: "c99:7"))
 expect("edit: channel node versions", AYEditHistory.versions(node: BubbleNode(ItemWithMessage(msg(2, 99, 7)))).map { $0.first ?? "" } == ["a", "b"])
 expect("edit: unrelated not edited", !AYEditHistory.isEdited(key: "u:99999"))
+
+// ---- Message details (AYMessageDetails, #30) ----
+do {
+	let author = AuthorRef(id: PeerId(namespace: .init(rawValue: 0), id: .init(rawValue: 55)))
+	let m = Message(MessageId(peerId: PeerId(namespace: .init(rawValue: 0), id: .init(rawValue: 100)), namespace: 0, id: 7),
+	                timestamp: 1000, text: "hi", author: author, attributes: [EditedMessageAttr(date: 1200)])
+	let lines = AYMessageDetails.lines(node: BubbleNode(ItemWithMessage(m)))
+	var d: [String: String] = [:]
+	for l in lines where l.count >= 2 { d[l[0]] = l[1] }
+	expect("info: id", d["MSG_INFO_ID"] == "7")
+	expect("info: chat", d["MSG_INFO_CHAT"] == "user #100")
+	expect("info: sender", d["MSG_INFO_SENDER"] == "55")
+	expect("info: sent present", d["MSG_INFO_SENT"] != nil)
+	expect("info: edited present", d["MSG_INFO_EDITED"] != nil)
+	expect("info: empty node", AYMessageDetails.lines(node: BubbleNode(nil)).isEmpty)
+}
+
+// ---- Private notes (AYNotes, #27) ----
+do {
+	let node = BubbleNode(ItemWithMessage(Message(MessageId(peerId: PeerId(namespace: .init(rawValue: 0), id: .init(rawValue: 100)), namespace: 0, id: 9), text: "remember this message")))
+	expect("note: none initially", !AYNotes.hasNote(node: node))
+	AYNotes.setNote(node: node, text: "  reply later  ")
+	expect("note: added", AYNotes.hasNote(node: node))
+	expect("note: trimmed text", AYNotes.note(node: node) == "reply later")
+	expect("note: listed with snippet", AYNotes.all().contains { $0.count >= 3 && $0[0] == "u:9" && $0[2].hasPrefix("remember") })
+	AYNotes.setNote(node: node, text: "   ")
+	expect("note: cleared by blank", !AYNotes.hasNote(node: node))
+}
 
 print(failures == 0 ? "ALL PASS" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)
