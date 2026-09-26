@@ -17,8 +17,8 @@
 //   (e.g. TrollStore with the original entitlements) is left untouched.
 
 typedef struct __SecTask *SecTaskRef;
-extern SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef allocator);
-extern CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef task, CFStringRef entitlement, CFErrorRef *error);
+extern "C" SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef allocator);
+extern "C" CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef task, CFStringRef entitlement, CFErrorRef *error);
 
 static OSStatus (*orig_SecItemAdd)(CFDictionaryRef, CFTypeRef *);
 static OSStatus (*orig_SecItemCopyMatching)(CFDictionaryRef, CFTypeRef *);
