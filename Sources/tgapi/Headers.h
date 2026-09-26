@@ -21,6 +21,7 @@
 
 @interface AYEditHistory : NSObject
 @property (class, nonatomic, readonly) BOOL isEnabled;
+@property (class, nonatomic, readonly) BOOL shouldObserve;
 @property (class, nonatomic, readonly) NSNotificationName changedNotification;
 + (void)observe:(NSData *)data;
 + (BOOL)isEditedWithNode:(NSObject *)node;
