@@ -71,6 +71,15 @@ jobs:
                 path: packages
                 merge-multiple: true
 
+            - name: Extract ayTELE.dylib for sideloading
+              shell: bash
+              run: |
+                set -e
+                mkdir -p deb-extract
+                (cd deb-extract && ar x ../packages/*_iphoneos-arm.deb && tar -xf data.tar.*)
+                cp "$(find deb-extract -name '*.dylib' | head -n1)" packages/ayTELE.dylib
+                rm -rf deb-extract
+
             - name: Generate Checksums
               id: metadata
               shell: bash
@@ -116,7 +125,9 @@ jobs:
                 tag_name: release
                 name: ayTELE
                 body_path: release_body.md
-                files: packages/*.deb
+                files: |
+                  packages/*.deb
+                  packages/ayTELE.dylib
                 draft: false
                 prerelease: false
                 make_latest: true
