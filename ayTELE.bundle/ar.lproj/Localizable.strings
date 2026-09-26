@@ -106,3 +106,23 @@
 "EDIT_HISTORY_COUNT" = "%ld نسخة";
 "EDIT_HISTORY_ORIGINAL" = "الأصلية";
 "EDIT_HISTORY_EDITED" = "معدّلة";
+
+
+"SAVE" = "حفظ";
+"MESSAGE_INFO_TITLE" = "معلومات الرسالة";
+"MSG_ACTION_INFO" = "معلومات الرسالة";
+"MSG_ACTION_NOTE" = "ملاحظة خاصة";
+"PRIVATE_NOTE_TITLE" = "ملاحظة خاصة";
+"PRIVATE_NOTE_PLACEHOLDER" = "اكتب ملاحظة يشوفها إنت بس…";
+"NOTES_LIST_TITLE" = "الملاحظات الخاصة";
+"NOTES_SETTINGS_TITLE" = "الملاحظات الخاصة";
+"NOTES_SETTINGS_SUBTITLE" = "ملاحظات تلزگها على الرسائل، تشوفها إنت بس.";
+"MSG_INFO_ID" = "رقم الرسالة";
+"MSG_INFO_CHAT" = "المحادثة";
+"MSG_INFO_SENDER" = "المرسِل";
+"MSG_INFO_SENT" = "وقت الإرسال";
+"MSG_INFO_EDITED" = "آخر تعديل";
+"MSG_INFO_MIME" = "النوع";
+"MSG_INFO_FILENAME" = "اسم الملف";
+"MSG_INFO_SIZE" = "الحجم";
+"MSG_INFO_DC" = "مركز البيانات";

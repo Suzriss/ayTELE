@@ -109,3 +109,23 @@
 "EDIT_HISTORY_COUNT" = "%ld 个版本";
 "EDIT_HISTORY_ORIGINAL" = "原始";
 "EDIT_HISTORY_EDITED" = "已编辑";
+
+
+"SAVE" = "保存";
+"MESSAGE_INFO_TITLE" = "消息信息";
+"MSG_ACTION_INFO" = "消息信息";
+"MSG_ACTION_NOTE" = "私人笔记";
+"PRIVATE_NOTE_TITLE" = "私人笔记";
+"PRIVATE_NOTE_PLACEHOLDER" = "写一条只有你能看到的笔记…";
+"NOTES_LIST_TITLE" = "私人笔记";
+"NOTES_SETTINGS_TITLE" = "私人笔记";
+"NOTES_SETTINGS_SUBTITLE" = "附加到消息上的笔记，只有你能看到。";
+"MSG_INFO_ID" = "消息 ID";
+"MSG_INFO_CHAT" = "聊天";
+"MSG_INFO_SENDER" = "发送者";
+"MSG_INFO_SENT" = "发送时间";
+"MSG_INFO_EDITED" = "已编辑";
+"MSG_INFO_MIME" = "类型";
+"MSG_INFO_FILENAME" = "文件名";
+"MSG_INFO_SIZE" = "大小";
+"MSG_INFO_DC" = "数据中心";

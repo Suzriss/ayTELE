@@ -108,3 +108,23 @@
 "EDIT_HISTORY_COUNT" = "%ld 個版本";
 "EDIT_HISTORY_ORIGINAL" = "原始";
 "EDIT_HISTORY_EDITED" = "已編輯";
+
+
+"SAVE" = "儲存";
+"MESSAGE_INFO_TITLE" = "訊息資訊";
+"MSG_ACTION_INFO" = "訊息資訊";
+"MSG_ACTION_NOTE" = "私人筆記";
+"PRIVATE_NOTE_TITLE" = "私人筆記";
+"PRIVATE_NOTE_PLACEHOLDER" = "寫一條只有你能看到的筆記…";
+"NOTES_LIST_TITLE" = "私人筆記";
+"NOTES_SETTINGS_TITLE" = "私人筆記";
+"NOTES_SETTINGS_SUBTITLE" = "附加到訊息上的筆記，只有你能看到。";
+"MSG_INFO_ID" = "訊息 ID";
+"MSG_INFO_CHAT" = "聊天";
+"MSG_INFO_SENDER" = "發送者";
+"MSG_INFO_SENT" = "發送時間";
+"MSG_INFO_EDITED" = "已編輯";
+"MSG_INFO_MIME" = "類型";
+"MSG_INFO_FILENAME" = "檔案名稱";
+"MSG_INFO_SIZE" = "大小";
+"MSG_INFO_DC" = "資料中心";

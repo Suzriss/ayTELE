@@ -108,3 +108,23 @@
 "EDIT_HISTORY_COUNT" = "%ld 件のバージョン";
 "EDIT_HISTORY_ORIGINAL" = "元のメッセージ";
 "EDIT_HISTORY_EDITED" = "編集済み";
+
+
+"SAVE" = "保存";
+"MESSAGE_INFO_TITLE" = "メッセージ情報";
+"MSG_ACTION_INFO" = "メッセージ情報";
+"MSG_ACTION_NOTE" = "プライベートメモ";
+"PRIVATE_NOTE_TITLE" = "プライベートメモ";
+"PRIVATE_NOTE_PLACEHOLDER" = "自分だけが見えるメモを入力…";
+"NOTES_LIST_TITLE" = "プライベートメモ";
+"NOTES_SETTINGS_TITLE" = "プライベートメモ";
+"NOTES_SETTINGS_SUBTITLE" = "メッセージに付けるメモ。自分だけに表示されます。";
+"MSG_INFO_ID" = "メッセージ ID";
+"MSG_INFO_CHAT" = "チャット";
+"MSG_INFO_SENDER" = "送信者";
+"MSG_INFO_SENT" = "送信日時";
+"MSG_INFO_EDITED" = "編集日時";
+"MSG_INFO_MIME" = "種類";
+"MSG_INFO_FILENAME" = "ファイル名";
+"MSG_INFO_SIZE" = "サイズ";
+"MSG_INFO_DC" = "データセンター";

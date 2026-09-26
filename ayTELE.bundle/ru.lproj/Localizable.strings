@@ -108,3 +108,23 @@
 "EDIT_HISTORY_COUNT" = "%ld версий";
 "EDIT_HISTORY_ORIGINAL" = "Оригинал";
 "EDIT_HISTORY_EDITED" = "Изменено";
+
+
+"SAVE" = "Сохранить";
+"MESSAGE_INFO_TITLE" = "Информация о сообщении";
+"MSG_ACTION_INFO" = "Информация о сообщении";
+"MSG_ACTION_NOTE" = "Личная заметка";
+"PRIVATE_NOTE_TITLE" = "Личная заметка";
+"PRIVATE_NOTE_PLACEHOLDER" = "Заметка, видимая только вам…";
+"NOTES_LIST_TITLE" = "Личные заметки";
+"NOTES_SETTINGS_TITLE" = "Личные заметки";
+"NOTES_SETTINGS_SUBTITLE" = "Заметки к сообщениям, видимые только вам.";
+"MSG_INFO_ID" = "ID сообщения";
+"MSG_INFO_CHAT" = "Чат";
+"MSG_INFO_SENDER" = "Отправитель";
+"MSG_INFO_SENT" = "Отправлено";
+"MSG_INFO_EDITED" = "Изменено";
+"MSG_INFO_MIME" = "Тип";
+"MSG_INFO_FILENAME" = "Имя файла";
+"MSG_INFO_SIZE" = "Размер";
+"MSG_INFO_DC" = "Дата-центр";

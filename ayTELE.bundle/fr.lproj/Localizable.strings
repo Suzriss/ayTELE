@@ -106,3 +106,23 @@
 "EDIT_HISTORY_COUNT" = "%ld versions";
 "EDIT_HISTORY_ORIGINAL" = "Original";
 "EDIT_HISTORY_EDITED" = "Modifié";
+
+
+"SAVE" = "Enregistrer";
+"MESSAGE_INFO_TITLE" = "Infos du message";
+"MSG_ACTION_INFO" = "Infos du message";
+"MSG_ACTION_NOTE" = "Note privée";
+"PRIVATE_NOTE_TITLE" = "Note privée";
+"PRIVATE_NOTE_PLACEHOLDER" = "Écrivez une note visible par vous seul…";
+"NOTES_LIST_TITLE" = "Notes privées";
+"NOTES_SETTINGS_TITLE" = "Notes privées";
+"NOTES_SETTINGS_SUBTITLE" = "Notes attachées aux messages, visibles par vous seul.";
+"MSG_INFO_ID" = "ID du message";
+"MSG_INFO_CHAT" = "Discussion";
+"MSG_INFO_SENDER" = "Expéditeur";
+"MSG_INFO_SENT" = "Envoyé";
+"MSG_INFO_EDITED" = "Modifié";
+"MSG_INFO_MIME" = "Type";
+"MSG_INFO_FILENAME" = "Nom du fichier";
+"MSG_INFO_SIZE" = "Taille";
+"MSG_INFO_DC" = "Centre de données";

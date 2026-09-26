@@ -108,3 +108,23 @@
 "EDIT_HISTORY_COUNT" = "%ld phiên bản";
 "EDIT_HISTORY_ORIGINAL" = "Bản gốc";
 "EDIT_HISTORY_EDITED" = "Đã chỉnh sửa";
+
+
+"SAVE" = "Lưu";
+"MESSAGE_INFO_TITLE" = "Thông tin tin nhắn";
+"MSG_ACTION_INFO" = "Thông tin tin nhắn";
+"MSG_ACTION_NOTE" = "Ghi chú riêng";
+"PRIVATE_NOTE_TITLE" = "Ghi chú riêng";
+"PRIVATE_NOTE_PLACEHOLDER" = "Viết ghi chú chỉ bạn thấy…";
+"NOTES_LIST_TITLE" = "Ghi chú riêng";
+"NOTES_SETTINGS_TITLE" = "Ghi chú riêng";
+"NOTES_SETTINGS_SUBTITLE" = "Ghi chú gắn vào tin nhắn, chỉ bạn thấy.";
+"MSG_INFO_ID" = "ID tin nhắn";
+"MSG_INFO_CHAT" = "Trò chuyện";
+"MSG_INFO_SENDER" = "Người gửi";
+"MSG_INFO_SENT" = "Đã gửi";
+"MSG_INFO_EDITED" = "Đã sửa";
+"MSG_INFO_MIME" = "Loại";
+"MSG_INFO_FILENAME" = "Tên tệp";
+"MSG_INFO_SIZE" = "Kích thước";
+"MSG_INFO_DC" = "Trung tâm dữ liệu";

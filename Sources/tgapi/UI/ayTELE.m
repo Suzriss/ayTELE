@@ -3,6 +3,9 @@
 #import "Icons.h"
 #import "Headers.h"
 
+@interface AYNotesListViewController : UITableViewController
+@end
+
 #define TGLoc(key) [ayTELELocalization localizedStringForKey:(key)]
 
 @interface ayTELE ()
@@ -186,7 +189,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		case READ_RECEIPT:
 		   return 2;
 		case MISC:
-		   return 4;
+		   return 5;
 		case FILE_FIXER:
 		   return 2;
 		case FAKE_LOCATION:
@@ -358,6 +361,17 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		toggle.tag = 1000 + (indexPath.section *1000) + indexPath.row;
 		cell.accessoryView = toggle;
 
+		cell.textLabel.numberOfLines = 0;
+		cell.detailTextLabel.numberOfLines = 0;
+		return cell;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 4) { // MISC: open private notes list
+		cell = [self normalCellFromTableView:tableView];
+		cell.textLabel.text = TGLoc(@"NOTES_SETTINGS_TITLE");
+		cell.detailTextLabel.text = TGLoc(@"NOTES_SETTINGS_SUBTITLE");
+		cell.imageView.image = [UIImage systemImageNamed:@"note.text"];
+		cell.imageView.tintColor = [UIColor systemYellowColor];
+		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		cell.textLabel.numberOfLines = 0;
 		cell.detailTextLabel.numberOfLines = 0;
 		return cell;
@@ -565,6 +579,12 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
+	if (indexPath.section == MISC) { // Private notes list
+		if (indexPath.row == 4) {
+			[self showNotesList];
+		}
+	}
+
 	if (indexPath.section == FILE_FIXER) { // File Picker Fix
 		if (indexPath.row == 1) {
 			[self clearFilePickerFixCache];
@@ -716,6 +736,11 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
     [alert addAction:okAction];
 
     [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)showNotesList {
+	AYNotesListViewController *ui = [[AYNotesListViewController alloc] initWithStyle:UITableViewStyleInsetGrouped];
+	[self.navigationController pushViewController:ui animated:YES];
 }
 
 - (void)showLanguageSelector {

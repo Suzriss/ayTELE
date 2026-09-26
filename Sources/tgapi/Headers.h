@@ -26,6 +26,18 @@
 + (NSArray<NSArray<NSString *> *> *)versionsWithNode:(NSObject *)node;
 @end
 
+@interface AYMessageDetails : NSObject
++ (NSArray<NSArray<NSString *> *> *)linesWithNode:(NSObject *)node;
+@end
+
+@interface AYNotes : NSObject
+@property (class, nonatomic, readonly) NSNotificationName changedNotification;
++ (BOOL)hasNoteWithNode:(NSObject *)node;
++ (NSString *)noteWithNode:(NSObject *)node;
++ (void)setNoteWithNode:(NSObject *)node text:(NSString *)text;
++ (NSArray<NSArray<NSString *> *> *)all;
+@end
+
 @interface MTRpcError : NSObject
 - (id)initWithErrorCode:(int)code errorDescription:(id)desc;
 @end

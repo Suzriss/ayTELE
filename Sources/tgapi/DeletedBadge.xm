@@ -199,11 +199,177 @@ static void updateEditBadge(ASDisplayNode *node) {
 	else [view bringSubviewToFront:badge];
 }
 
+static const void *kNoteBadgeKey = &kNoteBadgeKey;
+static const void *kGestureInstalledKey = &kGestureInstalledKey;
+static const void *kGestureNodeKey = &kGestureNodeKey;
+
+// Info sheet: label / value rows for one message (#30).
+@interface AYMessageInfoViewer : UITableViewController
+@property (nonatomic, strong) NSArray<NSArray<NSString *> *> *lines;
+@end
+@implementation AYMessageInfoViewer
+- (void)viewDidLoad {
+	[super viewDidLoad];
+	self.title = [ayTELELocalization localizedStringForKey:@"MESSAGE_INFO_TITLE"];
+	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissSelf)];
+}
+- (void)dismissSelf { [self dismissViewControllerAnimated:YES completion:nil]; }
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section { return self.lines.count; }
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+	UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+	NSArray<NSString *> *line = self.lines[indexPath.row];
+	cell.textLabel.text = [ayTELELocalization localizedStringForKey:line.firstObject];
+	cell.detailTextLabel.text = line.count > 1 ? line[1] : @"";
+	cell.detailTextLabel.numberOfLines = 0;
+	cell.selectionStyle = UITableViewCellSelectionStyleNone;
+	return cell;
+}
+@end
+
+// Lists every private note across chats (#27).
+@interface AYNotesListViewController : UITableViewController
+@property (nonatomic, strong) NSArray<NSArray<NSString *> *> *notes;
+@end
+@implementation AYNotesListViewController
+- (void)viewDidLoad {
+	[super viewDidLoad];
+	self.title = [ayTELELocalization localizedStringForKey:@"NOTES_LIST_TITLE"];
+	self.notes = [AYNotes all];
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section { return self.notes.count; }
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+	UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+	NSArray<NSString *> *note = self.notes[indexPath.row];
+	cell.textLabel.text = note.count > 1 ? note[1] : @"";
+	cell.textLabel.numberOfLines = 0;
+	cell.detailTextLabel.text = note.count > 2 ? note[2] : @"";
+	cell.detailTextLabel.numberOfLines = 0;
+	cell.detailTextLabel.textColor = [UIColor secondaryLabelColor];
+	cell.selectionStyle = UITableViewCellSelectionStyleNone;
+	return cell;
+}
+@end
+
+static UIViewController *topPresenter(void) {
+	UIWindow *window = UIApplication.sharedApplication.keyWindow;
+	UIViewController *presenter = window.rootViewController;
+	while (presenter.presentedViewController) presenter = presenter.presentedViewController;
+	return presenter;
+}
+
+// Handles the per-message two-finger tap menu and the note badge tap.
+@interface AYMessageActionHandler : NSObject
++ (instancetype)shared;
+@end
+@implementation AYMessageActionHandler
++ (instancetype)shared {
+	static AYMessageActionHandler *instance;
+	static dispatch_once_t token;
+	dispatch_once(&token, ^{ instance = [AYMessageActionHandler new]; });
+	return instance;
+}
+- (void)showInfoForNode:(NSObject *)node {
+	NSArray<NSArray<NSString *> *> *lines = @[];
+	@try { lines = [AYMessageDetails linesWithNode:node]; } @catch (NSException *e) { return; }
+	if (lines.count == 0) return;
+	AYMessageInfoViewer *viewer = [AYMessageInfoViewer new];
+	viewer.lines = lines;
+	[topPresenter() presentViewController:[[UINavigationController alloc] initWithRootViewController:viewer] animated:YES completion:nil];
+}
+- (void)showNoteEditorForNode:(NSObject *)node {
+	NSString *existing = nil;
+	@try { existing = [AYNotes noteWithNode:node]; } @catch (NSException *e) {}
+	UIAlertController *alert = [UIAlertController alertControllerWithTitle:[ayTELELocalization localizedStringForKey:@"PRIVATE_NOTE_TITLE"]
+	                                                              message:nil
+	                                                       preferredStyle:UIAlertControllerStyleAlert];
+	[alert addTextFieldWithConfigurationHandler:^(UITextField *field) {
+		field.placeholder = [ayTELELocalization localizedStringForKey:@"PRIVATE_NOTE_PLACEHOLDER"];
+		field.text = existing;
+		field.autocapitalizationType = UITextAutocapitalizationTypeSentences;
+	}];
+	[alert addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"SAVE"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
+		NSString *text = alert.textFields.firstObject.text ?: @"";
+		@try { [AYNotes setNoteWithNode:node text:text]; } @catch (NSException *e) {}
+	}]];
+	[alert addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"CANCEL"] style:UIAlertActionStyleCancel handler:nil]];
+	[topPresenter() presentViewController:alert animated:YES completion:nil];
+}
+- (void)noteBadgeTapped:(UIButton *)sender {
+	NSObject *node = objc_getAssociatedObject(sender, kGestureNodeKey);
+	if (node) [self showNoteEditorForNode:node];
+}
+- (void)twoFingerTap:(UITapGestureRecognizer *)gesture {
+	if (gesture.state != UIGestureRecognizerStateRecognized) return;
+	NSObject *node = objc_getAssociatedObject(gesture, kGestureNodeKey);
+	if (!node) return;
+	UIAlertController *sheet = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+	[sheet addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"MSG_ACTION_INFO"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
+		[self showInfoForNode:node];
+	}]];
+	[sheet addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"MSG_ACTION_NOTE"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
+		[self showNoteEditorForNode:node];
+	}]];
+	[sheet addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"CANCEL"] style:UIAlertActionStyleCancel handler:nil]];
+	UIView *view = ((ASDisplayNode *)node).view;
+	sheet.popoverPresentationController.sourceView = view;
+	sheet.popoverPresentationController.sourceRect = view.bounds;
+	[topPresenter() presentViewController:sheet animated:YES completion:nil];
+}
+@end
+
+// Two-finger tap on a message opens the info / note menu.
+static void installMessageGesture(ASDisplayNode *node) {
+	if (!node.isNodeLoaded) return;
+	UITapGestureRecognizer *gesture = objc_getAssociatedObject(node, kGestureInstalledKey);
+	if (!gesture) {
+		gesture = [[UITapGestureRecognizer alloc] initWithTarget:[AYMessageActionHandler shared] action:@selector(twoFingerTap:)];
+		gesture.numberOfTouchesRequired = 2;
+		objc_setAssociatedObject(node, kGestureInstalledKey, gesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+	}
+	objc_setAssociatedObject(gesture, kGestureNodeKey, node, OBJC_ASSOCIATION_ASSIGN);
+	UIView *view = node.view;
+	if (![view.gestureRecognizers containsObject:gesture]) [view addGestureRecognizer:gesture];
+}
+
+static void updateNoteBadge(ASDisplayNode *node) {
+	UIButton *badge = objc_getAssociatedObject(node, kNoteBadgeKey);
+	BOOL noted = NO;
+	@try { noted = [AYNotes hasNoteWithNode:node]; } @catch (NSException *exception) { noted = NO; }
+	if (!noted) { badge.hidden = YES; return; }
+	if (!node.isNodeLoaded) return;
+
+	if (!badge) {
+		UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:12 weight:UIImageSymbolWeightSemibold];
+		badge = [UIButton buttonWithType:UIButtonTypeSystem];
+		[badge setImage:[UIImage systemImageNamed:@"note.text" withConfiguration:config] forState:UIControlStateNormal];
+		badge.tintColor = [UIColor systemYellowColor];
+		[badge addTarget:[AYMessageActionHandler shared] action:@selector(noteBadgeTapped:) forControlEvents:UIControlEventTouchUpInside];
+		objc_setAssociatedObject(node, kNoteBadgeKey, badge, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+	}
+	objc_setAssociatedObject(badge, kGestureNodeKey, node, OBJC_ASSOCIATION_ASSIGN);
+
+	CGRect nodeBounds = node.bounds;
+	BOOL incoming = NO;
+	CGRect rect = contentRectOf(node, &incoming);
+	CGFloat size = 20;
+	// Bottom inner corner, clear of the outer trash (bottom) and pencil (top) badges.
+	CGFloat x = incoming ? CGRectGetMaxX(rect) - size - 4 : CGRectGetMinX(rect) + 4;
+	x = MAX(0, MIN(x, nodeBounds.size.width - size));
+	badge.frame = CGRectMake(x, CGRectGetMaxY(rect) - size - 2, size, size);
+	badge.hidden = NO;
+
+	UIView *view = node.view;
+	if (badge.superview != view) [view addSubview:badge];
+	else [view bringSubviewToFront:badge];
+}
+
 static void trackAndUpdate(ASDisplayNode *node) {
 	if (!chatMessageItemViewClass || ![node isKindOfClass:chatMessageItemViewClass]) return;
 	[trackedNodes addObject:node];
 	updateDeletedBadge(node);
 	updateEditBadge(node);
+	updateNoteBadge(node);
+	installMessageGesture(node);
 }
 
 // Chat item nodes don't override -layout, so ASDisplayNode's runs for them after ListView sizes them.
@@ -223,9 +389,11 @@ static void trackAndUpdate(ASDisplayNode *node) {
 		for (ASDisplayNode *node in trackedNodes.allObjects) {
 			updateDeletedBadge(node);
 			updateEditBadge(node);
+			updateNoteBadge(node);
 		}
 	};
 	[[NSNotificationCenter defaultCenter] addObserverForName:AYDeletedMarks.changedNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:refresh];
 	[[NSNotificationCenter defaultCenter] addObserverForName:AYEditHistory.changedNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:refresh];
+	[[NSNotificationCenter defaultCenter] addObserverForName:AYNotes.changedNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:refresh];
 	%init;
 }
