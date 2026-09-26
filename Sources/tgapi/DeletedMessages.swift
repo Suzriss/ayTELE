@@ -166,6 +166,15 @@ class AYDeletedMarks: NSObject {
 		return keys.contains(key)
 	}
 
+	// Deleted messages for the browse screen: [key, text] newest first, text from AYEditHistory
+	// when we captured it (empty otherwise).
+	@objc static func deletedList() -> [[String]] {
+		lock.lock()
+		let snapshot = order
+		lock.unlock()
+		return snapshot.reversed().map { [$0, AYEditHistory.text(forKey: $0) ?? ""] }
+	}
+
 	// node is a ChatMessageItemView; its Swift `item` holds the Postbox Message.
 	@objc static func isDeleted(node: NSObject) -> Bool {
 		guard let key = messageKey(node) else { return false }

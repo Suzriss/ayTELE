@@ -250,6 +250,61 @@ static const void *kGestureNodeKey = &kGestureNodeKey;
 }
 @end
 
+// Browse deleted / edited messages (#56). A segmented control switches lists; tapping an edited
+// row opens its version history.
+@interface AYArchiveViewController : UITableViewController
+@property (nonatomic, strong) NSArray<NSArray<NSString *> *> *edited;
+@property (nonatomic, strong) NSArray<NSArray<NSString *> *> *deleted;
+@property (nonatomic, assign) NSInteger mode; // 0 = edited, 1 = deleted
+@end
+@implementation AYArchiveViewController
+- (void)viewDidLoad {
+	[super viewDidLoad];
+	self.edited = [AYEditHistory editedList];
+	self.deleted = [AYDeletedMarks deletedList];
+	UISegmentedControl *seg = [[UISegmentedControl alloc] initWithItems:@[
+		[ayTELELocalization localizedStringForKey:@"ARCHIVE_EDITED"],
+		[ayTELELocalization localizedStringForKey:@"ARCHIVE_DELETED"]]];
+	seg.selectedSegmentIndex = 0;
+	[seg addTarget:self action:@selector(segChanged:) forControlEvents:UIControlEventValueChanged];
+	self.navigationItem.titleView = seg;
+}
+- (void)segChanged:(UISegmentedControl *)seg { self.mode = seg.selectedSegmentIndex; [self.tableView reloadData]; }
+- (NSArray<NSArray<NSString *> *> *)rows { return self.mode == 0 ? self.edited : self.deleted; }
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section { return self.rows.count; }
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+	if (self.rows.count > 0) return nil;
+	return [ayTELELocalization localizedStringForKey:@"ARCHIVE_EMPTY"];
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+	UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+	NSArray<NSString *> *row = self.rows[indexPath.row];
+	NSString *text = row.count > 1 ? row[1] : @"";
+	cell.textLabel.text = text.length ? text : @"—";
+	cell.textLabel.numberOfLines = 2;
+	if (self.mode == 0) {
+		NSString *fmt = [ayTELELocalization localizedStringForKey:@"EDIT_HISTORY_COUNT"];
+		cell.detailTextLabel.text = [NSString stringWithFormat:fmt, (long)(row.count > 2 ? row[2].integerValue : 0)];
+		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	} else {
+		cell.detailTextLabel.text = row.firstObject;
+		cell.selectionStyle = UITableViewCellSelectionStyleNone;
+	}
+	cell.detailTextLabel.textColor = [UIColor secondaryLabelColor];
+	return cell;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+	[tableView deselectRowAtIndexPath:indexPath animated:YES];
+	if (self.mode != 0) return;
+	NSArray<NSString *> *row = self.rows[indexPath.row];
+	NSArray<NSArray<NSString *> *> *versions = [AYEditHistory versionsWithKey:row.firstObject];
+	if (versions.count == 0) return;
+	AYEditHistoryViewer *viewer = [AYEditHistoryViewer new];
+	viewer.versions = versions;
+	[self.navigationController pushViewController:viewer animated:YES];
+}
+@end
+
 static UIViewController *topPresenter(void) {
 	UIWindow *window = UIApplication.sharedApplication.keyWindow;
 	UIViewController *presenter = window.rootViewController;

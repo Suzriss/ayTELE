@@ -13,8 +13,16 @@ class AYEditHistory: NSObject {
 	private static let messageLimit = 4000   // distinct messages tracked
 	private static let versionLimit = 40     // versions kept per message
 
+	// The pencil badge and version viewer are gated on this.
 	@objc static var isEnabled: Bool {
 		return UserDefaults.standard.bool(forKey: "keepEditHistory")
+	}
+
+	// Text is captured whenever edit history OR deleted-message keeping is on, so the deleted
+	// browse list (#56) has message text even without edit history enabled.
+	@objc static var shouldObserve: Bool {
+		let d = UserDefaults.standard
+		return d.bool(forKey: "keepEditHistory") || d.bool(forKey: "keepDeletedMessages")
 	}
 
 	// One stored version: the text as it was, and the server timestamp we saw it at.
@@ -42,7 +50,7 @@ class AYEditHistory: NSObject {
 
 	// Read-only scan of a decoded payload. Records every message text version it can reach.
 	@objc static func observe(_ data: NSData) {
-		guard isEnabled else { return }
+		guard shouldObserve else { return }
 		let buffer = Buffer(nsData: data)
 		guard let object = Api.parse(buffer) else { return }
 		var found: [Entry] = []
@@ -157,8 +165,26 @@ class AYEditHistory: NSObject {
 	// Returns [text, "date"] pairs oldest-first for the message under this node, for the viewer UI.
 	@objc static func versions(node: NSObject) -> [[String]] {
 		guard let key = AYDeletedMarks.key(node: node) else { return [] }
+		return versions(key: key)
+	}
+
+	@objc static func versions(key: String) -> [[String]] {
 		lock.lock(); defer { lock.unlock() }
 		guard let versions = store[key] else { return [] }
 		return versions.map { [$0.text, "\($0.date)"] }
+	}
+
+	// The latest text we observed for a message, if any (used by the deleted browse list).
+	@objc static func text(forKey key: String) -> String? {
+		lock.lock(); defer { lock.unlock() }
+		return store[key]?.last?.text
+	}
+
+	// Edited messages for the browse screen: [key, latestText, "versionCount"], newest first.
+	@objc static func editedList() -> [[String]] {
+		lock.lock(); defer { lock.unlock() }
+		return store.filter { $0.value.count > 1 }
+			.sorted { ($0.value.last?.date ?? 0) > ($1.value.last?.date ?? 0) }
+			.map { [$0.key, $0.value.last?.text ?? "", "\($0.value.count)"] }
 	}
 }

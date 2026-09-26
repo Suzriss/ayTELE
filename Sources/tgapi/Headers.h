@@ -16,6 +16,7 @@
 @property (class, nonatomic, readonly) NSNotificationName changedNotification;
 + (BOOL)isDeletedWithNode:(NSObject *)node;
 + (NSString *)keyWithNode:(NSObject *)node;
++ (NSArray<NSArray<NSString *> *> *)deletedList;
 @end
 
 @interface AYEditHistory : NSObject
@@ -24,6 +25,8 @@
 + (void)observe:(NSData *)data;
 + (BOOL)isEditedWithNode:(NSObject *)node;
 + (NSArray<NSArray<NSString *> *> *)versionsWithNode:(NSObject *)node;
++ (NSArray<NSArray<NSString *> *> *)versionsWithKey:(NSString *)key;
++ (NSArray<NSArray<NSString *> *> *)editedList;
 @end
 
 @interface AYMessageDetails : NSObject

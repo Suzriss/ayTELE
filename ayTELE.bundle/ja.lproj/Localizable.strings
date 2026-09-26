@@ -128,3 +128,9 @@
 "MSG_INFO_FILENAME" = "ファイル名";
 "MSG_INFO_SIZE" = "サイズ";
 "MSG_INFO_DC" = "データセンター";
+
+"ARCHIVE_SETTINGS_TITLE" = "削除・編集済み";
+"ARCHIVE_SETTINGS_SUBTITLE" = "他の人が削除・編集したメッセージを閲覧します。";
+"ARCHIVE_EDITED" = "編集済み";
+"ARCHIVE_DELETED" = "削除済み";
+"ARCHIVE_EMPTY" = "まだ記録がありません。";

@@ -128,3 +128,9 @@
 "MSG_INFO_FILENAME" = "File name";
 "MSG_INFO_SIZE" = "Size";
 "MSG_INFO_DC" = "Data center";
+
+"ARCHIVE_SETTINGS_TITLE" = "Deleted & Edited";
+"ARCHIVE_SETTINGS_SUBTITLE" = "Browse messages others deleted or edited.";
+"ARCHIVE_EDITED" = "Edited";
+"ARCHIVE_DELETED" = "Deleted";
+"ARCHIVE_EMPTY" = "Nothing recorded yet.";

@@ -126,3 +126,9 @@
 "MSG_INFO_FILENAME" = "Nom du fichier";
 "MSG_INFO_SIZE" = "Taille";
 "MSG_INFO_DC" = "Centre de données";
+
+"ARCHIVE_SETTINGS_TITLE" = "Supprimés et modifiés";
+"ARCHIVE_SETTINGS_SUBTITLE" = "Parcourez les messages supprimés ou modifiés par d’autres.";
+"ARCHIVE_EDITED" = "Modifiés";
+"ARCHIVE_DELETED" = "Supprimés";
+"ARCHIVE_EMPTY" = "Rien d’enregistré pour l’instant.";

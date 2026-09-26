@@ -130,3 +130,9 @@
 "MSG_INFO_FILENAME" = "Nome file";
 "MSG_INFO_SIZE" = "Dimensione";
 "MSG_INFO_DC" = "Data center";
+
+"ARCHIVE_SETTINGS_TITLE" = "Eliminati e modificati";
+"ARCHIVE_SETTINGS_SUBTITLE" = "Sfoglia i messaggi eliminati o modificati da altri.";
+"ARCHIVE_EDITED" = "Modificati";
+"ARCHIVE_DELETED" = "Eliminati";
+"ARCHIVE_EMPTY" = "Ancora niente registrato.";

@@ -128,3 +128,9 @@
 "MSG_INFO_FILENAME" = "Tên tệp";
 "MSG_INFO_SIZE" = "Kích thước";
 "MSG_INFO_DC" = "Trung tâm dữ liệu";
+
+"ARCHIVE_SETTINGS_TITLE" = "Đã xóa & đã sửa";
+"ARCHIVE_SETTINGS_SUBTITLE" = "Duyệt tin nhắn người khác đã xóa hoặc sửa.";
+"ARCHIVE_EDITED" = "Đã sửa";
+"ARCHIVE_DELETED" = "Đã xóa";
+"ARCHIVE_EMPTY" = "Chưa ghi lại gì.";

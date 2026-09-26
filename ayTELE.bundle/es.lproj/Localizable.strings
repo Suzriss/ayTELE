@@ -130,3 +130,9 @@
 "MSG_INFO_FILENAME" = "Nombre de archivo";
 "MSG_INFO_SIZE" = "Tamaño";
 "MSG_INFO_DC" = "Centro de datos";
+
+"ARCHIVE_SETTINGS_TITLE" = "Eliminados y editados";
+"ARCHIVE_SETTINGS_SUBTITLE" = "Explora mensajes que otros eliminaron o editaron.";
+"ARCHIVE_EDITED" = "Editados";
+"ARCHIVE_DELETED" = "Eliminados";
+"ARCHIVE_EMPTY" = "Aún no hay nada registrado.";

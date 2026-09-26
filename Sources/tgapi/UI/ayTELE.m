@@ -6,6 +6,9 @@
 @interface AYNotesListViewController : UITableViewController
 @end
 
+@interface AYArchiveViewController : UITableViewController
+@end
+
 #define TGLoc(key) [ayTELELocalization localizedStringForKey:(key)]
 
 @interface ayTELE ()
@@ -189,7 +192,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		case READ_RECEIPT:
 		   return 2;
 		case MISC:
-		   return 5;
+		   return 6;
 		case FILE_FIXER:
 		   return 2;
 		case FAKE_LOCATION:
@@ -371,6 +374,17 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		cell.detailTextLabel.text = TGLoc(@"NOTES_SETTINGS_SUBTITLE");
 		cell.imageView.image = [UIImage systemImageNamed:@"note.text"];
 		cell.imageView.tintColor = [UIColor systemYellowColor];
+		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		cell.textLabel.numberOfLines = 0;
+		cell.detailTextLabel.numberOfLines = 0;
+		return cell;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 5) { // MISC: browse deleted / edited
+		cell = [self normalCellFromTableView:tableView];
+		cell.textLabel.text = TGLoc(@"ARCHIVE_SETTINGS_TITLE");
+		cell.detailTextLabel.text = TGLoc(@"ARCHIVE_SETTINGS_SUBTITLE");
+		cell.imageView.image = [UIImage systemImageNamed:@"magnifyingglass"];
+		cell.imageView.tintColor = [self dynamicColorBW];
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		cell.textLabel.numberOfLines = 0;
 		cell.detailTextLabel.numberOfLines = 0;
@@ -579,9 +593,12 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-	if (indexPath.section == MISC) { // Private notes list
+	if (indexPath.section == MISC) { // Private notes list / archive browser
 		if (indexPath.row == 4) {
 			[self showNotesList];
+		}
+		else if (indexPath.row == 5) {
+			[self showArchive];
 		}
 	}
 
@@ -740,6 +757,11 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 
 - (void)showNotesList {
 	AYNotesListViewController *ui = [[AYNotesListViewController alloc] initWithStyle:UITableViewStyleInsetGrouped];
+	[self.navigationController pushViewController:ui animated:YES];
+}
+
+- (void)showArchive {
+	AYArchiveViewController *ui = [[AYArchiveViewController alloc] initWithStyle:UITableViewStylePlain];
 	[self.navigationController pushViewController:ui animated:YES];
 }
 

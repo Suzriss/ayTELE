@@ -126,3 +126,9 @@
 "MSG_INFO_FILENAME" = "اسم الملف";
 "MSG_INFO_SIZE" = "الحجم";
 "MSG_INFO_DC" = "مركز البيانات";
+
+"ARCHIVE_SETTINGS_TITLE" = "المحذوف والمعدّل";
+"ARCHIVE_SETTINGS_SUBTITLE" = "تصفّح الرسائل اللي الآخرين حذفوها أو عدّلوها.";
+"ARCHIVE_EDITED" = "المعدّلة";
+"ARCHIVE_DELETED" = "المحذوفة";
+"ARCHIVE_EMPTY" = "ماكو شي مسجّل لهسه.";

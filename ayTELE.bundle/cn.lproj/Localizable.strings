@@ -129,3 +129,9 @@
 "MSG_INFO_FILENAME" = "文件名";
 "MSG_INFO_SIZE" = "大小";
 "MSG_INFO_DC" = "数据中心";
+
+"ARCHIVE_SETTINGS_TITLE" = "已删除和已编辑";
+"ARCHIVE_SETTINGS_SUBTITLE" = "浏览他人删除或编辑的消息。";
+"ARCHIVE_EDITED" = "已编辑";
+"ARCHIVE_DELETED" = "已删除";
+"ARCHIVE_EMPTY" = "暂无记录。";

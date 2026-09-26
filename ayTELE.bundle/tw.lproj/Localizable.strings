@@ -128,3 +128,9 @@
 "MSG_INFO_FILENAME" = "檔案名稱";
 "MSG_INFO_SIZE" = "大小";
 "MSG_INFO_DC" = "資料中心";
+
+"ARCHIVE_SETTINGS_TITLE" = "已刪除和已編輯";
+"ARCHIVE_SETTINGS_SUBTITLE" = "瀏覽他人刪除或編輯的訊息。";
+"ARCHIVE_EDITED" = "已編輯";
+"ARCHIVE_DELETED" = "已刪除";
+"ARCHIVE_EMPTY" = "尚無記錄。";

@@ -128,3 +128,9 @@
 "MSG_INFO_FILENAME" = "Имя файла";
 "MSG_INFO_SIZE" = "Размер";
 "MSG_INFO_DC" = "Дата-центр";
+
+"ARCHIVE_SETTINGS_TITLE" = "Удалённые и изменённые";
+"ARCHIVE_SETTINGS_SUBTITLE" = "Просмотр сообщений, удалённых или изменённых другими.";
+"ARCHIVE_EDITED" = "Изменённые";
+"ARCHIVE_DELETED" = "Удалённые";
+"ARCHIVE_EMPTY" = "Пока ничего не записано.";

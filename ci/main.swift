@@ -144,5 +144,20 @@ do {
 	expect("note: cleared by blank", !AYNotes.hasNote(node: node))
 }
 
+// ---- Archive browse lists (#56) ----
+do {
+	// editedList: only messages with >1 version, latest text + count.
+	let edited = AYEditHistory.editedList()
+	expect("archive: edited has u:30", edited.contains { $0.first == "u:30" && $0.count >= 3 && $0[1] == "hello world" && $0[2] == "2" })
+	expect("archive: edited excludes single-version", !edited.contains { $0.first == "u:99999" })
+	// text(forKey:) returns latest observed text.
+	expect("archive: text for key", AYEditHistory.text(forKey: "c99:7") == "b")
+	// deletedList carries captured text when we saw the message.
+	obs(upd(.updateNewMessage(message: tmsg(peerU, 61, "to be deleted"), pts: 1, ptsCount: 1)))
+	_ = AYDeletedFilter.filter(ser(Api.Updates.updates(updates: [Api.Update.updateDeleteMessages(messages: [61], pts: 1, ptsCount: 1)], users: [], chats: [], date: 1, seq: 1)))
+	let deleted = AYDeletedMarks.deletedList()
+	expect("archive: deleted lists u:61 with text", deleted.contains { $0.first == "u:61" && $0.count >= 2 && $0[1] == "to be deleted" })
+}
+
 print(failures == 0 ? "ALL PASS" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

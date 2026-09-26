@@ -16,7 +16,7 @@
 	//customLog(@"Function id: %d", functionID);
 	
 	id(^hooked_block)(NSData *) = ^(NSData *inputData) {
-		if (AYEditHistory.isEnabled) {
+		if (AYEditHistory.shouldObserve) {
 			[AYEditHistory observe:inputData];
 		}
 		if (AYDeletedFilter.isEnabled) {
@@ -105,7 +105,7 @@
 %hook _TtC12TelegramCore13Serialization
 
 - (id)parseMessage:(NSData *)data {
-	if (data && AYEditHistory.isEnabled) {
+	if (data && AYEditHistory.shouldObserve) {
 		@try {
 			[AYEditHistory observe:data];
 		} @catch (NSException *exception) {
