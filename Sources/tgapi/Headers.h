@@ -12,6 +12,11 @@
 + (NSData *)filter:(NSData *)data;
 @end
 
+@interface AYDeletedMarks : NSObject
+@property (class, nonatomic, readonly) NSNotificationName changedNotification;
++ (BOOL)isDeletedWithNode:(NSObject *)node;
+@end
+
 @interface MTRpcError : NSObject
 - (id)initWithErrorCode:(int)code errorDescription:(id)desc;
 @end
