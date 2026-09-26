@@ -9,6 +9,11 @@
 @interface AYArchiveViewController : UITableViewController
 @end
 
+@interface AYVoiceConverter : NSObject
++ (void)convertURL:(NSURL *)url
+        completion:(void (^)(NSData *oggOpusData, NSTimeInterval duration, NSData *waveform, NSError *error))completion;
+@end
+
 #define TGLoc(key) [ayTELELocalization localizedStringForKey:(key)]
 
 @interface ayTELE () <UIDocumentPickerDelegate>
