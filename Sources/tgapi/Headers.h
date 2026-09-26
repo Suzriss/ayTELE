@@ -7,6 +7,11 @@
 + (NSData *)handleResponse:(NSData *)data functionID:(NSNumber *)ios;
 @end
 
+@interface AYDeletedFilter : NSObject
+@property (class, nonatomic, readonly) BOOL isEnabled;
++ (NSData *)filter:(NSData *)data;
+@end
+
 @interface MTRpcError : NSObject
 - (id)initWithErrorCode:(int)code errorDescription:(id)desc;
 @end

@@ -75,6 +75,8 @@
 
 "ENABLE_SAVING_PROTECTED_CONTENT_TITLE" = "تمكين حفظ المحتوى المحمي";
 "ENABLE_SAVING_PROTECTED_CONTENT_SUBTITLE" = "تجاوز القيود وحفظ المحتوى المحمي.";
+"KEEP_DELETED_MESSAGES_TITLE" = "الاحتفاظ بالرسائل المحذوفة";
+"KEEP_DELETED_MESSAGES_SUBTITLE" = "تبقى الرسائل التي يحذفها الآخرون ظاهرة في المحادثة.";
 
 /* File Picker */
 "FIX_FILE_PICKER_TITLE" = "إصلاح منتقي الملفات";

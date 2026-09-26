@@ -16,6 +16,13 @@
 	//customLog(@"Function id: %d", functionID);
 	
 	id(^hooked_block)(NSData *) = ^(NSData *inputData) {
+		if (AYDeletedFilter.isEnabled) {
+			NSData *filtered = [AYDeletedFilter filter:inputData];
+			if (filtered) inputData = filtered;
+		}
+		if (![[NSUserDefaults standardUserDefaults] boolForKey:kDisableForwardRestriction]) {
+			return responseParser(inputData);
+		}
 		NSNumber *functionIDNumber = [NSNumber numberWithUnsignedInt:functionID];
 		NSData *fuck = [TLParser handleResponse:inputData functionID:functionIDNumber];
 		id result;
@@ -51,7 +58,8 @@
 		   
 	}
 	
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"disableForwardRestriction"]) {
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	if ([defaults boolForKey:kDisableForwardRestriction] || [defaults boolForKey:kKeepDeletedMessages]) {
 		%orig(payload, metadata, shortMetadata, hooked_block);
 	} else {
 		%orig(payload, metadata, shortMetadata, responseParser);
@@ -84,6 +92,25 @@
         return;
     }
     %orig;
+}
+
+%end
+
+
+// Pushed updates (not RPC results) are decoded by TelegramCore's Serialization after MtProtoKit
+// unwraps gzip and finds no internal MTProto message: -[MTProto ...] -> [serialization parseMessage:].
+%hook _TtC12TelegramCore13Serialization
+
+- (id)parseMessage:(NSData *)data {
+	if (data && AYDeletedFilter.isEnabled) {
+		@try {
+			NSData *filtered = [AYDeletedFilter filter:data];
+			if (filtered) return %orig(filtered);
+		} @catch (NSException *exception) {
+			customLog2(@"Deleted messages filter failed: %@", exception);
+		}
+	}
+	return %orig;
 }
 
 %end

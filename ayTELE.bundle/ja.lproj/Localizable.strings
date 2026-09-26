@@ -75,6 +75,8 @@
 
 "ENABLE_SAVING_PROTECTED_CONTENT_TITLE" = "保護されたコンテンツの保存を許可";
 "ENABLE_SAVING_PROTECTED_CONTENT_SUBTITLE" = "保存が制限されているコンテンツも保存できるようにします。";
+"KEEP_DELETED_MESSAGES_TITLE" = "削除されたメッセージを保持";
+"KEEP_DELETED_MESSAGES_SUBTITLE" = "他の人が削除したメッセージをチャットに残します。";
 
 /* File Picker */
 "FIX_FILE_PICKER_TITLE" = "ファイルピッカーを修正";

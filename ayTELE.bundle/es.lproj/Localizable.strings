@@ -76,6 +76,8 @@
 
 "ENABLE_SAVING_PROTECTED_CONTENT_TITLE" = "Activar guardado de contenido protegido";
 "ENABLE_SAVING_PROTECTED_CONTENT_SUBTITLE" = "Eludir restricciones para guardar contenido protegido.";
+"KEEP_DELETED_MESSAGES_TITLE" = "Conservar mensajes eliminados";
+"KEEP_DELETED_MESSAGES_SUBTITLE" = "Los mensajes que otros eliminan permanecen en el chat.";
 
 /* File Picker */
 "FIX_FILE_PICKER_TITLE" = "Reparar Selector de Archivos";

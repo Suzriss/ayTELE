@@ -75,6 +75,8 @@
 
 "ENABLE_SAVING_PROTECTED_CONTENT_TITLE" = "允许保存受保护内容";
 "ENABLE_SAVING_PROTECTED_CONTENT_SUBTITLE" = "绕过限制，保存受保护的内容。";
+"KEEP_DELETED_MESSAGES_TITLE" = "保留已删除的消息";
+"KEEP_DELETED_MESSAGES_SUBTITLE" = "他人删除的消息仍保留在聊天中。";
 
 /* File Picker */
 "FIX_FILE_PICKER_TITLE" = "修复文件选择器";

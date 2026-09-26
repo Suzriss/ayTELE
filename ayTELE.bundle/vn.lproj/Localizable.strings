@@ -75,6 +75,8 @@
 
 "ENABLE_SAVING_PROTECTED_CONTENT_TITLE" = "Cho phép lưu nội dung được bảo vệ";
 "ENABLE_SAVING_PROTECTED_CONTENT_SUBTITLE" = "Cho phép lưu và chụp ảnh màn hình nội dung được bảo vệ.";
+"KEEP_DELETED_MESSAGES_TITLE" = "Giữ tin nhắn đã xóa";
+"KEEP_DELETED_MESSAGES_SUBTITLE" = "Tin nhắn bị người khác xóa vẫn được giữ trong cuộc trò chuyện.";
 
 /* File Picker */
 "FIX_FILE_PICKER_TITLE" = "Sửa lỗi chọn tệp";

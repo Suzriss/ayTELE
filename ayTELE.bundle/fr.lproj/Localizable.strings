@@ -76,6 +76,8 @@
 
 "ENABLE_SAVING_PROTECTED_CONTENT_TITLE" = "Activer l'enregistrement de contenu protégé";
 "ENABLE_SAVING_PROTECTED_CONTENT_SUBTITLE" = "Contournement des restrictions pour enregistrer le contenu protégé.";
+"KEEP_DELETED_MESSAGES_TITLE" = "Conserver les messages supprimés";
+"KEEP_DELETED_MESSAGES_SUBTITLE" = "Les messages supprimés par les autres restent dans la discussion.";
 
 /* File Picker */
 "FIX_FILE_PICKER_TITLE" = "Corriger le Sélecteur de Fichiers";

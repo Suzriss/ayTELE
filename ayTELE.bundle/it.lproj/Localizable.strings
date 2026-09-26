@@ -77,6 +77,8 @@
 
 "ENABLE_SAVING_PROTECTED_CONTENT_TITLE" = "Consenti salvataggio contenuti protetti";
 "ENABLE_SAVING_PROTECTED_CONTENT_SUBTITLE" = "Bypassa le restrizioni sul salvataggio dei contenuti protetti.";
+"KEEP_DELETED_MESSAGES_TITLE" = "Mantieni messaggi eliminati";
+"KEEP_DELETED_MESSAGES_SUBTITLE" = "I messaggi eliminati da altri restano nella chat.";
 
 /* File Picker */
 "FIX_FILE_PICKER_TITLE" = "Correggi selezione file";
