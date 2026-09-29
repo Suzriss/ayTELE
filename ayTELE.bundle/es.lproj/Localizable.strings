@@ -141,3 +141,16 @@
 "VOICE_CONVERT_SUBTITLE" = "Convierte audio o vídeo en una nota de voz OGG/Opus guardada en Archivos.";
 "VOICE_CONVERTING" = "Convirtiendo…";
 "VOICE_CONVERT_FAILED" = "Conversión fallida";
+
+/* Content read receipt (ayTELE: block voice/video-note/view-once view receipts) */
+"DISABLE_CONTENT_READ_RECEIPT_TITLE" = "Disable Media View Receipt";
+"DISABLE_CONTENT_READ_RECEIPT_SUBTITLE" = "Play voice messages, watch video notes and open view-once media without the sender knowing you opened them.";
+
+/* Media metadata (ayTELE #30 extension) */
+"MSG_INFO_DIMENSIONS" = "Dimensions";
+"MSG_INFO_GPS" = "Location (GPS)";
+/* Chat tweaks */
+"CHAT_SECTION_HEADER" = "Chats";
+"DOUBLE_TAP_COPY_TITLE" = "Double-Tap to Copy";
+"DOUBLE_TAP_COPY_SUBTITLE" = "Double-tap a message to copy its text. (Replaces Telegram's double-tap quick reaction.)";
+"COPIED_TOAST" = "Copied";

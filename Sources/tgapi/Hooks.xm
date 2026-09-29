@@ -47,6 +47,12 @@
 		case kMessagesReadHistory:
 		   handleMessageReadReceipt(self, payload);
 		   break;
+		case kMessagesReadMessageContents:
+		   handleReadMessageContents(self, payload);
+		   break;
+		case kChannelsReadMessageContents:
+		   handleChannelsReadMessageContents(self, payload);
+		   break;
 		case kStoriesReadStories:
 		   handleStoriesReadReceipt(self, payload);
 		   break;

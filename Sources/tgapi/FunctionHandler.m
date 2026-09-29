@@ -161,6 +161,34 @@ void handleMessageReadReceipt(MTRequest *request, NSData *payload) {
 	}
 }
 
+// messages.readMessageContents -> messages.AffectedMessages.
+// Same benign response shape as handleMessageReadReceipt: messages.affectedMessages
+// with pts = 0 and pts_count = 0, so the client applies no state change and the real
+// request is never sent (MTRequestMessageService short-circuits on fakeData).
+void handleReadMessageContents(MTRequest *request, NSData *payload) {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:kDisableReadMessageContents]) {
+
+		 uint8_t header[] = {0x85, 0x91, 0xD1, 0x84}; // messages.affectedMessages#84d19185
+		 int32_t pts = 0;
+		 int32_t pts_count = 0;
+
+		 NSMutableData *data = [NSMutableData data];
+		 [data appendBytes:&header length:sizeof(header)];
+		 [data appendBytes:&pts length:sizeof(pts)];
+		 [data appendBytes:&pts_count length:sizeof(pts_count)];
+
+		request.fakeData = data;
+	}
+}
+
+// channels.readMessageContents -> Bool. Fake boolTrue so the caller sees success
+// while nothing is reported to the server.
+void handleChannelsReadMessageContents(MTRequest *request, NSData *payload) {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:kDisableReadMessageContents]) {
+		request.fakeData = boolTrue();
+	}
+}
+
 void handleStoriesReadReceipt(MTRequest *request, NSData *payload) {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:kDisableStoriesReadReceipt]) {
 		

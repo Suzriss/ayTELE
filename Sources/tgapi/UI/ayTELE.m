@@ -182,12 +182,13 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
     MISC = 2,
     FILE_FIXER = 3,
     FAKE_LOCATION = 4,
-    LANGUAGE = 5,
-	CREDITS = 6,
+    CHAT_TWEAKS = 5,
+    LANGUAGE = 6,
+	CREDITS = 7,
 };
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 7;
+    return 8;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -195,13 +196,15 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		case GHOST_MODE:
 		   return 17;
 		case READ_RECEIPT:
-		   return 2;
+		   return 3;
 		case MISC:
 		   return 7;
 		case FILE_FIXER:
 		   return 2;
 		case FAKE_LOCATION:
 		   return 2;
+		case CHAT_TWEAKS:
+		   return 1;
 		case LANGUAGE:
 		   return 1;
 		case CREDITS:
@@ -225,6 +228,8 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		   return TGLoc(@"FILE_FIXER_SECTION_HEADER");
 		case FAKE_LOCATION:
 		   return TGLoc(@"FAKE_LOCATION_SECTION_HEADER");
+		case CHAT_TWEAKS:
+		   return TGLoc(@"CHAT_SECTION_HEADER");
 		case LANGUAGE:
 		   return TGLoc(@"LANGUAGE_SECTION_HEADER");
 		case CREDITS:
@@ -356,6 +361,10 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		else if (indexPath.row == 1) {
 			cell.textLabel.text = TGLoc(@"DISABLE_STORY_READ_RECEIPT_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"DISABLE_STORY_READ_RECEIPT_SUBTITLE");
+		}
+		else if (indexPath.row == 2) {
+			cell.textLabel.text = TGLoc(@"DISABLE_CONTENT_READ_RECEIPT_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"DISABLE_CONTENT_READ_RECEIPT_SUBTITLE");
 		}
 
 		UISwitch *toggle = (UISwitch *)cell.accessoryView;
@@ -546,7 +555,32 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		return cell;
 	}
 
-	if (indexPath.section == 5) { // Language
+	if (indexPath.section == CHAT_TWEAKS) { // Chat tweaks
+		cell = [self switchCellFromTableView:tableView];
+		cell.imageView.image = nil;
+
+		if (indexPath.row == 0) {
+			cell.textLabel.text = TGLoc(@"DOUBLE_TAP_COPY_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"DOUBLE_TAP_COPY_SUBTITLE");
+		}
+
+		UISwitch *toggle = (UISwitch *)cell.accessoryView;
+		if (!toggle || ![toggle isKindOfClass:[UISwitch class]]) {
+			toggle = [[UISwitch alloc] init];
+		}
+
+		NSString *switchKey = [self switchKeyForIndexPath:indexPath];
+		toggle.on = [[NSUserDefaults standardUserDefaults] boolForKey:switchKey];
+		[toggle addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
+		toggle.tag = 1000 + (indexPath.section * 1000) + indexPath.row;
+		cell.accessoryView = toggle;
+
+		cell.textLabel.numberOfLines = 0;
+		cell.detailTextLabel.numberOfLines = 0;
+		return cell;
+	}
+
+	if (indexPath.section == LANGUAGE) { // Language
 		cell = [self normalCellFromTableView:tableView];
 		if (indexPath.row == 0) {
 			cell.textLabel.text = @"Change Language";
@@ -563,7 +597,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		}
 	}
 
-	if (indexPath.section == 6) { // Credits
+	if (indexPath.section == CREDITS) { // Credits
 		cell = [self normalCellFromTableView:tableView];
 
 		if (indexPath.row == 0) {
@@ -706,6 +740,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
             switch (indexPath.row) {
                 case 0: return kDisableMessageReadReceipt;
                 case 1: return kDisableStoriesReadReceipt;
+                case 2: return kDisableReadMessageContents;
                 default: return nil;
             }
         case 2:
@@ -724,6 +759,11 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
         case 4:
             switch (indexPath.row) {
                 case 0: return FAKE_LOCATION_ENABLED_KEY;
+                default: return nil;
+            }
+        case CHAT_TWEAKS:
+            switch (indexPath.row) {
+                case 0: return kDoubleTapCopy;
                 default: return nil;
             }
         default:

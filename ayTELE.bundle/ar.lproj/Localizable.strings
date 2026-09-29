@@ -137,3 +137,16 @@
 "VOICE_CONVERT_SUBTITLE" = "يحوّل ملف صوت أو فيديو لرسالة صوتية OGG/Opus وتنحفظ بالملفات.";
 "VOICE_CONVERTING" = "يحوّل…";
 "VOICE_CONVERT_FAILED" = "فشل التحويل";
+
+/* Content read receipt (ayTELE: block voice/video-note/view-once view receipts) */
+"DISABLE_CONTENT_READ_RECEIPT_TITLE" = "تعطيل إيصال مشاهدة الوسائط";
+"DISABLE_CONTENT_READ_RECEIPT_SUBTITLE" = "شغّل الرسائل الصوتية وشوف الفيديو الدائري ووسائط «العرض لمرة واحدة» بدون ما يعرف المرسِل إنك فتحتها.";
+
+/* Media metadata (ayTELE #30 extension) */
+"MSG_INFO_DIMENSIONS" = "الأبعاد";
+"MSG_INFO_GPS" = "الموقع (GPS)";
+/* Chat tweaks */
+"CHAT_SECTION_HEADER" = "المحادثات";
+"DOUBLE_TAP_COPY_TITLE" = "ضغطتين للنسخ";
+"DOUBLE_TAP_COPY_SUBTITLE" = "اضغط ضغطتين على الرسالة حتى تنسخ نصها. (يستبدل تفاعل التلي السريع بالضغطتين.)";
+"COPIED_TOAST" = "تم النسخ";

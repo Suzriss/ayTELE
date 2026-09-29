@@ -48,6 +48,15 @@
 #define kDisableMessageReadReceipt @"disableMessageReadReceipt"
 #define kDisableStoriesReadReceipt @"disableStoriesReadReceipt"
 
+// Content-view receipts: sent when you play a voice/video note, watch a round
+// video, or open a view-once media. Blocking these lets you view/play silently.
+// Verified against the repo's own TL schema (Api38):
+//   messages.readMessageContents#369e4f38  -> constructor 916930423  (messages.AffectedMessages)
+//   channels.readMessageContents#eab5dc38  -> constructor -357180360 (Bool)
+#define kMessagesReadMessageContents 916930423
+#define kChannelsReadMessageContents -357180360
+#define kDisableReadMessageContents @"disableReadMessageContents"
+
 #define kDisableAllAds @"disableOnlineStatus"
 #define kDisableForwardRestriction @"disableForwardRestriction"
 #define kKeepDeletedMessages @"keepDeletedMessages"
@@ -59,3 +68,6 @@
 
 #define FILE_PICKER_FIX_KEY @"ayTELEFixFilePicker"
 #define FILE_PICKER_PATH @"ayTELEFileFixUsingSomeUglyHacks"
+
+// Double-tap a message bubble to copy its text (opt-in; overrides Telegram's quick-react).
+#define kDoubleTapCopy @"ayTELEDoubleTapCopy"

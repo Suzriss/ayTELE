@@ -312,6 +312,34 @@ static UIViewController *topPresenter(void) {
 	return presenter;
 }
 
+// Lightweight self-dismissing toast, used to confirm a copy.
+static void presentToast(NSString *message) {
+	if (message.length == 0) return;
+	UIWindow *window = UIApplication.sharedApplication.keyWindow;
+	if (!window) return;
+	UILabel *toast = [[UILabel alloc] init];
+	toast.text = message;
+	toast.textColor = [UIColor whiteColor];
+	toast.backgroundColor = [UIColor colorWithWhite:0 alpha:0.82];
+	toast.textAlignment = NSTextAlignmentCenter;
+	toast.font = [UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
+	toast.numberOfLines = 0;
+	toast.alpha = 0;
+	toast.layer.cornerRadius = 14;
+	toast.clipsToBounds = YES;
+	CGFloat maxW = window.bounds.size.width - 80;
+	CGSize fit = [toast sizeThatFits:CGSizeMake(maxW, 1000)];
+	CGFloat w = MIN(maxW, fit.width + 28);
+	CGFloat h = fit.height + 16;
+	toast.frame = CGRectMake((window.bounds.size.width - w) / 2, window.bounds.size.height - h - 120, w, h);
+	[window addSubview:toast];
+	[UIView animateWithDuration:0.25 animations:^{ toast.alpha = 1; } completion:^(BOOL f1) {
+		[UIView animateWithDuration:0.3 delay:1.1 options:0 animations:^{ toast.alpha = 0; } completion:^(BOOL f2) {
+			[toast removeFromSuperview];
+		}];
+	}];
+}
+
 // Handles the per-message two-finger tap menu and the note badge tap.
 @interface AYMessageActionHandler : NSObject
 + (instancetype)shared;
@@ -353,6 +381,18 @@ static UIViewController *topPresenter(void) {
 	NSObject *node = objc_getAssociatedObject(sender, kGestureNodeKey);
 	if (node) [self showNoteEditorForNode:node];
 }
+- (void)doubleTapCopy:(UITapGestureRecognizer *)gesture {
+	if (gesture.state != UIGestureRecognizerStateRecognized) return;
+	NSObject *node = objc_getAssociatedObject(gesture, kGestureNodeKey);
+	if (!node) return;
+	NSString *text = nil;
+	@try { text = [AYMessageDetails textWithNode:node]; } @catch (NSException *e) { return; }
+	if (text.length == 0) return;
+	[UIPasteboard generalPasteboard].string = text;
+	UIImpactFeedbackGenerator *fb = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight];
+	[fb impactOccurred];
+	presentToast([ayTELELocalization localizedStringForKey:@"COPIED_TOAST"]);
+}
 - (void)twoFingerTap:(UITapGestureRecognizer *)gesture {
 	if (gesture.state != UIGestureRecognizerStateRecognized) return;
 	NSObject *node = objc_getAssociatedObject(gesture, kGestureNodeKey);
@@ -384,6 +424,30 @@ static void installMessageGesture(ASDisplayNode *node) {
 	objc_setAssociatedObject(gesture, kGestureNodeKey, node, OBJC_ASSOCIATION_ASSIGN);
 	UIView *view = node.view;
 	if (![view.gestureRecognizers containsObject:gesture]) [view addGestureRecognizer:gesture];
+}
+
+static const void *kCopyGestureKey = &kCopyGestureKey;
+
+// One-finger double-tap to copy the message text. Opt-in (kDoubleTapCopy): added when the
+// toggle is on and removed when it's off, so it never touches Telegram's own double-tap otherwise.
+static void installCopyGesture(ASDisplayNode *node) {
+	if (!node.isNodeLoaded) return;
+	UIView *view = node.view;
+	if (!view) return;
+	BOOL want = [[NSUserDefaults standardUserDefaults] boolForKey:kDoubleTapCopy];
+	UITapGestureRecognizer *gesture = objc_getAssociatedObject(node, kCopyGestureKey);
+	if (want) {
+		if (!gesture) {
+			gesture = [[UITapGestureRecognizer alloc] initWithTarget:[AYMessageActionHandler shared] action:@selector(doubleTapCopy:)];
+			gesture.numberOfTapsRequired = 2;
+			gesture.numberOfTouchesRequired = 1;
+			objc_setAssociatedObject(node, kCopyGestureKey, gesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+		}
+		objc_setAssociatedObject(gesture, kGestureNodeKey, node, OBJC_ASSOCIATION_ASSIGN);
+		if (![view.gestureRecognizers containsObject:gesture]) [view addGestureRecognizer:gesture];
+	} else if (gesture && [view.gestureRecognizers containsObject:gesture]) {
+		[view removeGestureRecognizer:gesture];
+	}
 }
 
 static void updateNoteBadge(ASDisplayNode *node) {
@@ -425,6 +489,7 @@ static void trackAndUpdate(ASDisplayNode *node) {
 	updateEditBadge(node);
 	updateNoteBadge(node);
 	installMessageGesture(node);
+	installCopyGesture(node);
 }
 
 // Chat item nodes don't override -layout, so ASDisplayNode's runs for them after ListView sizes them.

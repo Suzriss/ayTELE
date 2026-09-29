@@ -32,6 +32,7 @@
 
 @interface AYMessageDetails : NSObject
 + (NSArray<NSArray<NSString *> *> *)linesWithNode:(NSObject *)node;
++ (NSString *)textWithNode:(NSObject *)node;
 @end
 
 @interface AYVoiceConverter : NSObject
@@ -69,6 +70,8 @@ extern "C" {
 void handleOnlineStatus(MTRequest *request, NSData *payload);
 void handleSetTyping(MTRequest *request, NSData *payload);
 void handleMessageReadReceipt(MTRequest *request, NSData *payload);
+void handleReadMessageContents(MTRequest *request, NSData *payload);
+void handleChannelsReadMessageContents(MTRequest *request, NSData *payload);
 void handleStoriesReadReceipt(MTRequest *request, NSData *payload);
 void handleGetSponsoredMessages(MTRequest *request, NSData *payload);
 void handleChannelsReadReceipt(MTRequest *request, NSData *payload);

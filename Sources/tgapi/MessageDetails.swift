@@ -59,6 +59,34 @@ class AYMessageDetails: NSObject {
 		return out
 	}
 
+	// Returns the message text for the node, or nil when empty. Used by double-tap-to-copy.
+	@objc static func text(node: NSObject) -> String? {
+		guard let message = AYDeletedMarks.messageObject(node) else { return nil }
+		if let t = AYDeletedMarks.child(Mirror(reflecting: message), "text") as? String, !t.isEmpty {
+			return t
+		}
+		return nil
+	}
+
+	// Reads a Double-ish field (Double / Float / integer) from a reflected value.
+	private static func double(_ any: Any?) -> Double? {
+		guard let any = any else { return nil }
+		if let d = any as? Double { return d }
+		if let f = any as? Float { return Double(f) }
+		if let i = AYDeletedMarks.integer(any) { return Double(i) }
+		return nil
+	}
+
+	// width×height from a PixelDimensions-like value (named width / height Int32 fields).
+	private static func dimensionString(_ dim: Any?) -> String? {
+		guard let dim = dim else { return nil }
+		let m = Mirror(reflecting: dim)
+		guard let w = AYDeletedMarks.integer(AYDeletedMarks.child(m, "width")),
+		      let h = AYDeletedMarks.integer(AYDeletedMarks.child(m, "height")),
+		      w > 0, h > 0 else { return nil }
+		return "\(w)×\(h)"
+	}
+
 	private static func appendMedia(_ media: Any, into out: inout [[String]]) {
 		let mirror = Mirror(reflecting: media)
 		if let mime = AYDeletedMarks.child(mirror, "mimeType") as? String {
@@ -66,6 +94,24 @@ class AYMessageDetails: NSObject {
 		}
 		if let name = AYDeletedMarks.child(mirror, "fileName") as? String {
 			out.append(["MSG_INFO_FILENAME", name])
+		}
+
+		// Pixel dimensions: either directly on the media (video/file) or on the largest
+		// image representation. Only named width/height fields are read, so it never crashes.
+		if let dims = dimensionString(AYDeletedMarks.child(mirror, "dimensions")) {
+			out.append(["MSG_INFO_DIMENSIONS", dims])
+		} else if let reps = AYDeletedMarks.child(mirror, "representations") {
+			let repValues = Mirror(reflecting: reps).children.map { $0.value }
+			if let largest = repValues.last,
+			   let dims = dimensionString(AYDeletedMarks.child(Mirror(reflecting: largest), "dimensions")) {
+				out.append(["MSG_INFO_DIMENSIONS", dims])
+			}
+		}
+
+		// GPS from a location / venue message (TelegramMediaMap latitude & longitude).
+		if let lat = double(AYDeletedMarks.child(mirror, "latitude")),
+		   let lon = double(AYDeletedMarks.child(mirror, "longitude")) {
+			out.append(["MSG_INFO_GPS", String(format: "%.6f, %.6f", lat, lon)])
 		}
 		if let size = AYDeletedMarks.integer(AYDeletedMarks.child(mirror, "size")) {
 			out.append(["MSG_INFO_SIZE", byteString(size)])
