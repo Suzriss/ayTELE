@@ -18,7 +18,12 @@
 @property (nonatomic, strong ) TGLocalization *localization;
 + (instancetype)shared;
 + (NSString *)localizedStringForKey:(NSString *)key;
++ (NSDictionary *)stringsForCode:(NSString *)code;
 @end
+
+// Generated from ayTELE.bundle by ci/gen_strings.py (EmbeddedStrings.m).
+NSArray<NSDictionary *> *AYEmbeddedLanguages(void);
+NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code);
 
 
 @interface LanguageSelector : UIViewController <UITableViewDataSource, UITableViewDelegate>

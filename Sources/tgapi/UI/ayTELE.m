@@ -14,6 +14,10 @@
         completion:(void (^)(NSData *oggOpusData, NSTimeInterval duration, NSData *waveform, NSError *error))completion;
 @end
 
+#ifndef AY_BUILD
+#define AY_BUILD "dev"
+#endif
+
 #define TGLoc(key) [ayTELELocalization localizedStringForKey:(key)]
 
 // Telegram-flavoured dark palette for the ayTELE settings UI.
@@ -212,6 +216,12 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		default:
 		   return nil;
 	}
+	return nil;
+}
+
+// Build stamp, so a swapped dylib can be told apart from the old one at a glance.
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+	if (section == CREDITS) return @"ayTELE · " AY_BUILD;
 	return nil;
 }
 

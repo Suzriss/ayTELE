@@ -44,18 +44,29 @@
 		selectedLanguageCode = [self deviceLanguageCode] ?: @"ar";
 	}
 
-	NSString *localizationFilePath = [NSString stringWithFormat:@"%@/ayTELE.bundle/%@.lproj/Localizable.strings", jbroot(@"/Library/Application Support/ayTELE"), selectedLanguageCode];
-	if (![[NSFileManager defaultManager] fileExistsAtPath:localizationFilePath]) {
-		localizationFilePath = [NSString stringWithFormat:@"%@/ayTELE.bundle/%@.lproj/Localizable.strings", [[NSBundle mainBundle] resourcePath], selectedLanguageCode];
-	}
-
-	NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:localizationFilePath];
+	NSDictionary *dict = [ayTELELocalization stringsForCode:selectedLanguageCode];
 
 	self.localization = [[objc_getClass("TGLocalization") alloc] initWithVersion:96929692
                                                                    code:selectedLanguageCode
                                                                    dict:dict
                                                               isActive:YES];
 
+}
+
+// Strings compiled into the dylib win (they always match this build); an installed
+// ayTELE.bundle only fills keys the dylib doesn't have.
++ (NSDictionary *)stringsForCode:(NSString *)code {
+	if (!code) return nil;
+	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+	NSString *path = [NSString stringWithFormat:@"%@/ayTELE.bundle/%@.lproj/Localizable.strings", jbroot(@"/Library/Application Support/ayTELE"), code];
+	if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+		path = [NSString stringWithFormat:@"%@/ayTELE.bundle/%@.lproj/Localizable.strings", [[NSBundle mainBundle] resourcePath], code];
+	}
+	NSDictionary *file = [NSDictionary dictionaryWithContentsOfFile:path];
+	if (file) [dict addEntriesFromDictionary:file];
+	NSDictionary *embedded = AYEmbeddedStrings(code);
+	if (embedded) [dict addEntriesFromDictionary:embedded];
+	return dict.count ? dict : nil;
 }
 
 + (NSString *)localizedStringForKey:(NSString *)key {

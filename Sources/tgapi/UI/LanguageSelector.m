@@ -25,13 +25,7 @@
     }
 
     if (jsonDecodeError || !langs) {
-        self.languages = @[
-           @{
-               @"name": @"English",
-               @"code": @"en",
-               @"flag": @"🇺🇸"
-           }
-        ];
+        self.languages = AYEmbeddedLanguages();
     } else {
         self.languages = langs;
     }
@@ -61,20 +55,13 @@
     NSMutableArray *languages = [NSMutableArray array];
 
     for (NSDictionary *language in self.languages) {
-        NSString *localizationFilePath = [NSString stringWithFormat:@"%@/ayTELE.bundle/%@.lproj/Localizable.strings", jbroot(@"/Library/Application Support/ayTELE"), language[@"code"]];
-        BOOL hasFile = [[NSFileManager defaultManager] fileExistsAtPath:localizationFilePath];
-
-        if (!hasFile) {
-            localizationFilePath = [NSString stringWithFormat:@"%@/ayTELE.bundle/%@.lproj/Localizable.strings", [[NSBundle mainBundle] resourcePath], language[@"code"]];
-            hasFile = (localizationFilePath != nil);
-        }
+        BOOL hasStrings = [ayTELELocalization stringsForCode:language[@"code"]] != nil;
 
         [languages addObject:@{
             @"code": language[@"code"],
             @"name" : language[@"name"],
             @"flag": language[@"flag"],
-            @"path" : localizationFilePath,
-            @"isValid" : @(hasFile)}
+            @"isValid" : @(hasStrings)}
         ];
     }
 
@@ -124,7 +111,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSDictionary *languageData = self.languages[indexPath.row];
 
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:languageData[@"path"]];
+    NSDictionary *dict = [ayTELELocalization stringsForCode:languageData[@"code"]];
 
     if (!dict) {
         [self showAlertWithTitle:@"Error" message:@"Failed to load language localization data"];
