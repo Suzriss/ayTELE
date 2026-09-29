@@ -1,22 +1,31 @@
 #import "Headers.h"
 #import <objc/runtime.h>
 #import <dlfcn.h>
+#import <Security/Security.h>
 
 // CloudKit launch-crash guard for sideloaded / re-signed Telegram.
 //
-// When Telegram is signed with a certificate that can't grant its iCloud/CloudKit
-// entitlement (any sideload of `ph.telegra.Telegraph`), CloudKit throws an UNCAUGHT
-// NSException the first time TelegramCore touches it — inside a dispatch_once during
-// CloudKit's one-time init (CKSDKVersion) — which aborts the app ~0.2s after launch.
-// The exception propagates up through Swift/dispatch frames that can't catch it, so it
-// reaches std::terminate -> abort().
+// When Telegram is signed with a certificate that can't grant its iCloud entitlement
+// (any sideload of `ph.telegra.Telegraph`), the first time TelegramCore's iCloud file
+// support touches CloudKit — `+[CKContainer defaultContainer]` — CloudKit runs its
+// one-time init inside a dispatch_once and throws NSInternalInconsistencyException
+// (CKSDKVersion) because there is no icloud-container-identifiers entitlement. The throw
+// happens INSIDE _dispatch_client_callout, which is compiled -fno-exceptions, so it can't
+// unwind: std::terminate fires there and aborts ~0.2s after launch. A @try/@catch around
+// the call is therefore useless — terminate runs below our frame before we can catch it.
 //
-// We wrap the CKContainer entry points (the first CloudKit call TelegramCore makes) in
-// @try/@catch. On a correctly-entitled install %orig never throws, so this is a pure
-// no-op there — it CANNOT regress a working install. Only on the throwing sideload path
-// do we swallow the exception and return nil, letting the app finish launching. Telegram's
-// CloudKit paths are async and nil/error-tolerant, so losing (an already-broken) CloudKit
-// is far better than aborting at launch.
+// So we must stop the call from reaching the throw. We read the process's real granted
+// entitlements with SecTask: if `com.apple.developer.icloud-container-identifiers` is
+// present and non-empty (App Store / TrollStore-with-original-entitlements), CloudKit is
+// usable, we call %orig, and this is a pure no-op — zero regression. Only when that
+// entitlement is entirely absent (the sideload case, where %orig is guaranteed to throw)
+// do we return nil instead of calling it. The caller is Telegram's Objective-C
+// LegacyICloudFileController, which tolerates a nil container, so the app just launches
+// without its (already non-functional) iCloud file feature.
+
+typedef struct __SecTask *SecTaskRef;
+extern "C" SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef allocator);
+extern "C" CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef task, CFStringRef entitlement, CFErrorRef *error);
 
 @interface CKContainer : NSObject
 + (instancetype)containerWithIdentifier:(NSString *)identifier;
@@ -30,28 +39,43 @@ static BOOL cloudKitGuardEnabled(void) {
 	return v ? [v boolValue] : YES;   // opt-out, default enabled
 }
 
+// YES when the app has no usable iCloud container entitlement, i.e. CloudKit would throw.
+// Computed once: entitlements don't change during the process lifetime.
+static BOOL appLacksICloudContainers(void) {
+	static BOOL lacks = NO;
+	static dispatch_once_t once;
+	dispatch_once(&once, ^{
+		SecTaskRef task = SecTaskCreateFromSelf(kCFAllocatorDefault);
+		id ids = task ? CFBridgingRelease(SecTaskCopyValueForEntitlement(
+			task, CFSTR("com.apple.developer.icloud-container-identifiers"), NULL)) : nil;
+		if (task) CFRelease(task);
+		lacks = !([ids isKindOfClass:[NSArray class]] && [(NSArray *)ids count] > 0);
+	});
+	return lacks;
+}
+
+static BOOL shouldBypassCloudKit(void) {
+	return cloudKitGuardEnabled() && appLacksICloudContainers();
+}
+
 %group CloudKitGuard
 
 %hook CKContainer
 
 + (instancetype)containerWithIdentifier:(NSString *)identifier {
-	if (!cloudKitGuardEnabled()) return %orig;
-	@try {
-		return %orig;
-	} @catch (NSException *e) {
-		customLog2(@"[ayTELE] CloudKit guard swallowed exception: %@", e);
+	if (shouldBypassCloudKit()) {
+		customLog2(@"[ayTELE] CloudKit guard: bypassing containerWithIdentifier: (no iCloud entitlement)");
 		return nil;
 	}
+	return %orig;
 }
 
 + (instancetype)defaultContainer {
-	if (!cloudKitGuardEnabled()) return %orig;
-	@try {
-		return %orig;
-	} @catch (NSException *e) {
-		customLog2(@"[ayTELE] CloudKit guard swallowed exception: %@", e);
+	if (shouldBypassCloudKit()) {
+		customLog2(@"[ayTELE] CloudKit guard: bypassing defaultContainer (no iCloud entitlement)");
 		return nil;
 	}
+	return %orig;
 }
 
 %end
@@ -59,8 +83,8 @@ static BOOL cloudKitGuardEnabled(void) {
 %end
 
 %ctor {
-	// Make sure CloudKit is present before we resolve the class; it is normally already
-	// loaded by Telegram, but dlopen is harmless if so and never calls a throwing API.
+	// CloudKit is normally already loaded by Telegram; dlopen is harmless otherwise and
+	// never calls a throwing API. Only hook once the class actually exists.
 	dlopen("/System/Library/Frameworks/CloudKit.framework/CloudKit", RTLD_LAZY);
 	Class ck = objc_getClass("CKContainer");
 	if (ck) {
