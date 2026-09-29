@@ -157,3 +157,4 @@
 "MSG_ACTION_REVEAL_READ" = "👁️ Reveal Read";
 "REVEAL_READ_DONE" = "Read receipt sent";
 "REVEAL_READ_FAILED" = "Couldn't send the read receipt";
+"REVEAL_READ_NONE" = "No held receipt here — open a new message/story while blocking is on";

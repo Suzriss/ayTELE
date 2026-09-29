@@ -159,3 +159,4 @@
 "MSG_ACTION_REVEAL_READ" = "👁️ Revelar lectura";
 "REVEAL_READ_DONE" = "Confirmación de lectura enviada";
 "REVEAL_READ_FAILED" = "No se pudo enviar la confirmación";
+"REVEAL_READ_NONE" = "No hay confirmación retenida — abre un mensaje/historia nuevo con el bloqueo activado";

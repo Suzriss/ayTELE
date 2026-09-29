@@ -130,6 +130,7 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"MSG_ACTION_REVEAL_READ": @"👁️ كشف القراءة",
 		@"REVEAL_READ_DONE": @"انرسل إيصال القراءة",
 		@"REVEAL_READ_FAILED": @"ما انرسل الإيصال",
+		@"REVEAL_READ_NONE": @"ماكو إيصال محجوز هنا — لازم توصلك رسالة/ستوري جديدة وتفتحها والحجب شغّال",
 	};
 	if ([code isEqualToString:@"cn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隐身模式",
@@ -244,6 +245,7 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"MSG_ACTION_REVEAL_READ": @"👁️ 显示已读",
 		@"REVEAL_READ_DONE": @"已发送已读回执",
 		@"REVEAL_READ_FAILED": @"已读回执发送失败",
+		@"REVEAL_READ_NONE": @"这里没有被拦截的回执 — 请在拦截开启时打开新消息/动态",
 	};
 	if ([code isEqualToString:@"en"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Ghost Mode",
@@ -359,6 +361,7 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"MSG_ACTION_REVEAL_READ": @"👁️ Reveal Read",
 		@"REVEAL_READ_DONE": @"Read receipt sent",
 		@"REVEAL_READ_FAILED": @"Couldn't send the read receipt",
+		@"REVEAL_READ_NONE": @"No held receipt here — open a new message/story while blocking is on",
 	};
 	if ([code isEqualToString:@"fr"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Mode Fantôme",
@@ -473,6 +476,7 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"MSG_ACTION_REVEAL_READ": @"👁️ Révéler la lecture",
 		@"REVEAL_READ_DONE": @"Accusé de lecture envoyé",
 		@"REVEAL_READ_FAILED": @"Échec de l'envoi de l'accusé de lecture",
+		@"REVEAL_READ_NONE": @"Aucun accusé retenu ici — ouvrez un nouveau message/story avec le blocage activé",
 	};
 	if ([code isEqualToString:@"it"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modalità Fantasma",
@@ -588,6 +592,7 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"MSG_ACTION_REVEAL_READ": @"👁️ Rivela lettura",
 		@"REVEAL_READ_DONE": @"Conferma di lettura inviata",
 		@"REVEAL_READ_FAILED": @"Invio della conferma non riuscito",
+		@"REVEAL_READ_NONE": @"Nessuna conferma trattenuta — apri un nuovo messaggio/storia con il blocco attivo",
 	};
 	if ([code isEqualToString:@"ja"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"ゴーストモード",
@@ -703,6 +708,7 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"MSG_ACTION_REVEAL_READ": @"👁️ 既読を送信",
 		@"REVEAL_READ_DONE": @"既読を送信しました",
 		@"REVEAL_READ_FAILED": @"既読を送信できませんでした",
+		@"REVEAL_READ_NONE": @"保留中の既読はありません — ブロック中に新しいメッセージ/ストーリーを開いてください",
 	};
 	if ([code isEqualToString:@"ru"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Режим призрака",
@@ -818,6 +824,7 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"MSG_ACTION_REVEAL_READ": @"👁️ Показать прочтение",
 		@"REVEAL_READ_DONE": @"Отметка о прочтении отправлена",
 		@"REVEAL_READ_FAILED": @"Не удалось отправить отметку",
+		@"REVEAL_READ_NONE": @"Нет удержанной отметки — откройте новое сообщение/историю при включённой блокировке",
 	};
 	if ([code isEqualToString:@"es"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modo Fantasma",
@@ -933,6 +940,7 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"MSG_ACTION_REVEAL_READ": @"👁️ Revelar lectura",
 		@"REVEAL_READ_DONE": @"Confirmación de lectura enviada",
 		@"REVEAL_READ_FAILED": @"No se pudo enviar la confirmación",
+		@"REVEAL_READ_NONE": @"No hay confirmación retenida — abre un mensaje/historia nuevo con el bloqueo activado",
 	};
 	if ([code isEqualToString:@"tw"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隱身模式",
@@ -1048,6 +1056,7 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"MSG_ACTION_REVEAL_READ": @"👁️ 顯示已讀",
 		@"REVEAL_READ_DONE": @"已傳送已讀回條",
 		@"REVEAL_READ_FAILED": @"已讀回條傳送失敗",
+		@"REVEAL_READ_NONE": @"這裡沒有被攔截的回條 — 請在攔截開啟時開啟新訊息/限時動態",
 	};
 	if ([code isEqualToString:@"vn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Chế độ ma",
@@ -1163,6 +1172,7 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"MSG_ACTION_REVEAL_READ": @"👁️ Hiện đã đọc",
 		@"REVEAL_READ_DONE": @"Đã gửi xác nhận đã đọc",
 		@"REVEAL_READ_FAILED": @"Không gửi được xác nhận đã đọc",
+		@"REVEAL_READ_NONE": @"Không có xác nhận bị giữ — hãy mở tin nhắn/tin mới khi đang chặn",
 	};
 	return nil;
 }

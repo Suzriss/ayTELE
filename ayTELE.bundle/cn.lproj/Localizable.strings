@@ -158,3 +158,4 @@
 "MSG_ACTION_REVEAL_READ" = "👁️ 显示已读";
 "REVEAL_READ_DONE" = "已发送已读回执";
 "REVEAL_READ_FAILED" = "已读回执发送失败";
+"REVEAL_READ_NONE" = "这里没有被拦截的回执 — 请在拦截开启时打开新消息/动态";

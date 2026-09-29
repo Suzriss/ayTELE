@@ -155,3 +155,4 @@
 "MSG_ACTION_REVEAL_READ" = "👁️ Révéler la lecture";
 "REVEAL_READ_DONE" = "Accusé de lecture envoyé";
 "REVEAL_READ_FAILED" = "Échec de l'envoi de l'accusé de lecture";
+"REVEAL_READ_NONE" = "Aucun accusé retenu ici — ouvrez un nouveau message/story avec le blocage activé";

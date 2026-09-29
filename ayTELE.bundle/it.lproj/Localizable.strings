@@ -159,3 +159,4 @@
 "MSG_ACTION_REVEAL_READ" = "👁️ Rivela lettura";
 "REVEAL_READ_DONE" = "Conferma di lettura inviata";
 "REVEAL_READ_FAILED" = "Invio della conferma non riuscito";
+"REVEAL_READ_NONE" = "Nessuna conferma trattenuta — apri un nuovo messaggio/storia con il blocco attivo";

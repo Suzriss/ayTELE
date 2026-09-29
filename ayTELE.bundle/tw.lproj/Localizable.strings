@@ -157,3 +157,4 @@
 "MSG_ACTION_REVEAL_READ" = "👁️ 顯示已讀";
 "REVEAL_READ_DONE" = "已傳送已讀回條";
 "REVEAL_READ_FAILED" = "已讀回條傳送失敗";
+"REVEAL_READ_NONE" = "這裡沒有被攔截的回條 — 請在攔截開啟時開啟新訊息/限時動態";

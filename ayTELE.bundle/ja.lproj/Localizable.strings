@@ -157,3 +157,4 @@
 "MSG_ACTION_REVEAL_READ" = "👁️ 既読を送信";
 "REVEAL_READ_DONE" = "既読を送信しました";
 "REVEAL_READ_FAILED" = "既読を送信できませんでした";
+"REVEAL_READ_NONE" = "保留中の既読はありません — ブロック中に新しいメッセージ/ストーリーを開いてください";

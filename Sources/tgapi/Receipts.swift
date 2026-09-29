@@ -40,11 +40,26 @@ class AYReceipts: NSObject {
 		}
 	}
 
-	// Chat key for the message behind a ChatMessageItemView node.
-	@objc static func peerKey(node: NSObject) -> String? {
-		guard let message = AYDeletedMarks.messageObject(node),
-		      let messageId = AYDeletedMarks.child(Mirror(reflecting: message), "id"),
-		      let peerId = AYDeletedMarks.child(Mirror(reflecting: messageId), "peerId") else { return nil }
+	// Held-receipt key of the peer whose stories a StoryItemSetContainerComponent.View shows:
+	// view.component.slice.peer (EnginePeer) -> ... -> PeerId. nil if the shape changed.
+	@objc static func storyKey(view: NSObject) -> String? {
+		guard let component = AYDeletedMarks.child(Mirror(reflecting: view), "component"),
+		      let slice = AYDeletedMarks.child(Mirror(reflecting: component), "slice"),
+		      let peer = AYDeletedMarks.child(Mirror(reflecting: slice), "peer") else { return nil }
+		var queue: [(Any, Int)] = [(peer, 0)]
+		while !queue.isEmpty {
+			let (value, depth) = queue.removeFirst()
+			if String(describing: type(of: value)) == "PeerId", let found = peerIdKey(value) {
+				return "s:\(found)"
+			}
+			if depth < 3 {
+				queue.append(contentsOf: Mirror(reflecting: value).children.compactMap { c in AYDeletedMarks.unwrap(c.value).map { ($0, depth + 1) } })
+			}
+		}
+		return nil
+	}
+
+	private static func peerIdKey(_ peerId: Any) -> String? {
 		let peerMirror = Mirror(reflecting: peerId)
 		guard let namespace = AYDeletedMarks.integer(AYDeletedMarks.child(peerMirror, "namespace")),
 		      let id = AYDeletedMarks.integer(AYDeletedMarks.child(peerMirror, "id")) else { return nil }
@@ -54,5 +69,13 @@ class AYReceipts: NSObject {
 		case 2: return "c\(id)" // CloudChannel
 		default: return nil
 		}
+	}
+
+	// Chat key for the message behind a ChatMessageItemView node.
+	@objc static func peerKey(node: NSObject) -> String? {
+		guard let message = AYDeletedMarks.messageObject(node),
+		      let messageId = AYDeletedMarks.child(Mirror(reflecting: message), "id"),
+		      let peerId = AYDeletedMarks.child(Mirror(reflecting: messageId), "peerId") else { return nil }
+		return peerIdKey(peerId)
 	}
 }

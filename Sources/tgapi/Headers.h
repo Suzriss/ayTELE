@@ -78,12 +78,14 @@
 @interface AYReceipts : NSObject
 + (NSString *)peerKeyWithPayload:(NSData *)payload;
 + (NSString *)peerKeyWithNode:(NSObject *)node;
++ (NSString *)storyKeyWithView:(NSObject *)view;
 @end
 
 // Blocked read receipts held per chat; revealKey sends the real one on demand.
 @interface AYReceiptQueue : NSObject
 + (void)holdPayload:(NSData *)payload service:(MTRequestMessageService *)service;
 + (BOOL)hasHeldForKey:(NSString *)key;
++ (NSString *)latestStoryKey;
 + (void)revealKey:(NSString *)key completion:(void (^)(BOOL ok))completion;
 @end
 

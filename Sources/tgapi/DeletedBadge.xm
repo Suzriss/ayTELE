@@ -340,6 +340,61 @@ static void presentToast(NSString *message) {
 	}];
 }
 
+// Sends the held read receipt for key, or explains that none is held.
+static void revealReceipt(NSString *key) {
+	if (![AYReceiptQueue hasHeldForKey:key]) {
+		presentToast([ayTELELocalization localizedStringForKey:@"REVEAL_READ_NONE"]);
+		return;
+	}
+	[AYReceiptQueue revealKey:key completion:^(BOOL ok) {
+		presentToast([ayTELELocalization localizedStringForKey:ok ? @"REVEAL_READ_DONE" : @"REVEAL_READ_FAILED"]);
+	}];
+}
+
+// Eye button in the story viewer: reveals that you watched the current peer's stories.
+@interface AYStoryEyeHandler : NSObject
+@end
+@implementation AYStoryEyeHandler
++ (void)tapped:(UIButton *)sender {
+	NSObject *view = sender.superview;
+	NSString *key = nil;
+	@try { key = [AYReceipts storyKeyWithView:view]; } @catch (NSException *e) {}
+	if (![AYReceiptQueue hasHeldForKey:key]) key = [AYReceiptQueue latestStoryKey];
+	revealReceipt(key);
+}
+@end
+
+static const void *kStoryEyeKey = &kStoryEyeKey;
+
+%group StoryEye
+%hook StoryItemSetContainerView
+- (void)layoutSubviews {
+	%orig;
+	UIView *view = (UIView *)self;
+	UIButton *eye = objc_getAssociatedObject(view, kStoryEyeKey);
+	if (![[NSUserDefaults standardUserDefaults] boolForKey:kDisableStoriesReadReceipt]) {
+		eye.hidden = YES;
+		return;
+	}
+	if (!eye) {
+		eye = [UIButton buttonWithType:UIButtonTypeSystem];
+		[eye setImage:[UIImage systemImageNamed:@"eye.fill"] forState:UIControlStateNormal];
+		eye.tintColor = [UIColor whiteColor];
+		eye.backgroundColor = [UIColor colorWithWhite:0 alpha:0.35];
+		eye.layer.cornerRadius = 18;
+		eye.accessibilityLabel = [ayTELELocalization localizedStringForKey:@"MSG_ACTION_REVEAL_READ"];
+		[eye addTarget:[AYStoryEyeHandler class] action:@selector(tapped:) forControlEvents:UIControlEventTouchUpInside];
+		objc_setAssociatedObject(view, kStoryEyeKey, eye, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+		[view addSubview:eye];
+	}
+	eye.hidden = NO;
+	CGFloat top = view.safeAreaInsets.top > 0 ? view.safeAreaInsets.top : 20;
+	eye.frame = CGRectMake(view.bounds.size.width - 36 - 16, top + 64, 36, 36);
+	[view bringSubviewToFront:eye];
+}
+%end
+%end
+
 // Handles the per-message two-finger tap menu and the note badge tap.
 @interface AYMessageActionHandler : NSObject
 + (instancetype)shared;
@@ -404,14 +459,12 @@ static void presentToast(NSString *message) {
 	[sheet addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"MSG_ACTION_NOTE"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
 		[self showNoteEditorForNode:node];
 	}]];
-	// Only offered while a read receipt for this chat is being held back.
-	NSString *peerKey = nil;
-	@try { peerKey = [AYReceipts peerKeyWithNode:node]; } @catch (NSException *e) {}
-	if ([AYReceiptQueue hasHeldForKey:peerKey]) {
+	// Offered whenever read receipts are blocked; says so when nothing is held for this chat.
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:kDisableMessageReadReceipt]) {
+		NSString *peerKey = nil;
+		@try { peerKey = [AYReceipts peerKeyWithNode:node]; } @catch (NSException *e) {}
 		[sheet addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"MSG_ACTION_REVEAL_READ"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
-			[AYReceiptQueue revealKey:peerKey completion:^(BOOL ok) {
-				presentToast([ayTELELocalization localizedStringForKey:ok ? @"REVEAL_READ_DONE" : @"REVEAL_READ_FAILED"]);
-			}];
+			revealReceipt(peerKey);
 		}]];
 	}
 	[sheet addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"CANCEL"] style:UIAlertActionStyleCancel handler:nil]];
@@ -526,4 +579,6 @@ static void trackAndUpdate(ASDisplayNode *node) {
 	[[NSNotificationCenter defaultCenter] addObserverForName:AYEditHistory.changedNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:refresh];
 	[[NSNotificationCenter defaultCenter] addObserverForName:AYNotes.changedNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:refresh];
 	%init;
+	Class storyView = objc_getClass("_TtCC20StoryContainerScreen30StoryItemSetContainerComponent4View");
+	if (storyView) %init(StoryEye, StoryItemSetContainerView = storyView);
 }

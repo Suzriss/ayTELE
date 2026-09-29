@@ -201,6 +201,14 @@ do {
 	expect("receipts: readStories", AYReceipts.peerKey(payload: payload(-1521034552, Api.InputPeer.inputPeerUser(userId: 42, accessHash: 1))) == "s:u42")
 	expect("receipts: other function", AYReceipts.peerKey(payload: payload(1, Api.InputPeer.inputPeerSelf)) == nil)
 	expect("receipts: node user", AYReceipts.peerKey(node: BubbleNode(ItemWithMessage(msg(0, 42, 1)))) == "u42")
+	final class TelegramUserMock { let id: PeerId; init(_ id: PeerId) { self.id = id } }
+	enum EnginePeerMock { case user(TelegramUserMock) }
+	struct SliceMock { let peer: EnginePeerMock }
+	struct ComponentMock { let context = TelegramUserMock(PeerId(namespace: .init(rawValue: 0), id: .init(rawValue: 1))); let slice: SliceMock }
+	final class StoryViewMock: NSObject { var component: ComponentMock?; init(_ c: ComponentMock?) { component = c } }
+	let storyPeer = PeerId(namespace: .init(rawValue: 0), id: .init(rawValue: 42))
+	expect("receipts: story view peer", AYReceipts.storyKey(view: StoryViewMock(ComponentMock(slice: SliceMock(peer: .user(TelegramUserMock(storyPeer)))))) == "s:u42")
+	expect("receipts: story view without component", AYReceipts.storyKey(view: StoryViewMock(nil)) == nil)
 	expect("receipts: node channel", AYReceipts.peerKey(node: BubbleNode(ItemWithMessage(msg(2, 77, 1)))) == "c77")
 }
 

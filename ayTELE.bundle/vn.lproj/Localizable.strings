@@ -157,3 +157,4 @@
 "MSG_ACTION_REVEAL_READ" = "👁️ Hiện đã đọc";
 "REVEAL_READ_DONE" = "Đã gửi xác nhận đã đọc";
 "REVEAL_READ_FAILED" = "Không gửi được xác nhận đã đọc";
+"REVEAL_READ_NONE" = "Không có xác nhận bị giữ — hãy mở tin nhắn/tin mới khi đang chặn";

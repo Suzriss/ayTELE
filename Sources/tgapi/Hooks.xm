@@ -25,7 +25,20 @@
 	AYHeldReceipt *receipt = [AYHeldReceipt new];
 	receipt.payload = payload;
 	receipt.service = service;
-	@synchronized (self) { [self held][key] = receipt; }
+	@synchronized (self) {
+		[self held][key] = receipt;
+		if ([key hasPrefix:@"s:"]) [self latest][@"story"] = key;
+	}
+}
+// Most recent held story key: the story viewer's fallback when reflection can't name the peer.
++ (NSMutableDictionary<NSString *, NSString *> *)latest {
+	static NSMutableDictionary *latest;
+	static dispatch_once_t token;
+	dispatch_once(&token, ^{ latest = [NSMutableDictionary new]; });
+	return latest;
+}
++ (NSString *)latestStoryKey {
+	@synchronized (self) { return [self latest][@"story"]; }
 }
 + (BOOL)hasHeldForKey:(NSString *)key {
 	if (!key) return NO;
