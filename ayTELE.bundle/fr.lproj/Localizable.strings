@@ -156,3 +156,6 @@
 "REVEAL_READ_DONE" = "Accusé de lecture envoyé";
 "REVEAL_READ_FAILED" = "Échec de l'envoi de l'accusé de lecture";
 "REVEAL_READ_NONE" = "Aucun accusé retenu ici — ouvrez un nouveau message/story avec le blocage activé";
+"ARCHIVE_NO_TEXT" = "(texte non capturé — reçu avant le suivi)";
+"ARCHIVE_FROM_ME" = "Vous";
+"ARCHIVE_DELETED_NOTE" = "Telegram n'indique pas qui a supprimé un message ; la discussion et l'expéditeur sont affichés.";

@@ -11,7 +11,7 @@ jobs:
         run: python3 ci/gen_strings.py --check
       - name: Run filter tests
         run: |
-          swiftc -O -o filtertest Sources/tgapi/api_sources/*.swift Sources/tgapi/DeletedMessages.swift Sources/tgapi/EditHistory.swift Sources/tgapi/MessageDetails.swift Sources/tgapi/Notes.swift Sources/tgapi/Protected.swift Sources/tgapi/Receipts.swift ci/main.swift
+          swiftc -O -o filtertest Sources/tgapi/api_sources/*.swift Sources/tgapi/DeletedMessages.swift Sources/tgapi/EditHistory.swift Sources/tgapi/MessageDetails.swift Sources/tgapi/Notes.swift Sources/tgapi/DeletedArchive.swift Sources/tgapi/Protected.swift Sources/tgapi/Receipts.swift ci/main.swift
           ./filtertest
   build:
     runs-on: macos-15

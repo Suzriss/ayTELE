@@ -24,6 +24,10 @@
 + (NSData *)filter:(NSData *)data;
 @end
 
+@interface AYDeletedArchive : NSObject
++ (void)backfillWithNode:(NSObject *)node;
+@end
+
 @interface AYEditHistory : NSObject
 @property (class, nonatomic, readonly) BOOL isEnabled;
 @property (class, nonatomic, readonly) BOOL shouldObserve;

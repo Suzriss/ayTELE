@@ -212,5 +212,21 @@ do {
 	expect("receipts: node channel", AYReceipts.peerKey(node: BubbleNode(ItemWithMessage(msg(2, 77, 1)))) == "c77")
 }
 
+// Deleted archive: text, chat title and sender name survive the deletion.
+do {
+	let user = Api.User.user(flags: (1 << 1) | (1 << 2), flags2: 0, id: 777, accessHash: nil, firstName: "Ali", lastName: "Hasan", username: nil, phone: nil, photo: nil, status: nil, botInfoVersion: nil, restrictionReason: nil, botInlinePlaceholder: nil, langCode: nil, emojiStatus: nil, usernames: nil, storiesMaxId: nil, color: nil, profileColor: nil, botActiveUsers: nil, botVerificationIcon: nil, sendPaidMessagesStars: nil)
+	let channel = Api.Chat.channel(flags: 0, flags2: 0, id: 4242, accessHash: nil, title: "Friends", username: nil, photo: .chatPhotoEmpty, date: 1, restrictionReason: nil, adminRights: nil, bannedRights: nil, defaultBannedRights: nil, participantsCount: nil, usernames: nil, storiesMaxId: nil, color: nil, profileColor: nil, emojiStatus: nil, level: nil, subscriptionUntilDate: nil, botVerificationIcon: nil, sendPaidMessagesStars: nil)
+	let groupMsg = Api.Message.message(flags: 1 << 8, flags2: 0, id: 70, fromId: .peerUser(userId: 777), fromBoostsApplied: nil, peerId: .peerChannel(channelId: 4242), savedPeerId: nil, fwdFrom: nil, viaBotId: nil, viaBusinessBotId: nil, replyTo: nil, date: 1, message: "secret", media: nil, replyMarkup: nil, entities: nil, views: nil, forwards: nil, replies: nil, editDate: nil, postAuthor: nil, groupedId: nil, reactions: nil, restrictionReason: nil, ttlPeriod: nil, quickReplyShortcutId: nil, effect: nil, factcheck: nil, reportDeliveryUntilDate: nil, paidMessageStars: nil)
+	obs(Api.Updates.updates(updates: [.updateNewChannelMessage(message: groupMsg, pts: 1, ptsCount: 1)], users: [user], chats: [channel], date: 1, seq: 1))
+	_ = AYDeletedFilter.filter(ser(Api.Updates.updates(updates: [.updateDeleteChannelMessages(channelId: 4242, messages: [70], pts: 1, ptsCount: 1)], users: [], chats: [], date: 1, seq: 1)))
+	let row = AYDeletedMarks.deletedList().first { $0.first == "c4242:70" } ?? []
+	expect("deleted archive: text/chat/sender \(row)", row == ["c4242:70", "secret", "Friends", "Ali Hasan"])
+	// Private chat, incoming: sender is the chat peer.
+	obs(Api.Updates.updates(updates: [.updateNewMessage(message: tmsg(.peerUser(userId: 777), 71, "hi"), pts: 1, ptsCount: 1)], users: [user], chats: [], date: 1, seq: 1))
+	_ = AYDeletedFilter.filter(ser(Api.Updates.updates(updates: [.updateDeleteMessages(messages: [71], pts: 1, ptsCount: 1)], users: [], chats: [], date: 1, seq: 1)))
+	let row2 = AYDeletedMarks.deletedList().first { $0.first == "u:71" } ?? []
+	expect("deleted archive: private \(row2)", row2 == ["u:71", "hi", "Ali Hasan", "Ali Hasan"])
+}
+
 print(failures == 0 ? "ALL PASS" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

@@ -160,3 +160,6 @@
 "REVEAL_READ_DONE" = "Confirmación de lectura enviada";
 "REVEAL_READ_FAILED" = "No se pudo enviar la confirmación";
 "REVEAL_READ_NONE" = "No hay confirmación retenida — abre un mensaje/historia nuevo con el bloqueo activado";
+"ARCHIVE_NO_TEXT" = "(texto no capturado — llegó antes del seguimiento)";
+"ARCHIVE_FROM_ME" = "Tú";
+"ARCHIVE_DELETED_NOTE" = "Telegram no indica quién borró un mensaje; se muestran el chat y el remitente.";

@@ -59,6 +59,7 @@ static void updateDeletedBadge(ASDisplayNode *node) {
 		badge.hidden = YES;
 		return;
 	}
+	@try { [AYDeletedArchive backfillWithNode:node]; } @catch (NSException *exception) {}
 	if (!node.isNodeLoaded) return;
 
 	if (!badge) {
@@ -273,8 +274,8 @@ static const void *kGestureNodeKey = &kGestureNodeKey;
 - (NSArray<NSArray<NSString *> *> *)rows { return self.mode == 0 ? self.edited : self.deleted; }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section { return self.rows.count; }
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-	if (self.rows.count > 0) return nil;
-	return [ayTELELocalization localizedStringForKey:@"ARCHIVE_EMPTY"];
+	if (self.rows.count == 0) return [ayTELELocalization localizedStringForKey:@"ARCHIVE_EMPTY"];
+	return self.mode == 1 ? [ayTELELocalization localizedStringForKey:@"ARCHIVE_DELETED_NOTE"] : nil;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
@@ -287,7 +288,15 @@ static const void *kGestureNodeKey = &kGestureNodeKey;
 		cell.detailTextLabel.text = [NSString stringWithFormat:fmt, (long)(row.count > 2 ? row[2].integerValue : 0)];
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	} else {
-		cell.detailTextLabel.text = row.firstObject;
+		if (text.length == 0) cell.textLabel.text = [ayTELELocalization localizedStringForKey:@"ARCHIVE_NO_TEXT"];
+		NSString *chat = row.count > 2 ? row[2] : @"";
+		NSString *from = row.count > 3 ? row[3] : @"";
+		if ([from isEqualToString:@"me"]) from = [ayTELELocalization localizedStringForKey:@"ARCHIVE_FROM_ME"];
+		NSMutableArray *parts = [NSMutableArray array];
+		if (chat.length) [parts addObject:chat];
+		if (from.length && ![from isEqualToString:chat]) [parts addObject:from];
+		if (parts.count == 0) [parts addObject:row.firstObject];
+		cell.detailTextLabel.text = [parts componentsJoinedByString:@" · "];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	}
 	cell.detailTextLabel.textColor = [UIColor secondaryLabelColor];

@@ -10,7 +10,7 @@ import Foundation
 class AYEditHistory: NSObject {
 	@objc static let changedNotification = Notification.Name("ayTELEEditHistoryChanged")
 	private static let storageKey = "ayTELEEditHistoryV1"
-	private static let messageLimit = 4000   // distinct messages tracked
+	private static let messageLimit = 10000  // distinct messages tracked
 	private static let versionLimit = 40     // versions kept per message
 
 	// The pencil badge and version viewer are gated on this.
@@ -26,9 +26,12 @@ class AYEditHistory: NSObject {
 	}
 
 	// One stored version: the text as it was, and the server timestamp we saw it at.
+	// chat / from are peer keys ("u<id>", "g<id>", "c<id>", "me"); optional so older stores decode.
 	private struct Version: Codable, Equatable {
 		let text: String
 		let date: Int32
+		var chat: String? = nil
+		var from: String? = nil
 	}
 
 	private static let lock = NSLock()
@@ -41,12 +44,21 @@ class AYEditHistory: NSObject {
 		return decoded
 	}
 
+	// Coalesced: busy accounts record many times a second, the JSON is written at most every 3s.
+	private static var persistPending = false
 	private static func persist() {
-		guard let data = try? JSONEncoder().encode(store) else { return }
-		UserDefaults.standard.set(data, forKey: storageKey)
+		guard !persistPending else { return }
+		persistPending = true
+		DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 3) {
+			lock.lock()
+			persistPending = false
+			let data = try? JSONEncoder().encode(store)
+			lock.unlock()
+			if let data = data { UserDefaults.standard.set(data, forKey: storageKey) }
+		}
 	}
 
-	private typealias Entry = (key: String, text: String, date: Int32)
+	private typealias Entry = (key: String, text: String, date: Int32, chat: String?, from: String?)
 
 	// Read-only scan of a decoded payload. Records every message text version it can reach.
 	@objc static func observe(_ data: NSData) {
@@ -54,38 +66,73 @@ class AYEditHistory: NSObject {
 		let buffer = Buffer(nsData: data)
 		guard let object = Api.parse(buffer) else { return }
 		var found: [Entry] = []
-		collect(object, into: &found, depth: 0)
+		var names: [String: String] = [:]
+		collect(object, into: &found, names: &names, depth: 0)
+		if !names.isEmpty { AYPeerNames.record(names) }
 		guard !found.isEmpty else { return }
 		record(found)
 	}
 
 	// Walks a parsed Api object with Mirror, pulling out every Api.Message.message it finds.
-	private static func collect(_ value: Any, into found: inout [Entry], depth: Int) {
+	private static func collect(_ value: Any, into found: inout [Entry], names: inout [String: String], depth: Int) {
 		guard depth < 10 else { return }
 		let mirror = Mirror(reflecting: value)
-		if mirror.displayStyle == .enum, let child = mirror.children.first, child.label == "message" {
+		if mirror.displayStyle == .enum, let child = mirror.children.first {
 			let tuple = Mirror(reflecting: child.value)
-			let labels = Set(tuple.children.compactMap { $0.label })
-			if labels.contains("id"), labels.contains("peerId"), labels.contains("message") {
-				if let entry = messageEntry(tuple) { found.append(entry) }
+			switch child.label {
+			case "message":
+				let labels = Set(tuple.children.compactMap { $0.label })
+				if labels.contains("id"), labels.contains("peerId"), labels.contains("message") {
+					if let entry = messageEntry(tuple) { found.append(entry) }
+				}
+			case "user":
+				if let id = int64(tuple, "id") {
+					let name = [string(tuple, "firstName"), string(tuple, "lastName")].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " ")
+					let fallback = string(tuple, "username").map { "@" + $0 }
+					if let n = name.isEmpty ? fallback : name { names["u\(id)"] = n }
+				}
+			case "chat":
+				if let id = int64(tuple, "id"), let title = string(tuple, "title") { names["g\(id)"] = title }
+			case "channel":
+				if let id = int64(tuple, "id"), let title = string(tuple, "title") { names["c\(id)"] = title }
+			default:
+				break
 			}
 		}
 		for child in mirror.children {
-			collect(child.value, into: &found, depth: depth + 1)
+			collect(child.value, into: &found, names: &names, depth: depth + 1)
 		}
+	}
+
+	private static func string(_ tuple: Mirror, _ label: String) -> String? {
+		for c in tuple.children where c.label == label {
+			return AYDeletedMarks.unwrap(c.value) as? String
+		}
+		return nil
+	}
+
+	private static func int64(_ tuple: Mirror, _ label: String) -> Int64? {
+		for c in tuple.children where c.label == label {
+			return AYDeletedMarks.unwrap(c.value) as? Int64
+		}
+		return nil
 	}
 
 	private static func messageEntry(_ tuple: Mirror) -> Entry? {
 		var id: Int32?
 		var text: String?
 		var peer: Any?
+		var fromId: Any?
+		var flags: Int32 = 0
 		var date: Int32?
 		var editDate: Int32?
 		for child in tuple.children {
 			switch child.label {
 			case "id": id = child.value as? Int32
+			case "flags": flags = child.value as? Int32 ?? 0
 			case "message": text = child.value as? String
 			case "peerId": peer = child.value
+			case "fromId": fromId = AYDeletedMarks.unwrap(child.value)
 			case "date": date = child.value as? Int32
 			case "editDate": editDate = unwrapInt32(child.value)
 			default: break
@@ -93,7 +140,23 @@ class AYEditHistory: NSObject {
 		}
 		guard let id = id, let text = text, let peer = peer,
 		      let key = peerKey(peer, messageId: id) else { return nil }
-		return (key, text, editDate ?? date ?? 0)
+		let chat = chatKey(peer)
+		// Private chats omit from_id: the sender is us (flags.1 = out) or the chat peer.
+		let from = fromId.flatMap(chatKey) ?? ((flags & (1 << 1)) != 0 ? "me" : chat)
+		return (key, text, editDate ?? date ?? 0, chat, from)
+	}
+
+	// Api.Peer -> "u<id>" / "g<id>" / "c<id>", the peer keys used by AYPeerNames.
+	static func chatKey(_ peer: Any) -> String? {
+		let mirror = Mirror(reflecting: peer)
+		guard mirror.displayStyle == .enum, let child = mirror.children.first,
+		      let id = firstInt64(child.value) else { return nil }
+		switch child.label {
+		case "peerUser": return "u\(id)"
+		case "peerChat": return "g\(id)"
+		case "peerChannel": return "c\(id)"
+		default: return nil
+		}
 	}
 
 	// Api.Peer -> the same key AYDeletedMarks uses: "u:<msgId>" for users/basic groups
@@ -133,7 +196,7 @@ class AYEditHistory: NSObject {
 			var versions = store[entry.key] ?? []
 			if versions.last?.text == entry.text { continue } // no change
 			if versions.isEmpty { order.append(entry.key) }
-			versions.append(Version(text: entry.text, date: entry.date))
+			versions.append(Version(text: entry.text, date: entry.date, chat: entry.chat, from: entry.from))
 			if versions.count > versionLimit { versions.removeFirst(versions.count - versionLimit) }
 			store[entry.key] = versions
 			changed = true
@@ -172,6 +235,13 @@ class AYEditHistory: NSObject {
 		lock.lock(); defer { lock.unlock() }
 		guard let versions = store[key] else { return [] }
 		return versions.map { [$0.text, "\($0.date)"] }
+	}
+
+	// [text, chat, from] of the latest observed version, for freezing a deleted message.
+	static func latest(forKey key: String) -> (text: String, chat: String?, from: String?)? {
+		lock.lock(); defer { lock.unlock() }
+		guard let v = store[key]?.last else { return nil }
+		return (v.text, v.chat, v.from)
 	}
 
 	// The latest text we observed for a message, if any (used by the deleted browse list).

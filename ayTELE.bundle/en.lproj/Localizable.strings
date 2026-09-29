@@ -158,3 +158,6 @@
 "REVEAL_READ_DONE" = "Read receipt sent";
 "REVEAL_READ_FAILED" = "Couldn't send the read receipt";
 "REVEAL_READ_NONE" = "No held receipt here — open a new message/story while blocking is on";
+"ARCHIVE_NO_TEXT" = "(text not captured — arrived before tracking)";
+"ARCHIVE_FROM_ME" = "You";
+"ARCHIVE_DELETED_NOTE" = "Telegram doesn't say who deleted a message; the chat and the original sender are shown.";

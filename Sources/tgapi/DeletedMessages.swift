@@ -154,10 +154,16 @@ class AYDeletedMarks: NSObject {
 		let snapshot = order
 		lock.unlock()
 		guard added else { return }
+		AYDeletedArchive.freeze(newKeys)
 		UserDefaults.standard.set(snapshot, forKey: storageKey)
 		DispatchQueue.main.async {
 			NotificationCenter.default.post(name: changedNotification, object: nil)
 		}
+	}
+
+	static func deletedKeys() -> [String] {
+		lock.lock(); defer { lock.unlock() }
+		return order
 	}
 
 	private static func contains(_ key: String) -> Bool {
@@ -166,13 +172,13 @@ class AYDeletedMarks: NSObject {
 		return keys.contains(key)
 	}
 
-	// Deleted messages for the browse screen: [key, text] newest first, text from AYEditHistory
-	// when we captured it (empty otherwise).
+	// Deleted messages for the browse screen, newest first: [key, text, chat name, sender name]
+	// (empty strings for what we never saw).
 	@objc static func deletedList() -> [[String]] {
 		lock.lock()
 		let snapshot = order
 		lock.unlock()
-		return snapshot.reversed().map { [$0, AYEditHistory.text(forKey: $0) ?? ""] }
+		return snapshot.reversed().map { AYDeletedArchive.row(forKey: $0) }
 	}
 
 	// node is a ChatMessageItemView; its Swift `item` holds the Postbox Message.

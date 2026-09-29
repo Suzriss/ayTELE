@@ -158,3 +158,6 @@
 "REVEAL_READ_DONE" = "Đã gửi xác nhận đã đọc";
 "REVEAL_READ_FAILED" = "Không gửi được xác nhận đã đọc";
 "REVEAL_READ_NONE" = "Không có xác nhận bị giữ — hãy mở tin nhắn/tin mới khi đang chặn";
+"ARCHIVE_NO_TEXT" = "(chưa lưu nội dung — đến trước khi theo dõi)";
+"ARCHIVE_FROM_ME" = "Bạn";
+"ARCHIVE_DELETED_NOTE" = "Telegram không cho biết ai đã xóa tin nhắn; hiển thị cuộc trò chuyện và người gửi.";

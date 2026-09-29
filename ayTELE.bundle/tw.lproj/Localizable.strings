@@ -158,3 +158,6 @@
 "REVEAL_READ_DONE" = "已傳送已讀回條";
 "REVEAL_READ_FAILED" = "已讀回條傳送失敗";
 "REVEAL_READ_NONE" = "這裡沒有被攔截的回條 — 請在攔截開啟時開啟新訊息/限時動態";
+"ARCHIVE_NO_TEXT" = "(未擷取文字 — 在記錄前收到)";
+"ARCHIVE_FROM_ME" = "你";
+"ARCHIVE_DELETED_NOTE" = "Telegram 不會告知誰刪除了訊息；顯示聊天和原傳送者。";

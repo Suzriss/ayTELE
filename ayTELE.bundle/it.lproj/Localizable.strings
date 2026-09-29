@@ -160,3 +160,6 @@
 "REVEAL_READ_DONE" = "Conferma di lettura inviata";
 "REVEAL_READ_FAILED" = "Invio della conferma non riuscito";
 "REVEAL_READ_NONE" = "Nessuna conferma trattenuta — apri un nuovo messaggio/storia con il blocco attivo";
+"ARCHIVE_NO_TEXT" = "(testo non acquisito — arrivato prima del tracciamento)";
+"ARCHIVE_FROM_ME" = "Tu";
+"ARCHIVE_DELETED_NOTE" = "Telegram non indica chi ha eliminato un messaggio; sono mostrati la chat e il mittente.";

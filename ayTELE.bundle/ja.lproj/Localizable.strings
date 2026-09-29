@@ -158,3 +158,6 @@
 "REVEAL_READ_DONE" = "既読を送信しました";
 "REVEAL_READ_FAILED" = "既読を送信できませんでした";
 "REVEAL_READ_NONE" = "保留中の既読はありません — ブロック中に新しいメッセージ/ストーリーを開いてください";
+"ARCHIVE_NO_TEXT" = "(テキスト未取得 — 記録開始前に受信)";
+"ARCHIVE_FROM_ME" = "あなた";
+"ARCHIVE_DELETED_NOTE" = "Telegramは削除した人を送りません。チャットと送信者を表示します。";

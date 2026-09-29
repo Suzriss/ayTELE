@@ -131,6 +131,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"REVEAL_READ_DONE": @"انرسل إيصال القراءة",
 		@"REVEAL_READ_FAILED": @"ما انرسل الإيصال",
 		@"REVEAL_READ_NONE": @"ماكو إيصال محجوز هنا — لازم توصلك رسالة/ستوري جديدة وتفتحها والحجب شغّال",
+		@"ARCHIVE_NO_TEXT": @"(النص ما انمسك — وصلت قبل التفعيل أو قبل ما تنفتح)",
+		@"ARCHIVE_FROM_ME": @"أنت",
+		@"ARCHIVE_DELETED_NOTE": @"تيليگرام ما يرسل منو حذف الرسالة؛ يطلع اسم المحادثة ومرسل الرسالة.",
 	};
 	if ([code isEqualToString:@"cn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隐身模式",
@@ -246,6 +249,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"REVEAL_READ_DONE": @"已发送已读回执",
 		@"REVEAL_READ_FAILED": @"已读回执发送失败",
 		@"REVEAL_READ_NONE": @"这里没有被拦截的回执 — 请在拦截开启时打开新消息/动态",
+		@"ARCHIVE_NO_TEXT": @"(未捕获文本 — 在记录前收到)",
+		@"ARCHIVE_FROM_ME": @"你",
+		@"ARCHIVE_DELETED_NOTE": @"Telegram 不会告知谁删除了消息；显示聊天和原发送者。",
 	};
 	if ([code isEqualToString:@"en"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Ghost Mode",
@@ -362,6 +368,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"REVEAL_READ_DONE": @"Read receipt sent",
 		@"REVEAL_READ_FAILED": @"Couldn't send the read receipt",
 		@"REVEAL_READ_NONE": @"No held receipt here — open a new message/story while blocking is on",
+		@"ARCHIVE_NO_TEXT": @"(text not captured — arrived before tracking)",
+		@"ARCHIVE_FROM_ME": @"You",
+		@"ARCHIVE_DELETED_NOTE": @"Telegram doesn't say who deleted a message; the chat and the original sender are shown.",
 	};
 	if ([code isEqualToString:@"fr"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Mode Fantôme",
@@ -477,6 +486,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"REVEAL_READ_DONE": @"Accusé de lecture envoyé",
 		@"REVEAL_READ_FAILED": @"Échec de l'envoi de l'accusé de lecture",
 		@"REVEAL_READ_NONE": @"Aucun accusé retenu ici — ouvrez un nouveau message/story avec le blocage activé",
+		@"ARCHIVE_NO_TEXT": @"(texte non capturé — reçu avant le suivi)",
+		@"ARCHIVE_FROM_ME": @"Vous",
+		@"ARCHIVE_DELETED_NOTE": @"Telegram n'indique pas qui a supprimé un message ; la discussion et l'expéditeur sont affichés.",
 	};
 	if ([code isEqualToString:@"it"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modalità Fantasma",
@@ -593,6 +605,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"REVEAL_READ_DONE": @"Conferma di lettura inviata",
 		@"REVEAL_READ_FAILED": @"Invio della conferma non riuscito",
 		@"REVEAL_READ_NONE": @"Nessuna conferma trattenuta — apri un nuovo messaggio/storia con il blocco attivo",
+		@"ARCHIVE_NO_TEXT": @"(testo non acquisito — arrivato prima del tracciamento)",
+		@"ARCHIVE_FROM_ME": @"Tu",
+		@"ARCHIVE_DELETED_NOTE": @"Telegram non indica chi ha eliminato un messaggio; sono mostrati la chat e il mittente.",
 	};
 	if ([code isEqualToString:@"ja"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"ゴーストモード",
@@ -709,6 +724,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"REVEAL_READ_DONE": @"既読を送信しました",
 		@"REVEAL_READ_FAILED": @"既読を送信できませんでした",
 		@"REVEAL_READ_NONE": @"保留中の既読はありません — ブロック中に新しいメッセージ/ストーリーを開いてください",
+		@"ARCHIVE_NO_TEXT": @"(テキスト未取得 — 記録開始前に受信)",
+		@"ARCHIVE_FROM_ME": @"あなた",
+		@"ARCHIVE_DELETED_NOTE": @"Telegramは削除した人を送りません。チャットと送信者を表示します。",
 	};
 	if ([code isEqualToString:@"ru"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Режим призрака",
@@ -825,6 +843,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"REVEAL_READ_DONE": @"Отметка о прочтении отправлена",
 		@"REVEAL_READ_FAILED": @"Не удалось отправить отметку",
 		@"REVEAL_READ_NONE": @"Нет удержанной отметки — откройте новое сообщение/историю при включённой блокировке",
+		@"ARCHIVE_NO_TEXT": @"(текст не сохранён — пришло до отслеживания)",
+		@"ARCHIVE_FROM_ME": @"Вы",
+		@"ARCHIVE_DELETED_NOTE": @"Telegram не сообщает, кто удалил сообщение; показаны чат и отправитель.",
 	};
 	if ([code isEqualToString:@"es"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modo Fantasma",
@@ -941,6 +962,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"REVEAL_READ_DONE": @"Confirmación de lectura enviada",
 		@"REVEAL_READ_FAILED": @"No se pudo enviar la confirmación",
 		@"REVEAL_READ_NONE": @"No hay confirmación retenida — abre un mensaje/historia nuevo con el bloqueo activado",
+		@"ARCHIVE_NO_TEXT": @"(texto no capturado — llegó antes del seguimiento)",
+		@"ARCHIVE_FROM_ME": @"Tú",
+		@"ARCHIVE_DELETED_NOTE": @"Telegram no indica quién borró un mensaje; se muestran el chat y el remitente.",
 	};
 	if ([code isEqualToString:@"tw"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隱身模式",
@@ -1057,6 +1081,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"REVEAL_READ_DONE": @"已傳送已讀回條",
 		@"REVEAL_READ_FAILED": @"已讀回條傳送失敗",
 		@"REVEAL_READ_NONE": @"這裡沒有被攔截的回條 — 請在攔截開啟時開啟新訊息/限時動態",
+		@"ARCHIVE_NO_TEXT": @"(未擷取文字 — 在記錄前收到)",
+		@"ARCHIVE_FROM_ME": @"你",
+		@"ARCHIVE_DELETED_NOTE": @"Telegram 不會告知誰刪除了訊息；顯示聊天和原傳送者。",
 	};
 	if ([code isEqualToString:@"vn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Chế độ ma",
@@ -1173,6 +1200,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"REVEAL_READ_DONE": @"Đã gửi xác nhận đã đọc",
 		@"REVEAL_READ_FAILED": @"Không gửi được xác nhận đã đọc",
 		@"REVEAL_READ_NONE": @"Không có xác nhận bị giữ — hãy mở tin nhắn/tin mới khi đang chặn",
+		@"ARCHIVE_NO_TEXT": @"(chưa lưu nội dung — đến trước khi theo dõi)",
+		@"ARCHIVE_FROM_ME": @"Bạn",
+		@"ARCHIVE_DELETED_NOTE": @"Telegram không cho biết ai đã xóa tin nhắn; hiển thị cuộc trò chuyện và người gửi.",
 	};
 	return nil;
 }
