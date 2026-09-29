@@ -16,7 +16,7 @@
 	NSString *selectedLanguageCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"ayTELELanguage"];
 
 	if (!selectedLanguageCode) {
-		selectedLanguageCode = @"en";
+		selectedLanguageCode = @"ar";
 	}
 
 	NSString *localizationFilePath = [NSString stringWithFormat:@"%@/ayTELE.bundle/%@.lproj/Localizable.strings", jbroot(@"/Library/Application Support/ayTELE"), selectedLanguageCode];

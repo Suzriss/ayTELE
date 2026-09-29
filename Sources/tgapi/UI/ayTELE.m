@@ -16,6 +16,17 @@
 
 #define TGLoc(key) [ayTELELocalization localizedStringForKey:(key)]
 
+// Telegram-flavoured dark palette for the ayTELE settings UI.
+static UIColor *ayColorHex(uint32_t rgb) {
+	return [UIColor colorWithRed:((rgb >> 16) & 0xFF) / 255.0
+	                       green:((rgb >> 8) & 0xFF) / 255.0
+	                        blue:(rgb & 0xFF) / 255.0
+	                       alpha:1.0];
+}
+#define AY_BG   ayColorHex(0x17212B)   // Telegram night background (blue-ish)
+#define AY_CELL ayColorHex(0x0E1621)   // near-black cells
+#define AY_BLUE ayColorHex(0x3390EC)   // Telegram accent blue
+
 @interface ayTELE () <UIDocumentPickerDelegate>
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSString *cacheSize;
@@ -24,10 +35,20 @@
 @implementation ayTELE
 
 - (void)viewDidLoad {
+    self.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+
     [self setupTableView];
     [self setupIconAsHeader];
     [self setupApplyButton];
     [self setupNavigationTitleWithIcon];
+
+    UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+    [appearance configureWithOpaqueBackground];
+    appearance.backgroundColor = AY_BG;
+    appearance.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor whiteColor]};
+    self.navigationController.navigationBar.standardAppearance = appearance;
+    self.navigationController.navigationBar.scrollEdgeAppearance = appearance;
+    self.navigationController.navigationBar.tintColor = AY_BLUE;
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(didChangeLanguage)
@@ -54,6 +75,8 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.tableView.backgroundColor = AY_BG;
+    self.view.backgroundColor = AY_BG;
 
     [self.view addSubview:self.tableView];
 
@@ -65,71 +88,23 @@
     ]];
 }
 
-// Nuovo metodo per titolo con icona a destra
+// Plain "ayTELE" title, no ghost icon.
 - (void)setupNavigationTitleWithIcon {
-    UIView *titleView = [[UIView alloc] init];
-    titleView.translatesAutoresizingMaskIntoConstraints = NO;
-
-    UILabel *titleLabel = [[UILabel alloc] init];
-    titleLabel.text = @"ayTELE";
-    titleLabel.font = [UIFont boldSystemFontOfSize:17];
-    titleLabel.textColor = [UIColor labelColor];
-    titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-
-    NSData *imageData = [[NSData alloc] initWithBase64EncodedString:GHOSTPNG options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    UIImage *icon = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale];
-
-    UIImageView *iconView = [[UIImageView alloc] initWithImage:icon];
-    iconView.contentMode = UIViewContentModeScaleAspectFit;
-    iconView.translatesAutoresizingMaskIntoConstraints = NO;
-
-    [titleView addSubview:titleLabel];
-    [titleView addSubview:iconView];
-
-    [NSLayoutConstraint activateConstraints:@[
-        [titleLabel.leadingAnchor constraintEqualToAnchor:titleView.leadingAnchor],
-        [titleLabel.centerYAnchor constraintEqualToAnchor:titleView.centerYAnchor],
-
-        [iconView.leadingAnchor constraintEqualToAnchor:titleLabel.trailingAnchor constant:1],
-        [iconView.trailingAnchor constraintEqualToAnchor:titleView.trailingAnchor],
-        [iconView.centerYAnchor constraintEqualToAnchor:titleLabel.centerYAnchor],
-    ]];
-
-    [titleView.widthAnchor constraintEqualToConstant:140].active = YES;
-    [titleView.heightAnchor constraintEqualToConstant:24].active = YES;
-
-    self.navigationItem.titleView = titleView;
+    self.title = @"ayTELE";
 }
 
+// Small clear spacer instead of the old ghost logo header.
 - (void)setupIconAsHeader {
-    UIView *logoContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 100)];
-
-    // Logo Image
-	NSData *imageData = [[NSData alloc] initWithBase64EncodedString:GHOSTPNG options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage imageWithData:imageData]];
-    iconView.translatesAutoresizingMaskIntoConstraints = NO;
-    iconView.layer.cornerRadius = 100 / 4;
-	iconView.userInteractionEnabled = YES;
-    iconView.clipsToBounds = YES;
-    iconView.contentMode = UIViewContentModeScaleAspectFill;
-
-    [logoContainer addSubview:iconView];
-
-    [NSLayoutConstraint activateConstraints:@[
-        [iconView.centerYAnchor constraintEqualToAnchor:logoContainer.centerYAnchor],
-        [iconView.centerXAnchor constraintEqualToAnchor:logoContainer.centerXAnchor],
-        [iconView.widthAnchor constraintEqualToConstant:100],
-        [iconView.heightAnchor constraintEqualToConstant:100]
-    ]];
-
-    self.tableView.tableHeaderView = logoContainer;
+    UIView *spacer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 12)];
+    spacer.backgroundColor = [UIColor clearColor];
+    self.tableView.tableHeaderView = spacer;
 }
 
 - (void)setupApplyButton {
 	UIButton *applyChangesButton = [UIButton buttonWithType:UIButtonTypeSystem];
 	UIImage *applyImage = [UIImage systemImageNamed:@"checkmark.square"];
 	applyImage = [applyImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-	applyChangesButton.tintColor = [UIColor systemPinkColor];
+	applyChangesButton.tintColor = AY_BLUE;
 	[applyChangesButton setImage:applyImage forState:UIControlStateNormal];
 	[applyChangesButton addTarget:self action:@selector(applyChanges) forControlEvents:UIControlEventTouchUpInside];
 	UIBarButtonItem *applyButtonItem = [[UIBarButtonItem alloc] initWithCustomView:applyChangesButton];
@@ -639,6 +614,20 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 }
 
 # pragma mark - UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    cell.backgroundColor = AY_CELL;
+    cell.textLabel.textColor = [UIColor whiteColor];
+    cell.detailTextLabel.textColor = [UIColor colorWithWhite:0.62 alpha:1.0];
+
+    UIView *selected = [[UIView alloc] init];
+    selected.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.08];
+    cell.selectedBackgroundView = selected;
+
+    if ([cell.accessoryView isKindOfClass:[UISwitch class]]) {
+        ((UISwitch *)cell.accessoryView).onTintColor = AY_BLUE;
+    }
+}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

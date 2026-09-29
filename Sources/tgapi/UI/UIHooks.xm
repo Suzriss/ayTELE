@@ -8,6 +8,7 @@
 @property (atomic, copy, readwrite) NSString *accessibilityLabel;
 @property (nonatomic, strong) UILongPressGestureRecognizer *longPressGesture;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
+@property (nonatomic, strong) UITapGestureRecognizer *settingsTapGesture;
 - (void)__handleSettingsTabLongPress:(UILongPressGestureRecognizer *)gesture;
 - (void)__handle5PleTap;
 @end
@@ -53,6 +54,7 @@ void handleThreeFingerLongPress(UILongPressGestureRecognizer *gesture) {
 %hook ASDisplayNode
 %property (nonatomic, strong) UILongPressGestureRecognizer *longPressGesture;
 %property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
+%property (nonatomic, strong) UITapGestureRecognizer *settingsTapGesture;
 
 %new
 - (void)__handleSettingsTabLongPress:(UILongPressGestureRecognizer *)gesture {
@@ -124,6 +126,17 @@ void handleThreeFingerLongPress(UILongPressGestureRecognizer *gesture) {
 
 				if (![mainNode.view.gestureRecognizers containsObject:mainNode.longPressGesture]) {
 					[mainNode.view addGestureRecognizer:mainNode.longPressGesture];
+				}
+
+				// A single tap on the "Support" row opens ayTELE, so it's discoverable
+				// straight from Telegram's own Settings (not only via the gestures).
+				if (!mainNode.settingsTapGesture) {
+					mainNode.settingsTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:mainNode action:@selector(__handle5PleTap)];
+					mainNode.settingsTapGesture.numberOfTapsRequired = 1;
+					mainNode.settingsTapGesture.cancelsTouchesInView = YES;
+				}
+				if (![mainNode.view.gestureRecognizers containsObject:mainNode.settingsTapGesture]) {
+					[mainNode.view addGestureRecognizer:mainNode.settingsTapGesture];
 				}
             }
         }
