@@ -216,3 +216,11 @@ void handleChannelsReadReceipt(MTRequest *request, NSData *payload) {
 		request.fakeData = boolTrue();
 	}
 }
+
+// stories.incrementStoryViews -> Bool. Bumps the public view counter; blocked together
+// with story read receipts so viewing leaves no trace.
+void handleStoriesIncrementViews(MTRequest *request, NSData *payload) {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:kDisableStoriesReadReceipt]) {
+		request.fakeData = boolTrue();
+	}
+}

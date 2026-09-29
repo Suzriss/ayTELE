@@ -150,3 +150,8 @@
 "DOUBLE_TAP_COPY_TITLE" = "ضغطتين للنسخ";
 "DOUBLE_TAP_COPY_SUBTITLE" = "اضغط ضغطتين على الرسالة حتى تنسخ نصها. (يستبدل تفاعل التلي السريع بالضغطتين.)";
 "COPIED_TOAST" = "تم النسخ";
+"KEEP_VIEW_ONCE_MEDIA_TITLE" = "الاحتفاظ بوسائط العرض لمرة واحدة";
+"KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "تخلي الصور والفيديوهات المؤقتة و«العرض لمرة واحدة» رسائل عادية ما تنمسح وتگدر تحفظها.";
+"MSG_ACTION_REVEAL_READ" = "👁️ كشف القراءة";
+"REVEAL_READ_DONE" = "انرسل إيصال القراءة";
+"REVEAL_READ_FAILED" = "ما انرسل الإيصال";

@@ -153,3 +153,8 @@
 "DOUBLE_TAP_COPY_TITLE" = "Double-Tap to Copy";
 "DOUBLE_TAP_COPY_SUBTITLE" = "Double-tap a message to copy its text. (Replaces Telegram's double-tap quick reaction.)";
 "COPIED_TOAST" = "Copied";
+"KEEP_VIEW_ONCE_MEDIA_TITLE" = "保留阅后即焚媒体";
+"KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "将限时及阅后即焚的照片/视频变为可重复打开和保存的普通消息。";
+"MSG_ACTION_REVEAL_READ" = "👁️ 显示已读";
+"REVEAL_READ_DONE" = "已发送已读回执";
+"REVEAL_READ_FAILED" = "已读回执发送失败";

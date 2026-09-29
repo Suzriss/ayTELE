@@ -404,6 +404,16 @@ static void presentToast(NSString *message) {
 	[sheet addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"MSG_ACTION_NOTE"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
 		[self showNoteEditorForNode:node];
 	}]];
+	// Only offered while a read receipt for this chat is being held back.
+	NSString *peerKey = nil;
+	@try { peerKey = [AYReceipts peerKeyWithNode:node]; } @catch (NSException *e) {}
+	if ([AYReceiptQueue hasHeldForKey:peerKey]) {
+		[sheet addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"MSG_ACTION_REVEAL_READ"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
+			[AYReceiptQueue revealKey:peerKey completion:^(BOOL ok) {
+				presentToast([ayTELELocalization localizedStringForKey:ok ? @"REVEAL_READ_DONE" : @"REVEAL_READ_FAILED"]);
+			}];
+		}]];
+	}
 	[sheet addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"CANCEL"] style:UIAlertActionStyleCancel handler:nil]];
 	UIView *view = ((ASDisplayNode *)node).view;
 	sheet.popoverPresentationController.sourceView = view;

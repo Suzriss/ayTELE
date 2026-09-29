@@ -152,3 +152,8 @@
 "DOUBLE_TAP_COPY_TITLE" = "Double-Tap to Copy";
 "DOUBLE_TAP_COPY_SUBTITLE" = "Double-tap a message to copy its text. (Replaces Telegram's double-tap quick reaction.)";
 "COPIED_TOAST" = "Copied";
+"KEEP_VIEW_ONCE_MEDIA_TITLE" = "1回表示メディアを保持";
+"KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "時間制限付き・1回表示の写真/動画を、再表示・保存できる通常のメッセージにします。";
+"MSG_ACTION_REVEAL_READ" = "👁️ 既読を送信";
+"REVEAL_READ_DONE" = "既読を送信しました";
+"REVEAL_READ_FAILED" = "既読を送信できませんでした";

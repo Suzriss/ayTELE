@@ -2,9 +2,66 @@
 
 #define kChannelsReadHistory -871347913
 
+// Read receipts we answered with fakeData, newest per chat, so the two-finger menu can
+// send the real one later ("reveal"). The service is weak: a logged-out account just drops it.
+@interface AYHeldReceipt : NSObject
+@property (nonatomic, copy) NSData *payload;
+@property (nonatomic, weak) MTRequestMessageService *service;
+@end
+@implementation AYHeldReceipt
+@end
+
+@implementation AYReceiptQueue
++ (NSMutableDictionary<NSString *, AYHeldReceipt *> *)held {
+	static NSMutableDictionary *held;
+	static dispatch_once_t token;
+	dispatch_once(&token, ^{ held = [NSMutableDictionary new]; });
+	return held;
+}
++ (void)holdPayload:(NSData *)payload service:(MTRequestMessageService *)service {
+	NSString *key = nil;
+	@try { key = [AYReceipts peerKeyWithPayload:payload]; } @catch (NSException *e) {}
+	if (!key || !service) return;
+	AYHeldReceipt *receipt = [AYHeldReceipt new];
+	receipt.payload = payload;
+	receipt.service = service;
+	@synchronized (self) { [self held][key] = receipt; }
+}
++ (BOOL)hasHeldForKey:(NSString *)key {
+	if (!key) return NO;
+	@synchronized (self) { return [self held][key].service != nil; }
+}
++ (void)revealKey:(NSString *)key completion:(void (^)(BOOL ok))completion {
+	AYHeldReceipt *receipt = nil;
+	if (key) { @synchronized (self) { receipt = [self held][key]; } }
+	MTRequestMessageService *service = receipt.service;
+	if (!receipt || !service) {
+		if (completion) completion(NO);
+		return;
+	}
+	MTRequest *request = [[%c(MTRequest) alloc] init];
+	request.ayBypass = @YES; // must be set before setPayload so the hook doesn't block it again
+	[request setPayload:receipt.payload metadata:@"ayTELE.reveal" shortMetadata:@"ayTELE.reveal" responseParser:^id(NSData *data) {
+		return data;
+	}];
+	request.completed = ^(id response, MTRequestResponseInfo *info, MTRpcError *error) {
+		BOOL ok = error == nil;
+		if (ok) {
+			@synchronized (self) {
+				if ([self held][key] == receipt) [[self held] removeObjectForKey:key];
+			}
+		}
+		if (completion) dispatch_async(dispatch_get_main_queue(), ^{ completion(ok); });
+	};
+	[service addRequest:request];
+}
+@end
+
 %hook MTRequest
 %property (nonatomic, strong) NSData *fakeData;
 %property (nonatomic, strong) NSNumber *functionID;
+%property (nonatomic, strong) NSData *receiptPayload;
+%property (nonatomic, strong) NSNumber *ayBypass;
 
 - (void)setPayload:(NSData *)payload metadata:(id)metadata shortMetadata:(id)shortMetadata responseParser:(id (^)(NSData *))responseParser {
 	
@@ -23,7 +80,7 @@
 			NSData *filtered = [AYDeletedFilter filter:inputData];
 			if (filtered) inputData = filtered;
 		}
-		if (![[NSUserDefaults standardUserDefaults] boolForKey:kDisableForwardRestriction]) {
+		if (!AYProtected.isEnabled) {
 			return responseParser(inputData);
 		}
 		NSNumber *functionIDNumber = [NSNumber numberWithUnsignedInt:functionID];
@@ -37,7 +94,7 @@
 		return result;
 	};
 	
-	switch (functionID) {
+	if (!self.ayBypass.boolValue) switch (functionID) {
 		case kAccountUpdateOnlineStatus:
 		   handleOnlineStatus(self, payload);
 		   break;
@@ -56,6 +113,9 @@
 		case kStoriesReadStories:
 		   handleStoriesReadReceipt(self, payload);
 		   break;
+		case kStoriesIncrementStoryViews:
+		   handleStoriesIncrementViews(self, payload);
+		   break;
 		case kGetSponsoredMessages:
 		   handleGetSponsoredMessages(self, payload);
 		   break;
@@ -66,9 +126,13 @@
 		   break;
 		   
 	}
+
+	if (self.fakeData && (functionID == kMessagesReadHistory || functionID == kChannelsReadHistory || functionID == kStoriesReadStories)) {
+		self.receiptPayload = payload;
+	}
 	
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	if ([defaults boolForKey:kDisableForwardRestriction] || [defaults boolForKey:kKeepDeletedMessages] || [defaults boolForKey:kKeepEditHistory]) {
+	if ([defaults boolForKey:kDisableForwardRestriction] || [defaults boolForKey:kKeepViewOnceMedia] || [defaults boolForKey:kKeepDeletedMessages] || [defaults boolForKey:kKeepEditHistory]) {
 		%orig(payload, metadata, shortMetadata, hooked_block);
 	} else {
 		%orig(payload, metadata, shortMetadata, responseParser);
@@ -83,6 +147,7 @@
 
 - (void)addRequest:(MTRequest *)request {
     if (request.fakeData) {
+        if (request.receiptPayload) [AYReceiptQueue holdPayload:request.receiptPayload service:self];
         @try {
              if (request.completed) {
                  NSTimeInterval currentTime = [[NSDate date] timeIntervalSince1970];
@@ -121,12 +186,21 @@
 	if (data && AYDeletedFilter.isEnabled) {
 		@try {
 			NSData *filtered = [AYDeletedFilter filter:data];
-			if (filtered) return %orig(filtered);
+			if (filtered) data = filtered;
 		} @catch (NSException *exception) {
 			customLog2(@"Deleted messages filter failed: %@", exception);
 		}
 	}
-	return %orig;
+	// Pushed stories / view-once media: re-serialized only when a protected flag was dropped.
+	if (data && AYProtected.isEnabled) {
+		@try {
+			NSData *filtered = [AYProtected filter:data];
+			if (filtered) data = filtered;
+		} @catch (NSException *exception) {
+			customLog2(@"Protected content filter failed: %@", exception);
+		}
+	}
+	return %orig(data);
 }
 
 %end

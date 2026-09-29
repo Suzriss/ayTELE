@@ -159,5 +159,50 @@ do {
 	expect("archive: deleted lists u:61 with text", deleted.contains { $0.first == "u:61" && $0.count >= 2 && $0[1] == "to be deleted" })
 }
 
+// AYProtected: story noforwards (flags.10) and media ttl_seconds (flags.2).
+do {
+	let d = UserDefaults.standard
+	let photo = Api.MessageMedia.messageMediaPhoto(flags: (1 << 0) | (1 << 2), photo: .photoEmpty(id: 1), ttlSeconds: 0x7FFFFFFF)
+	let photoKept = Api.MessageMedia.messageMediaPhoto(flags: 1 << 0, photo: .photoEmpty(id: 1), ttlSeconds: nil)
+	let expired = Api.MessageMedia.messageMediaPhoto(flags: 1 << 2, photo: nil, ttlSeconds: 10)
+	let doc = Api.MessageMedia.messageMediaDocument(flags: (1 << 0) | (1 << 2), document: .documentEmpty(id: 2), altDocuments: nil, videoCover: nil, videoTimestamp: nil, ttlSeconds: 30)
+	let docKept = Api.MessageMedia.messageMediaDocument(flags: 1 << 0, document: .documentEmpty(id: 2), altDocuments: nil, videoCover: nil, videoTimestamp: nil, ttlSeconds: nil)
+	func story(_ flags: Int32) -> Api.StoryItem { .storyItem(flags: flags, id: 5, date: 1, fromId: nil, fwdFrom: nil, expireDate: 2, caption: nil, entities: nil, media: photoKept, mediaAreas: nil, privacy: nil, views: nil, sentReaction: nil) }
+	let peer = Api.Peer.peerUser(userId: 7)
+	func pushed(_ u: Api.Update) -> NSData { ser(Api.Updates.updates(updates: [u], users: [], chats: [], date: 1, seq: 1)) }
+	func mediaMsg(_ m: Api.MessageMedia) -> Api.Update { .updateNewMessage(message: .message(flags: 1 << 9, flags2: 0, id: 1, fromId: nil, fromBoostsApplied: nil, peerId: peer, savedPeerId: nil, fwdFrom: nil, viaBotId: nil, viaBusinessBotId: nil, replyTo: nil, date: 1, message: "", media: m, replyMarkup: nil, entities: nil, views: nil, forwards: nil, replies: nil, editDate: nil, postAuthor: nil, groupedId: nil, reactions: nil, restrictionReason: nil, ttlPeriod: nil, quickReplyShortcutId: nil, effect: nil, factcheck: nil, reportDeliveryUntilDate: nil, paidMessageStars: nil), pts: 1, ptsCount: 1) }
+	func reparsed(_ data: NSData?) -> String { data.flatMap { Api.parse(Buffer(nsData: $0)) }.map { "\($0)" } ?? "nil" }
+	func str(_ u: Api.Update) -> String { "\(Api.Updates.updates(updates: [u], users: [], chats: [], date: 1, seq: 1))" }
+
+	d.set(false, forKey: "disableForwardRestriction"); d.set(false, forKey: "keepViewOnceMedia")
+	expect("protected: off -> untouched", AYProtected.filter(pushed(mediaMsg(photo))) == nil)
+
+	d.set(true, forKey: "keepViewOnceMedia")
+	expect("protected: photo ttl dropped", reparsed(AYProtected.filter(pushed(mediaMsg(photo)))) == str(mediaMsg(photoKept)))
+	expect("protected: document ttl dropped", reparsed(AYProtected.filter(pushed(mediaMsg(doc)))) == str(mediaMsg(docKept)))
+	expect("protected: expired placeholder untouched", AYProtected.filter(pushed(mediaMsg(expired))) == nil)
+	expect("protected: plain media untouched", AYProtected.filter(pushed(mediaMsg(photoKept))) == nil)
+	expect("protected: story kept protected without save toggle", AYProtected.filter(pushed(.updateStory(peer: peer, story: story(1 << 10)))) == nil)
+
+	d.set(true, forKey: "disableForwardRestriction"); d.set(false, forKey: "keepViewOnceMedia")
+	expect("protected: story noforwards dropped", reparsed(AYProtected.filter(pushed(.updateStory(peer: peer, story: story((1 << 10) | (1 << 5)))))) == str(.updateStory(peer: peer, story: story(1 << 5))))
+	expect("protected: ttl kept without view-once toggle", AYProtected.filter(pushed(mediaMsg(photo))) == nil)
+	d.set(false, forKey: "disableForwardRestriction")
+}
+
+// AYReceipts: chat key of a held readHistory / readStories payload.
+do {
+	func payload(_ function: Int32, _ object: Any, maxId: Int32 = 9) -> NSData {
+		let b = Buffer(); b.appendInt32(function); Api.serializeObject(object, buffer: b, boxed: true); b.appendInt32(maxId); return b.makeData() as NSData
+	}
+	expect("receipts: user readHistory", AYReceipts.peerKey(payload: payload(238054714, Api.InputPeer.inputPeerUser(userId: 42, accessHash: 1))) == "u42")
+	expect("receipts: chat readHistory", AYReceipts.peerKey(payload: payload(238054714, Api.InputPeer.inputPeerChat(chatId: 5))) == "g5")
+	expect("receipts: channels readHistory", AYReceipts.peerKey(payload: payload(-871347913, Api.InputChannel.inputChannel(channelId: 77, accessHash: 3))) == "c77")
+	expect("receipts: readStories", AYReceipts.peerKey(payload: payload(-1521034552, Api.InputPeer.inputPeerUser(userId: 42, accessHash: 1))) == "s:u42")
+	expect("receipts: other function", AYReceipts.peerKey(payload: payload(1, Api.InputPeer.inputPeerSelf)) == nil)
+	expect("receipts: node user", AYReceipts.peerKey(node: BubbleNode(ItemWithMessage(msg(0, 42, 1)))) == "u42")
+	expect("receipts: node channel", AYReceipts.peerKey(node: BubbleNode(ItemWithMessage(msg(2, 77, 1)))) == "c77")
+}
+
 print(failures == 0 ? "ALL PASS" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

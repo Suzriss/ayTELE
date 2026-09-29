@@ -154,3 +154,8 @@
 "DOUBLE_TAP_COPY_TITLE" = "Double-Tap to Copy";
 "DOUBLE_TAP_COPY_SUBTITLE" = "Double-tap a message to copy its text. (Replaces Telegram's double-tap quick reaction.)";
 "COPIED_TOAST" = "Copied";
+"KEEP_VIEW_ONCE_MEDIA_TITLE" = "Conservar medios de una sola vista";
+"KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "Convierte fotos/vídeos temporales y de una sola vista en mensajes normales que puedes volver a abrir y guardar.";
+"MSG_ACTION_REVEAL_READ" = "👁️ Revelar lectura";
+"REVEAL_READ_DONE" = "Confirmación de lectura enviada";
+"REVEAL_READ_FAILED" = "No se pudo enviar la confirmación";

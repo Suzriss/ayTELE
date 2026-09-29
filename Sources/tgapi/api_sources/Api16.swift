@@ -1000,6 +1000,11 @@ public extension Api {
             if Int(_1!) & Int(1 << 10) != 0 {_5 = reader.readInt32() }
             var _6: Int32?
             if Int(_1!) & Int(1 << 2) != 0 {_6 = reader.readInt32() }
+            if Int(_1!) & Int(1 << 2) != 0 && Int(_1!) & Int(1 << 0) != 0 && AYProtected.keepViewOnce { // Clears ttl_seconds (flags.2)
+                _1 = _1! & ~(1 << 2)
+                _6 = nil
+                AYProtected.noteCleared()
+            }
             let _c1 = _1 != nil
             let _c2 = (Int(_1!) & Int(1 << 0) == 0) || _2 != nil
             let _c3 = (Int(_1!) & Int(1 << 5) == 0) || _3 != nil
@@ -1210,6 +1215,11 @@ public extension Api {
             } }
             var _3: Int32?
             if Int(_1!) & Int(1 << 2) != 0 {_3 = reader.readInt32() }
+            if Int(_1!) & Int(1 << 2) != 0 && Int(_1!) & Int(1 << 0) != 0 && AYProtected.keepViewOnce { // Clears ttl_seconds (flags.2)
+                _1 = _1! & ~(1 << 2)
+                _3 = nil
+                AYProtected.noteCleared()
+            }
             let _c1 = _1 != nil
             let _c2 = (Int(_1!) & Int(1 << 0) == 0) || _2 != nil
             let _c3 = (Int(_1!) & Int(1 << 2) == 0) || _3 != nil

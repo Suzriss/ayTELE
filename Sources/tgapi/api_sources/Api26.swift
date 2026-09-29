@@ -202,6 +202,10 @@ public extension Api {
             if Int(_1!) & Int(1 << 15) != 0 {if let signature = reader.readInt32() {
                 _13 = Api.parse(reader, signature: signature) as? Api.Reaction
             } }
+            if Int(_1!) & Int(1 << 10) != 0 && AYProtected.allowSave { // Clears noforwards (flags.10)
+                _1 = _1! & ~(1 << 10)
+                AYProtected.noteCleared()
+            }
             let _c1 = _1 != nil
             let _c2 = _2 != nil
             let _c3 = _3 != nil

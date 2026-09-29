@@ -5,6 +5,8 @@
 #define kMessagesSetTypingAction 1486110434
 #define kMessagesReadHistory 238054714
 #define kStoriesReadStories -1521034552
+// stories.incrementStoryViews#b2028afb -> Bool (Api38)
+#define kStoriesIncrementStoryViews -1308456197
 #define kGetSponsoredMessages -1680673735
 
 #define kActionIDTyping                 381645902                       // .sendMessageTypingAction
@@ -61,6 +63,10 @@
 #define kDisableForwardRestriction @"disableForwardRestriction"
 #define kKeepDeletedMessages @"keepDeletedMessages"
 #define kKeepEditHistory @"keepEditHistory"
+
+// Drops ttl_seconds from photo/video media so view-once and self-destructing media
+// become ordinary, savable messages (read by AYProtected in Swift under the same key).
+#define kKeepViewOnceMedia @"keepViewOnceMedia"
 
 #define FAKE_LOCATION_ENABLED_KEY @"ayTELEFakeLocation"
 #define FAKE_LATITUDE_KEY @"ayTELESavedLatitude"

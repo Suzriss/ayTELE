@@ -19,6 +19,11 @@
 + (NSArray<NSArray<NSString *> *> *)deletedList;
 @end
 
+@interface AYProtected : NSObject
+@property (class, nonatomic, readonly) BOOL isEnabled;
++ (NSData *)filter:(NSData *)data;
+@end
+
 @interface AYEditHistory : NSObject
 @property (class, nonatomic, readonly) BOOL isEnabled;
 @property (class, nonatomic, readonly) BOOL shouldObserve;
@@ -59,8 +64,27 @@
 @interface MTRequest : NSObject
 @property (nonatomic, strong) NSNumber *functionID;
 @property (nonatomic, strong) NSData *fakeData;
+@property (nonatomic, strong) NSData *receiptPayload;
+@property (nonatomic, strong) NSNumber *ayBypass;
+- (void)setPayload:(NSData *)payload metadata:(id)metadata shortMetadata:(id)shortMetadata responseParser:(id (^)(NSData *))responseParser;
 @property (nonatomic, copy) void (^completed)(id boxedResponse, MTRequestResponseInfo *info, MTRpcError *error);
 @property (nonatomic, strong, readonly) id (^responseParser)(NSData *);
+@end
+
+@interface MTRequestMessageService : NSObject
+- (void)addRequest:(MTRequest *)request;
+@end
+
+@interface AYReceipts : NSObject
++ (NSString *)peerKeyWithPayload:(NSData *)payload;
++ (NSString *)peerKeyWithNode:(NSObject *)node;
+@end
+
+// Blocked read receipts held per chat; revealKey sends the real one on demand.
+@interface AYReceiptQueue : NSObject
++ (void)holdPayload:(NSData *)payload service:(MTRequestMessageService *)service;
++ (BOOL)hasHeldForKey:(NSString *)key;
++ (void)revealKey:(NSString *)key completion:(void (^)(BOOL ok))completion;
 @end
 
 // Function Handlers
@@ -73,6 +97,7 @@ void handleMessageReadReceipt(MTRequest *request, NSData *payload);
 void handleReadMessageContents(MTRequest *request, NSData *payload);
 void handleChannelsReadMessageContents(MTRequest *request, NSData *payload);
 void handleStoriesReadReceipt(MTRequest *request, NSData *payload);
+void handleStoriesIncrementViews(MTRequest *request, NSData *payload);
 void handleGetSponsoredMessages(MTRequest *request, NSData *payload);
 void handleChannelsReadReceipt(MTRequest *request, NSData *payload);
 #ifdef __cplusplus
