@@ -4,7 +4,7 @@
 
 - **المشروع:** تويك Theos (ObjC + Swift) لتيليگرام iOS، بالمجلد `/root/ayTELE`، الفرع `ci-test`.
 - **الهدف:** تيليگرام 12.9.4 (`ph.telegra.Telegraph`) مثبّت جانبياً على آيباد iOS 26.2.1.
-- **آخر بناء بيه كود:** CI run `36636567934` (commit `f6ccecf`). الدايلِب بـ `dylib/ayTELE.dylib` والحزم بـ `packages/`.
+- **آخر بناء بيه كود:** CI run `36640566238` (commit `77d4298`). الدايلِب بـ `dylib/ayTELE.dylib` والحزم بـ `packages/`.
 - **البناء:** أي push لـ `ci-test` يشغّل `.github/workflows/ci-test.yml` (filter-test + build) ويرفع artifact اسمه `debs`. المستودع `Suzriss/ayTELE` صار public حتى تشتغل رَنَرات macOS مجاناً.
 - **القيود:** ماكو Swift toolchain ولا iOS SDK محلياً — البناء عبر CI بس، والتجربة على جهاز المستخدم (يدز ملفات `.ips` لو صار كراش).
 - **اقرأ كذلك:** `PROGRESS.md` (سجل اللي انعمل بالتفصيل).
