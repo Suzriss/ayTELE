@@ -169,9 +169,9 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	switch (section) {
 		case GHOST_MODE:
-		   return 17;
+		   return 18;
 		case READ_RECEIPT:
-		   return 3;
+		   return 2;
 		case MISC:
 		   return 7;
 		case FILE_FIXER:
@@ -308,6 +308,10 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 			cell.textLabel.text = TGLoc(@"DISABLE_EMOJI_ACKNOWLEDGEMENT_STATUS_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"DISABLE_EMOJI_ACKNOWLEDGEMENT_STATUS_SUBTITLE");
 		}
+		else if (indexPath.row == 17) {
+			cell.textLabel.text = TGLoc(@"DISABLE_CONTENT_READ_RECEIPT_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"DISABLE_CONTENT_READ_RECEIPT_SUBTITLE");
+		}
 
 		UISwitch *toggle = (UISwitch *)cell.accessoryView;
 		if (!toggle || ![toggle isKindOfClass:[UISwitch class]]) {
@@ -336,10 +340,6 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		else if (indexPath.row == 1) {
 			cell.textLabel.text = TGLoc(@"DISABLE_STORY_READ_RECEIPT_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"DISABLE_STORY_READ_RECEIPT_SUBTITLE");
-		}
-		else if (indexPath.row == 2) {
-			cell.textLabel.text = TGLoc(@"DISABLE_CONTENT_READ_RECEIPT_TITLE");
-			cell.detailTextLabel.text = TGLoc(@"DISABLE_CONTENT_READ_RECEIPT_SUBTITLE");
 		}
 
 		UISwitch *toggle = (UISwitch *)cell.accessoryView;
@@ -626,6 +626,30 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 
     if ([cell.accessoryView isKindOfClass:[UISwitch class]]) {
         ((UISwitch *)cell.accessoryView).onTintColor = AY_BLUE;
+
+        // Give the icon-less toggle rows a tasteful blue SF Symbol.
+        if (cell.imageView.image == nil) {
+            NSString *symbol = nil;
+            switch (indexPath.section) {
+                case GHOST_MODE:   symbol = @"eye.slash.fill"; break;
+                case READ_RECEIPT: symbol = @"checkmark.seal.fill"; break;
+                case MISC:         symbol = @"wand.and.stars"; break;
+                case CHAT_TWEAKS:  symbol = @"hand.tap.fill"; break;
+                default: break;
+            }
+            if (symbol) {
+                cell.imageView.image = [UIImage systemImageNamed:symbol];
+                cell.imageView.tintColor = AY_BLUE;
+            }
+        }
+    }
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section {
+    if ([view isKindOfClass:[UITableViewHeaderFooterView class]]) {
+        UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+        header.textLabel.textColor = AY_BLUE;
+        header.textLabel.font = [UIFont systemFontOfSize:13 weight:UIFontWeightSemibold];
     }
 }
 
@@ -723,13 +747,13 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
                 case 14: return kDisableChoosingStickerStatus;
                 case 15: return kDisableEmojiInteractionStatus;
                 case 16: return kDisableEmojiAcknowledgementStatus;
+                case 17: return kDisableReadMessageContents;
                 default: return nil;
             }
         case 1:
             switch (indexPath.row) {
                 case 0: return kDisableMessageReadReceipt;
                 case 1: return kDisableStoriesReadReceipt;
-                case 2: return kDisableReadMessageContents;
                 default: return nil;
             }
         case 2:
