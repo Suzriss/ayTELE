@@ -134,6 +134,13 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"ARCHIVE_NO_TEXT": @"(النص ما انمسك — وصلت قبل التفعيل أو قبل ما تنفتح)",
 		@"ARCHIVE_FROM_ME": @"أنت",
 		@"ARCHIVE_DELETED_NOTE": @"تيليگرام ما يرسل منو حذف الرسالة؛ يطلع اسم المحادثة ومرسل الرسالة.",
+		@"SPEECH_TO_TEXT_TITLE": @"تحويل الكلام لنص",
+		@"SPEECH_TO_TEXT_SUBTITLE": @"مايك فوق حقل الكتابة بالمحادثات: اضغط واحچي، وكلامك ينكتب بالحقل. اضغط مرة ثانية أو اسكت شوية حتى يوقف. ضغطة مطوّلة حتى تختار اللغة.",
+		@"SPEECH_LISTENING": @"دا أسمعك…",
+		@"SPEECH_DENIED": @"اسمح للتيليگرام بالمايكروفون والتعرّف على الكلام من الإعدادات",
+		@"SPEECH_UNAVAILABLE": @"التعرّف على الكلام مو متوفر هسه لهاي اللغة",
+		@"SPEECH_NOTHING": @"ما سمعت شي",
+		@"SPEECH_LANGUAGE_TITLE": @"لغة الإملاء",
 	};
 	if ([code isEqualToString:@"cn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隐身模式",
@@ -252,6 +259,13 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"ARCHIVE_NO_TEXT": @"(未捕获文本 — 在记录前收到)",
 		@"ARCHIVE_FROM_ME": @"你",
 		@"ARCHIVE_DELETED_NOTE": @"Telegram 不会告知谁删除了消息；显示聊天和原发送者。",
+		@"SPEECH_TO_TEXT_TITLE": @"语音转文字",
+		@"SPEECH_TO_TEXT_SUBTITLE": @"聊天输入框上方的麦克风：点击后说话，文字会写入输入框。再次点击或停顿即可停止。长按选择语言。",
+		@"SPEECH_LISTENING": @"正在聆听…",
+		@"SPEECH_DENIED": @"请在设置中允许 Telegram 使用麦克风和语音识别",
+		@"SPEECH_UNAVAILABLE": @"此语言当前无法使用语音识别",
+		@"SPEECH_NOTHING": @"没有识别到内容",
+		@"SPEECH_LANGUAGE_TITLE": @"听写语言",
 	};
 	if ([code isEqualToString:@"en"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Ghost Mode",
@@ -371,6 +385,13 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"ARCHIVE_NO_TEXT": @"(text not captured — arrived before tracking)",
 		@"ARCHIVE_FROM_ME": @"You",
 		@"ARCHIVE_DELETED_NOTE": @"Telegram doesn't say who deleted a message; the chat and the original sender are shown.",
+		@"SPEECH_TO_TEXT_TITLE": @"Speech to Text",
+		@"SPEECH_TO_TEXT_SUBTITLE": @"A mic above the text field in chats: tap and speak, and your words are written into the field. Tap again or pause to stop. Long-press to choose the language.",
+		@"SPEECH_LISTENING": @"Listening…",
+		@"SPEECH_DENIED": @"Allow Microphone and Speech Recognition for Telegram in Settings",
+		@"SPEECH_UNAVAILABLE": @"Speech recognition isn't available right now for this language",
+		@"SPEECH_NOTHING": @"Didn't catch anything",
+		@"SPEECH_LANGUAGE_TITLE": @"Dictation Language",
 	};
 	if ([code isEqualToString:@"fr"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Mode Fantôme",
@@ -489,6 +510,13 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"ARCHIVE_NO_TEXT": @"(texte non capturé — reçu avant le suivi)",
 		@"ARCHIVE_FROM_ME": @"Vous",
 		@"ARCHIVE_DELETED_NOTE": @"Telegram n'indique pas qui a supprimé un message ; la discussion et l'expéditeur sont affichés.",
+		@"SPEECH_TO_TEXT_TITLE": @"Voix en texte",
+		@"SPEECH_TO_TEXT_SUBTITLE": @"Un micro au-dessus du champ de saisie dans les discussions : touchez et parlez, vos mots s'écrivent dans le champ. Touchez à nouveau ou faites une pause pour arrêter. Appui long pour choisir la langue.",
+		@"SPEECH_LISTENING": @"Écoute…",
+		@"SPEECH_DENIED": @"Autorisez le micro et la reconnaissance vocale pour Telegram dans Réglages",
+		@"SPEECH_UNAVAILABLE": @"La reconnaissance vocale n'est pas disponible pour cette langue pour le moment",
+		@"SPEECH_NOTHING": @"Rien n'a été compris",
+		@"SPEECH_LANGUAGE_TITLE": @"Langue de dictée",
 	};
 	if ([code isEqualToString:@"it"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modalità Fantasma",
@@ -608,6 +636,13 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"ARCHIVE_NO_TEXT": @"(testo non acquisito — arrivato prima del tracciamento)",
 		@"ARCHIVE_FROM_ME": @"Tu",
 		@"ARCHIVE_DELETED_NOTE": @"Telegram non indica chi ha eliminato un messaggio; sono mostrati la chat e il mittente.",
+		@"SPEECH_TO_TEXT_TITLE": @"Voce in testo",
+		@"SPEECH_TO_TEXT_SUBTITLE": @"Un microfono sopra il campo di testo nelle chat: tocca e parla, le parole vengono scritte nel campo. Tocca di nuovo o fai una pausa per fermare. Tieni premuto per scegliere la lingua.",
+		@"SPEECH_LISTENING": @"In ascolto…",
+		@"SPEECH_DENIED": @"Consenti a Telegram microfono e riconoscimento vocale in Impostazioni",
+		@"SPEECH_UNAVAILABLE": @"Il riconoscimento vocale non è disponibile ora per questa lingua",
+		@"SPEECH_NOTHING": @"Non ho capito nulla",
+		@"SPEECH_LANGUAGE_TITLE": @"Lingua di dettatura",
 	};
 	if ([code isEqualToString:@"ja"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"ゴーストモード",
@@ -727,6 +762,13 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"ARCHIVE_NO_TEXT": @"(テキスト未取得 — 記録開始前に受信)",
 		@"ARCHIVE_FROM_ME": @"あなた",
 		@"ARCHIVE_DELETED_NOTE": @"Telegramは削除した人を送りません。チャットと送信者を表示します。",
+		@"SPEECH_TO_TEXT_TITLE": @"音声をテキストに",
+		@"SPEECH_TO_TEXT_SUBTITLE": @"チャットの入力欄の上にマイクを表示：タップして話すと、入力欄に文字が入力されます。もう一度タップするか少し黙ると停止します。長押しで言語を選択。",
+		@"SPEECH_LISTENING": @"聞き取り中…",
+		@"SPEECH_DENIED": @"設定で Telegram にマイクと音声認識を許可してください",
+		@"SPEECH_UNAVAILABLE": @"この言語では現在音声認識を利用できません",
+		@"SPEECH_NOTHING": @"聞き取れませんでした",
+		@"SPEECH_LANGUAGE_TITLE": @"音声入力の言語",
 	};
 	if ([code isEqualToString:@"ru"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Режим призрака",
@@ -846,6 +888,13 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"ARCHIVE_NO_TEXT": @"(текст не сохранён — пришло до отслеживания)",
 		@"ARCHIVE_FROM_ME": @"Вы",
 		@"ARCHIVE_DELETED_NOTE": @"Telegram не сообщает, кто удалил сообщение; показаны чат и отправитель.",
+		@"SPEECH_TO_TEXT_TITLE": @"Речь в текст",
+		@"SPEECH_TO_TEXT_SUBTITLE": @"Микрофон над полем ввода в чатах: нажмите и говорите — слова появятся в поле. Нажмите снова или сделайте паузу, чтобы остановить. Долгое нажатие — выбор языка.",
+		@"SPEECH_LISTENING": @"Слушаю…",
+		@"SPEECH_DENIED": @"Разрешите Telegram доступ к микрофону и распознаванию речи в Настройках",
+		@"SPEECH_UNAVAILABLE": @"Распознавание речи сейчас недоступно для этого языка",
+		@"SPEECH_NOTHING": @"Ничего не распознано",
+		@"SPEECH_LANGUAGE_TITLE": @"Язык диктовки",
 	};
 	if ([code isEqualToString:@"es"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modo Fantasma",
@@ -965,6 +1014,13 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"ARCHIVE_NO_TEXT": @"(texto no capturado — llegó antes del seguimiento)",
 		@"ARCHIVE_FROM_ME": @"Tú",
 		@"ARCHIVE_DELETED_NOTE": @"Telegram no indica quién borró un mensaje; se muestran el chat y el remitente.",
+		@"SPEECH_TO_TEXT_TITLE": @"Voz a texto",
+		@"SPEECH_TO_TEXT_SUBTITLE": @"Un micrófono sobre el campo de texto en los chats: toca y habla, y tus palabras se escriben en el campo. Toca de nuevo o haz una pausa para parar. Mantén pulsado para elegir el idioma.",
+		@"SPEECH_LISTENING": @"Escuchando…",
+		@"SPEECH_DENIED": @"Permite a Telegram el micrófono y el reconocimiento de voz en Ajustes",
+		@"SPEECH_UNAVAILABLE": @"El reconocimiento de voz no está disponible ahora para este idioma",
+		@"SPEECH_NOTHING": @"No se entendió nada",
+		@"SPEECH_LANGUAGE_TITLE": @"Idioma de dictado",
 	};
 	if ([code isEqualToString:@"tw"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隱身模式",
@@ -1084,6 +1140,13 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"ARCHIVE_NO_TEXT": @"(未擷取文字 — 在記錄前收到)",
 		@"ARCHIVE_FROM_ME": @"你",
 		@"ARCHIVE_DELETED_NOTE": @"Telegram 不會告知誰刪除了訊息；顯示聊天和原傳送者。",
+		@"SPEECH_TO_TEXT_TITLE": @"語音轉文字",
+		@"SPEECH_TO_TEXT_SUBTITLE": @"聊天輸入框上方的麥克風：點一下後說話，文字會寫入輸入框。再點一次或停頓即可停止。長按選擇語言。",
+		@"SPEECH_LISTENING": @"正在聆聽…",
+		@"SPEECH_DENIED": @"請在設定中允許 Telegram 使用麥克風和語音辨識",
+		@"SPEECH_UNAVAILABLE": @"此語言目前無法使用語音辨識",
+		@"SPEECH_NOTHING": @"沒有辨識到內容",
+		@"SPEECH_LANGUAGE_TITLE": @"聽寫語言",
 	};
 	if ([code isEqualToString:@"vn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Chế độ ma",
@@ -1203,6 +1266,13 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"ARCHIVE_NO_TEXT": @"(chưa lưu nội dung — đến trước khi theo dõi)",
 		@"ARCHIVE_FROM_ME": @"Bạn",
 		@"ARCHIVE_DELETED_NOTE": @"Telegram không cho biết ai đã xóa tin nhắn; hiển thị cuộc trò chuyện và người gửi.",
+		@"SPEECH_TO_TEXT_TITLE": @"Giọng nói thành văn bản",
+		@"SPEECH_TO_TEXT_SUBTITLE": @"Một micro phía trên ô nhập trong cuộc trò chuyện: chạm và nói, lời của bạn sẽ được ghi vào ô. Chạm lại hoặc ngừng nói để dừng. Nhấn giữ để chọn ngôn ngữ.",
+		@"SPEECH_LISTENING": @"Đang nghe…",
+		@"SPEECH_DENIED": @"Hãy cho phép Telegram dùng micro và nhận dạng giọng nói trong Cài đặt",
+		@"SPEECH_UNAVAILABLE": @"Nhận dạng giọng nói hiện không khả dụng cho ngôn ngữ này",
+		@"SPEECH_NOTHING": @"Không nghe được gì",
+		@"SPEECH_LANGUAGE_TITLE": @"Ngôn ngữ đọc chính tả",
 	};
 	return nil;
 }

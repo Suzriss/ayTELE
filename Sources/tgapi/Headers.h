@@ -3,6 +3,9 @@
 #import "Logger/Logger.h"
 #import "Constants.h"
 
+// Short self-dismissing message at the bottom of the key window (DeletedBadge.xm).
+void AYPresentToast(NSString *message);
+
 @interface TLParser : NSObject
 + (NSData *)handleResponse:(NSData *)data functionID:(NSNumber *)ios;
 @end

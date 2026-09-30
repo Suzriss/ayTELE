@@ -162,3 +162,11 @@
 "ARCHIVE_NO_TEXT" = "(未捕获文本 — 在记录前收到)";
 "ARCHIVE_FROM_ME" = "你";
 "ARCHIVE_DELETED_NOTE" = "Telegram 不会告知谁删除了消息；显示聊天和原发送者。";
+/* Speech to text */
+"SPEECH_TO_TEXT_TITLE" = "语音转文字";
+"SPEECH_TO_TEXT_SUBTITLE" = "聊天输入框上方的麦克风：点击后说话，文字会写入输入框。再次点击或停顿即可停止。长按选择语言。";
+"SPEECH_LISTENING" = "正在聆听…";
+"SPEECH_DENIED" = "请在设置中允许 Telegram 使用麦克风和语音识别";
+"SPEECH_UNAVAILABLE" = "此语言当前无法使用语音识别";
+"SPEECH_NOTHING" = "没有识别到内容";
+"SPEECH_LANGUAGE_TITLE" = "听写语言";

@@ -77,3 +77,7 @@
 
 // Double-tap a message bubble to copy its text (opt-in; overrides Telegram's quick-react).
 #define kDoubleTapCopy @"ayTELEDoubleTapCopy"
+
+// Mic button above the chat text field: dictate with Apple speech recognition into the field.
+#define kSpeechToText @"ayTELESpeechToText"
+#define kSpeechLocale @"ayTELESpeechLocale"

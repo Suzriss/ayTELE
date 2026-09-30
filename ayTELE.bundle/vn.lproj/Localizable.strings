@@ -161,3 +161,11 @@
 "ARCHIVE_NO_TEXT" = "(chưa lưu nội dung — đến trước khi theo dõi)";
 "ARCHIVE_FROM_ME" = "Bạn";
 "ARCHIVE_DELETED_NOTE" = "Telegram không cho biết ai đã xóa tin nhắn; hiển thị cuộc trò chuyện và người gửi.";
+/* Speech to text */
+"SPEECH_TO_TEXT_TITLE" = "Giọng nói thành văn bản";
+"SPEECH_TO_TEXT_SUBTITLE" = "Một micro phía trên ô nhập trong cuộc trò chuyện: chạm và nói, lời của bạn sẽ được ghi vào ô. Chạm lại hoặc ngừng nói để dừng. Nhấn giữ để chọn ngôn ngữ.";
+"SPEECH_LISTENING" = "Đang nghe…";
+"SPEECH_DENIED" = "Hãy cho phép Telegram dùng micro và nhận dạng giọng nói trong Cài đặt";
+"SPEECH_UNAVAILABLE" = "Nhận dạng giọng nói hiện không khả dụng cho ngôn ngữ này";
+"SPEECH_NOTHING" = "Không nghe được gì";
+"SPEECH_LANGUAGE_TITLE" = "Ngôn ngữ đọc chính tả";

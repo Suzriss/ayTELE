@@ -336,6 +336,8 @@ static void presentToast(NSString *message) {
 	}];
 }
 
+void AYPresentToast(NSString *message) { presentToast(message); }
+
 // Sends the held read receipt for key, or explains that none is held.
 static void revealReceipt(NSString *key) {
 	if (![AYReceiptQueue hasHeldForKey:key]) {

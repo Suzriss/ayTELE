@@ -159,3 +159,11 @@
 "ARCHIVE_NO_TEXT" = "(texte non capturé — reçu avant le suivi)";
 "ARCHIVE_FROM_ME" = "Vous";
 "ARCHIVE_DELETED_NOTE" = "Telegram n'indique pas qui a supprimé un message ; la discussion et l'expéditeur sont affichés.";
+/* Speech to text */
+"SPEECH_TO_TEXT_TITLE" = "Voix en texte";
+"SPEECH_TO_TEXT_SUBTITLE" = "Un micro au-dessus du champ de saisie dans les discussions : touchez et parlez, vos mots s'écrivent dans le champ. Touchez à nouveau ou faites une pause pour arrêter. Appui long pour choisir la langue.";
+"SPEECH_LISTENING" = "Écoute…";
+"SPEECH_DENIED" = "Autorisez le micro et la reconnaissance vocale pour Telegram dans Réglages";
+"SPEECH_UNAVAILABLE" = "La reconnaissance vocale n'est pas disponible pour cette langue pour le moment";
+"SPEECH_NOTHING" = "Rien n'a été compris";
+"SPEECH_LANGUAGE_TITLE" = "Langue de dictée";

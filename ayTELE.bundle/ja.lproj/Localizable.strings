@@ -161,3 +161,11 @@
 "ARCHIVE_NO_TEXT" = "(テキスト未取得 — 記録開始前に受信)";
 "ARCHIVE_FROM_ME" = "あなた";
 "ARCHIVE_DELETED_NOTE" = "Telegramは削除した人を送りません。チャットと送信者を表示します。";
+/* Speech to text */
+"SPEECH_TO_TEXT_TITLE" = "音声をテキストに";
+"SPEECH_TO_TEXT_SUBTITLE" = "チャットの入力欄の上にマイクを表示：タップして話すと、入力欄に文字が入力されます。もう一度タップするか少し黙ると停止します。長押しで言語を選択。";
+"SPEECH_LISTENING" = "聞き取り中…";
+"SPEECH_DENIED" = "設定で Telegram にマイクと音声認識を許可してください";
+"SPEECH_UNAVAILABLE" = "この言語では現在音声認識を利用できません";
+"SPEECH_NOTHING" = "聞き取れませんでした";
+"SPEECH_LANGUAGE_TITLE" = "音声入力の言語";
