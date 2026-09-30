@@ -479,7 +479,6 @@ static NSString *findVideoFileWithSize(long long size) {
 	NSFileManager *fm = [NSFileManager defaultManager];
 	for (NSString *dir in postboxMediaDirs()) {
 		NSDirectoryEnumerator *en = [fm enumeratorAtPath:dir];
-		en.skipsSubdirectoryDescendants = NO;
 		NSString *rel;
 		int checked = 0;
 		for (rel in en) {
