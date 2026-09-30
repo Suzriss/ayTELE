@@ -170,3 +170,6 @@
 "SPEECH_UNAVAILABLE" = "此语言当前无法使用语音识别";
 "SPEECH_NOTHING" = "没有识别到内容";
 "SPEECH_LANGUAGE_TITLE" = "听写语言";
+"EYE_CHAT_UNKNOWN" = "无法识别当前聊天";
+"EYE_CHAT_SEEN" = "👁️ 此聊天现在会发送已读";
+"EYE_CHAT_HIDDEN" = "🙈 此聊天的已读保持隐藏";

@@ -171,3 +171,6 @@
 "SPEECH_UNAVAILABLE" = "El reconocimiento de voz no está disponible ahora para este idioma";
 "SPEECH_NOTHING" = "No se entendió nada";
 "SPEECH_LANGUAGE_TITLE" = "Idioma de dictado";
+"EYE_CHAT_UNKNOWN" = "El ojo no sabe qué chat es este";
+"EYE_CHAT_SEEN" = "👁️ Aquí ahora se envían las lecturas";
+"EYE_CHAT_HIDDEN" = "🙈 Aquí las lecturas quedan ocultas";

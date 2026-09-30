@@ -171,3 +171,6 @@
 "SPEECH_UNAVAILABLE" = "Il riconoscimento vocale non è disponibile ora per questa lingua";
 "SPEECH_NOTHING" = "Non ho capito nulla";
 "SPEECH_LANGUAGE_TITLE" = "Lingua di dettatura";
+"EYE_CHAT_UNKNOWN" = "L'occhio non riconosce questa chat";
+"EYE_CHAT_SEEN" = "👁️ Qui le letture ora vengono inviate";
+"EYE_CHAT_HIDDEN" = "🙈 Qui le letture restano nascoste";

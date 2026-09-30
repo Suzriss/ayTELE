@@ -40,6 +40,21 @@ class AYReceipts: NSObject {
 		}
 	}
 
+	// Chats where read receipts go through even while blocking is on (the eye turned red).
+	private static let allowedDefaultsKey = "ayTELEReceiptsAllowedChats"
+
+	@objc static func isAllowed(key: String?) -> Bool {
+		guard let key = key else { return false }
+		return (UserDefaults.standard.stringArray(forKey: allowedDefaultsKey) ?? []).contains(key)
+	}
+
+	@objc static func setAllowed(_ allowed: Bool, key: String) {
+		var keys = UserDefaults.standard.stringArray(forKey: allowedDefaultsKey) ?? []
+		keys.removeAll { $0 == key }
+		if allowed { keys.append(key) }
+		UserDefaults.standard.set(keys, forKey: allowedDefaultsKey)
+	}
+
 	// Held-receipt key of the peer whose stories a StoryItemSetContainerComponent.View shows:
 	// view.component.slice.peer (EnginePeer) -> ... -> PeerId. nil if the shape changed.
 	@objc static func storyKey(view: NSObject) -> String? {

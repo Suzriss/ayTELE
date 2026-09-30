@@ -145,8 +145,16 @@ void handleSetTyping(MTRequest *request, NSData *payload) {
 	}
 }
 
+// YES when read receipts are blocked and this chat hasn't been switched to "seen" (red eye).
+static BOOL blocksReadReceipt(NSData *payload) {
+	if (![[NSUserDefaults standardUserDefaults] boolForKey:kDisableMessageReadReceipt]) return NO;
+	NSString *key = nil;
+	@try { key = [AYReceipts peerKeyWithPayload:payload]; } @catch (NSException *exception) {}
+	return ![AYReceipts isAllowedWithKey:key];
+}
+
 void handleMessageReadReceipt(MTRequest *request, NSData *payload) {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:kDisableMessageReadReceipt]) {
+	if (blocksReadReceipt(payload)) {
 		
 		 uint8_t header[] = {0x85, 0x91, 0xD1, 0x84}; // messages.affectedMessages#84d19185
 		 int32_t pts = 0;
@@ -212,7 +220,7 @@ void handleGetSponsoredMessages(MTRequest *request, NSData *payload) {
 }
 
 void handleChannelsReadReceipt(MTRequest *request, NSData *payload) {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:kDisableMessageReadReceipt]) {
+	if (blocksReadReceipt(payload)) {
 		request.fakeData = boolTrue();
 	}
 }

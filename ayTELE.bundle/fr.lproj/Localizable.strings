@@ -167,3 +167,6 @@
 "SPEECH_UNAVAILABLE" = "La reconnaissance vocale n'est pas disponible pour cette langue pour le moment";
 "SPEECH_NOTHING" = "Rien n'a été compris";
 "SPEECH_LANGUAGE_TITLE" = "Langue de dictée";
+"EYE_CHAT_UNKNOWN" = "L'œil ne reconnaît pas cette discussion";
+"EYE_CHAT_SEEN" = "👁️ Les lectures sont envoyées ici";
+"EYE_CHAT_HIDDEN" = "🙈 Les lectures restent cachées ici";

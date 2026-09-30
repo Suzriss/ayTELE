@@ -169,3 +169,6 @@
 "SPEECH_UNAVAILABLE" = "Nhận dạng giọng nói hiện không khả dụng cho ngôn ngữ này";
 "SPEECH_NOTHING" = "Không nghe được gì";
 "SPEECH_LANGUAGE_TITLE" = "Ngôn ngữ đọc chính tả";
+"EYE_CHAT_UNKNOWN" = "Không xác định được cuộc trò chuyện này";
+"EYE_CHAT_SEEN" = "👁️ Đã xem ở đây giờ sẽ được gửi";
+"EYE_CHAT_HIDDEN" = "🙈 Đã xem ở đây được ẩn";

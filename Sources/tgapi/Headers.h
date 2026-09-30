@@ -91,6 +91,8 @@ void AYPresentToast(NSString *message);
 + (NSString *)peerKeyWithNode:(NSObject *)node;
 + (NSString *)storyKeyWithView:(NSObject *)view;
 + (NSString *)chatKeyWithController:(NSObject *)controller;
++ (BOOL)isAllowedWithKey:(NSString *)key;
++ (void)setAllowed:(BOOL)allowed key:(NSString *)key;
 @end
 
 // Posted on the main queue whenever a receipt is held or revealed.

@@ -107,15 +107,13 @@
 		if (!AYProtected.isEnabled) {
 			return responseParser(inputData);
 		}
-		NSNumber *functionIDNumber = [NSNumber numberWithUnsignedInt:functionID];
-		NSData *fuck = [TLParser handleResponse:inputData functionID:functionIDNumber];
-		id result;
-		if (fuck) {
-			result = responseParser(fuck);
-		} else {
-			result = responseParser(inputData);
+		NSData *filtered = nil;
+		@try {
+			filtered = [AYProtected filter:inputData];
+		} @catch (NSException *exception) {
+			customLog2(@"Protected content filter failed: %@", exception);
 		}
-		return result;
+		return responseParser(filtered ?: inputData);
 	};
 	
 	if (!self.ayBypass.boolValue) switch (functionID) {

@@ -141,6 +141,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SPEECH_UNAVAILABLE": @"التعرّف على الكلام مو متوفر هسه لهاي اللغة",
 		@"SPEECH_NOTHING": @"ما سمعت شي",
 		@"SPEECH_LANGUAGE_TITLE": @"لغة الإملاء",
+		@"EYE_CHAT_UNKNOWN": @"العين ما عرفت هاي أي محادثة",
+		@"EYE_CHAT_SEEN": @"👁️ القراءة هنا صارت تنشاف",
+		@"EYE_CHAT_HIDDEN": @"🙈 القراءة هنا مخفية",
 	};
 	if ([code isEqualToString:@"cn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隐身模式",
@@ -266,6 +269,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SPEECH_UNAVAILABLE": @"此语言当前无法使用语音识别",
 		@"SPEECH_NOTHING": @"没有识别到内容",
 		@"SPEECH_LANGUAGE_TITLE": @"听写语言",
+		@"EYE_CHAT_UNKNOWN": @"无法识别当前聊天",
+		@"EYE_CHAT_SEEN": @"👁️ 此聊天现在会发送已读",
+		@"EYE_CHAT_HIDDEN": @"🙈 此聊天的已读保持隐藏",
 	};
 	if ([code isEqualToString:@"en"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Ghost Mode",
@@ -392,6 +398,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SPEECH_UNAVAILABLE": @"Speech recognition isn't available right now for this language",
 		@"SPEECH_NOTHING": @"Didn't catch anything",
 		@"SPEECH_LANGUAGE_TITLE": @"Dictation Language",
+		@"EYE_CHAT_UNKNOWN": @"The eye can't tell which chat this is",
+		@"EYE_CHAT_SEEN": @"👁️ Reads here are sent now",
+		@"EYE_CHAT_HIDDEN": @"🙈 Reads here stay hidden",
 	};
 	if ([code isEqualToString:@"fr"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Mode Fantôme",
@@ -517,6 +526,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SPEECH_UNAVAILABLE": @"La reconnaissance vocale n'est pas disponible pour cette langue pour le moment",
 		@"SPEECH_NOTHING": @"Rien n'a été compris",
 		@"SPEECH_LANGUAGE_TITLE": @"Langue de dictée",
+		@"EYE_CHAT_UNKNOWN": @"L'œil ne reconnaît pas cette discussion",
+		@"EYE_CHAT_SEEN": @"👁️ Les lectures sont envoyées ici",
+		@"EYE_CHAT_HIDDEN": @"🙈 Les lectures restent cachées ici",
 	};
 	if ([code isEqualToString:@"it"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modalità Fantasma",
@@ -643,6 +655,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SPEECH_UNAVAILABLE": @"Il riconoscimento vocale non è disponibile ora per questa lingua",
 		@"SPEECH_NOTHING": @"Non ho capito nulla",
 		@"SPEECH_LANGUAGE_TITLE": @"Lingua di dettatura",
+		@"EYE_CHAT_UNKNOWN": @"L'occhio non riconosce questa chat",
+		@"EYE_CHAT_SEEN": @"👁️ Qui le letture ora vengono inviate",
+		@"EYE_CHAT_HIDDEN": @"🙈 Qui le letture restano nascoste",
 	};
 	if ([code isEqualToString:@"ja"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"ゴーストモード",
@@ -769,6 +784,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SPEECH_UNAVAILABLE": @"この言語では現在音声認識を利用できません",
 		@"SPEECH_NOTHING": @"聞き取れませんでした",
 		@"SPEECH_LANGUAGE_TITLE": @"音声入力の言語",
+		@"EYE_CHAT_UNKNOWN": @"このチャットを判別できません",
+		@"EYE_CHAT_SEEN": @"👁️ このチャットでは既読が送信されます",
+		@"EYE_CHAT_HIDDEN": @"🙈 このチャットでは既読を隠します",
 	};
 	if ([code isEqualToString:@"ru"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Режим призрака",
@@ -895,6 +913,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SPEECH_UNAVAILABLE": @"Распознавание речи сейчас недоступно для этого языка",
 		@"SPEECH_NOTHING": @"Ничего не распознано",
 		@"SPEECH_LANGUAGE_TITLE": @"Язык диктовки",
+		@"EYE_CHAT_UNKNOWN": @"Не удалось определить этот чат",
+		@"EYE_CHAT_SEEN": @"👁️ Здесь прочтение теперь видно",
+		@"EYE_CHAT_HIDDEN": @"🙈 Здесь прочтение скрыто",
 	};
 	if ([code isEqualToString:@"es"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modo Fantasma",
@@ -1021,6 +1042,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SPEECH_UNAVAILABLE": @"El reconocimiento de voz no está disponible ahora para este idioma",
 		@"SPEECH_NOTHING": @"No se entendió nada",
 		@"SPEECH_LANGUAGE_TITLE": @"Idioma de dictado",
+		@"EYE_CHAT_UNKNOWN": @"El ojo no sabe qué chat es este",
+		@"EYE_CHAT_SEEN": @"👁️ Aquí ahora se envían las lecturas",
+		@"EYE_CHAT_HIDDEN": @"🙈 Aquí las lecturas quedan ocultas",
 	};
 	if ([code isEqualToString:@"tw"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隱身模式",
@@ -1147,6 +1171,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SPEECH_UNAVAILABLE": @"此語言目前無法使用語音辨識",
 		@"SPEECH_NOTHING": @"沒有辨識到內容",
 		@"SPEECH_LANGUAGE_TITLE": @"聽寫語言",
+		@"EYE_CHAT_UNKNOWN": @"無法識別目前聊天",
+		@"EYE_CHAT_SEEN": @"👁️ 此聊天現在會傳送已讀",
+		@"EYE_CHAT_HIDDEN": @"🙈 此聊天的已讀保持隱藏",
 	};
 	if ([code isEqualToString:@"vn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Chế độ ma",
@@ -1273,6 +1300,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SPEECH_UNAVAILABLE": @"Nhận dạng giọng nói hiện không khả dụng cho ngôn ngữ này",
 		@"SPEECH_NOTHING": @"Không nghe được gì",
 		@"SPEECH_LANGUAGE_TITLE": @"Ngôn ngữ đọc chính tả",
+		@"EYE_CHAT_UNKNOWN": @"Không xác định được cuộc trò chuyện này",
+		@"EYE_CHAT_SEEN": @"👁️ Đã xem ở đây giờ sẽ được gửi",
+		@"EYE_CHAT_HIDDEN": @"🙈 Đã xem ở đây được ẩn",
 	};
 	return nil;
 }

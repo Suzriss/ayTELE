@@ -238,5 +238,84 @@ do {
 	expect("deleted archive: private \(row2)", row2 == ["u:71", "hi", "Ali Hasan", "Ali Hasan"])
 }
 
+// AYTLWalker on layer-229 bytes (the constructors Telegram 12.9.4 really sends).
+do {
+	let schema = AYTLSchema.shared
+	// Encodes a constructor from the embedded schema. Values: UInt32 for flags, Int32, Int64,
+	// String, Data (an already-encoded boxed object) or [Data] (a boxed vector of them).
+	func tl(_ name: String, _ values: [String: Any] = [:]) -> Data {
+		guard let id = schema.id(of: name), let c = schema.constructors[id] else { fatalError("no constructor \(name)") }
+		var out = Data()
+		func u32(_ v: UInt32) { withUnsafeBytes(of: v.littleEndian) { out.append(contentsOf: $0) } }
+		u32(id)
+		var flags: [Int: UInt32] = [:]
+		for (i, field) in c.fields.enumerated() {
+			if let cond = field.condition, (flags[cond.flags] ?? 0) & (1 << UInt32(cond.bit)) == 0 { continue }
+			let v = values[field.name]
+			switch field.type {
+			case .flags: let f = v as? UInt32 ?? 0; flags[i] = f; u32(f)
+			case .int: u32(UInt32(bitPattern: v as? Int32 ?? 0))
+			case .long: withUnsafeBytes(of: (v as? Int64 ?? 0).littleEndian) { out.append(contentsOf: $0) }
+			case .bytes:
+				let b = Data((v as? String ?? "").utf8)
+				precondition(b.count < 254)
+				out.append(UInt8(b.count)); out.append(b)
+				while out.count % 4 != 0 { out.append(0) }
+			case .bareTrue: break
+			case .vector:
+				u32(0x1cb5c415)
+				let items = v as? [Data] ?? []
+				u32(UInt32(items.count)); items.forEach { out.append($0) }
+			case .boxed, .bare:
+				guard let d = v as? Data else { fatalError("\(name).\(field.name) needs a value") }
+				out.append(d)
+			}
+		}
+		return out
+	}
+	func filtered(_ d: Data) -> Data? { AYProtected.filter(d as NSData).map { $0 as Data } }
+	let peer = tl("peerUser", ["user_id": Int64(7)])
+	func message(_ flags: UInt32, media: Data? = nil) -> Data {
+		var v: [String: Any] = ["flags": flags | (media == nil ? 0 : 1 << 9), "id": Int32(3), "peer_id": peer, "date": Int32(1), "message": "hi"]
+		if let media = media { v["media"] = media }
+		return tl("message", v)
+	}
+	func pushed(_ update: Data) -> Data { tl("updates", ["updates": [update], "date": Int32(1), "seq": Int32(1)]) }
+	func newMessage(_ m: Data) -> Data { pushed(tl("updateNewMessage", ["message": m, "pts": Int32(1), "pts_count": Int32(1)])) }
+	func photo(_ flags: UInt32, ttl: Int32? = nil) -> Data {
+		var v: [String: Any] = ["flags": flags, "photo": tl("photoEmpty", ["id": Int64(1)])]
+		if let ttl = ttl { v["ttl_seconds"] = ttl }
+		return tl("messageMediaPhoto", v)
+	}
+	func story(_ flags: UInt32) -> Data { pushed(tl("updateStory", ["peer": peer, "story": tl("storyItem", ["flags": flags, "id": Int32(5), "media": tl("messageMediaEmpty")])])) }
+	func userFull(_ flags2: UInt32) -> Data {
+		tl("users.userFull", ["full_user": tl("userFull", ["flags2": flags2, "id": Int64(7), "settings": tl("peerSettings"), "notify_settings": tl("peerNotifySettings")])])
+	}
+	let d = UserDefaults.standard
+
+	d.set(false, forKey: "disableForwardRestriction"); d.set(false, forKey: "keepViewOnceMedia")
+	expect("walker: off -> untouched", filtered(newMessage(message(1 << 26))) == nil)
+
+	d.set(true, forKey: "disableForwardRestriction")
+	expect("walker: message noforwards dropped", filtered(newMessage(message(1 << 26 | 1 << 1))) == newMessage(message(1 << 1)))
+	expect("walker: plain message untouched", filtered(newMessage(message(1 << 1))) == nil)
+	expect("walker: story noforwards dropped", filtered(story(1 << 10 | 1 << 5)) == story(1 << 5))
+	expect("walker: userFull protection dropped", filtered(userFull(1 << 23 | 1 << 24 | 1 << 7)) == userFull(1 << 7))
+	expect("walker: updateShort wrapper", filtered(tl("updateShort", ["update": tl("updateNewMessage", ["message": message(1 << 26), "pts": Int32(1), "pts_count": Int32(1)]), "date": Int32(2)]))
+		== tl("updateShort", ["update": tl("updateNewMessage", ["message": message(0), "pts": Int32(1), "pts_count": Int32(1)]), "date": Int32(2)]))
+	expect("walker: ttl kept without view-once toggle", filtered(newMessage(message(0, media: photo(1 << 0 | 1 << 2, ttl: 10)))) == nil)
+	var trailing = newMessage(message(1 << 26)); trailing.append(contentsOf: [0, 0, 0, 0])
+	expect("walker: trailing bytes -> left alone", filtered(trailing) == nil)
+	expect("walker: unknown constructor -> left alone", filtered(Data([0xef, 0xbe, 0xad, 0xde, 1, 2, 3, 4])) == nil)
+	let truncated = newMessage(message(1 << 26)).dropLast(4)
+	expect("walker: truncated -> left alone", filtered(Data(truncated)) == nil)
+
+	d.set(false, forKey: "disableForwardRestriction"); d.set(true, forKey: "keepViewOnceMedia")
+	expect("walker: photo ttl dropped", filtered(newMessage(message(0, media: photo(1 << 0 | 1 << 2, ttl: 10)))) == newMessage(message(0, media: photo(1 << 0))))
+	expect("walker: expired placeholder untouched", filtered(newMessage(message(0, media: tl("messageMediaPhoto", ["flags": UInt32(1 << 2), "ttl_seconds": Int32(10)])))) == nil)
+	expect("walker: message kept protected without save toggle", filtered(newMessage(message(1 << 26))) == nil)
+	d.set(false, forKey: "keepViewOnceMedia")
+}
+
 print(failures == 0 ? "ALL PASS" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

@@ -399,22 +399,22 @@ static NSString *const kChatEyePositionKey = @"ayTELEChatEyePosition";
 static const void *kChatEyeKey = &kChatEyeKey;
 static NSHashTable<UIButton *> *chatEyes;
 
-static NSString *chatEyeKey(UIButton *eye) {
-	// The eye sits on the controller's root view, whose next responder is the controller.
+// The chat this eye belongs to, without guessing: toggling must never hit another chat.
+static NSString *exactChatEyeKey(UIButton *eye) {
 	NSObject *controller = eye.superview.nextResponder;
-	if (![controller isKindOfClass:[UIViewController class]]) controller = nil;
-	NSString *key = nil;
-	if (controller) {
-		@try { key = [AYReceipts chatKeyWithController:controller]; } @catch (NSException *e) {}
-	}
-	return key ?: [AYReceiptQueue latestChatKey]; // only when reflection can't name the chat
+	if (![controller isKindOfClass:[UIViewController class]]) return nil;
+	@try { return [AYReceipts chatKeyWithController:controller]; } @catch (NSException *e) { return nil; }
 }
 
-// Dim when nothing is held for this chat; full when there is a receipt to reveal.
+// Green eye with a slash: reads in this chat stay hidden. Red open eye: reads are sent.
 static void refreshChatEye(UIButton *eye) {
 	if (!eye.superview) return;
 	eye.hidden = ![[NSUserDefaults standardUserDefaults] boolForKey:kDisableMessageReadReceipt];
-	eye.alpha = [AYReceiptQueue hasHeldForKey:chatEyeKey(eye)] ? 1.0 : 0.45;
+	BOOL seen = [AYReceipts isAllowedWithKey:exactChatEyeKey(eye)];
+	UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:16 weight:UIImageSymbolWeightSemibold];
+	[eye setImage:[UIImage systemImageNamed:seen ? @"eye.fill" : @"eye.slash.fill" withConfiguration:config] forState:UIControlStateNormal];
+	eye.backgroundColor = seen ? [UIColor colorWithRed:0.92 green:0.23 blue:0.21 alpha:0.92] : [UIColor colorWithRed:0.18 green:0.72 blue:0.35 alpha:0.92];
+	eye.alpha = 1.0;
 	[eye.superview bringSubviewToFront:eye];
 }
 
@@ -436,7 +436,23 @@ static void placeChatEye(UIButton *eye) {
 @end
 @implementation AYChatEyeHandler
 + (void)tapped:(UIButton *)sender {
-	revealReceipt(chatEyeKey(sender));
+	NSString *key = exactChatEyeKey(sender);
+	if (!key) {
+		presentToast([ayTELELocalization localizedStringForKey:@"EYE_CHAT_UNKNOWN"]);
+		return;
+	}
+	BOOL seen = ![AYReceipts isAllowedWithKey:key];
+	[AYReceipts setAllowed:seen key:key];
+	refreshChatEye(sender);
+	[[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight] impactOccurred];
+	if (seen && [AYReceiptQueue hasHeldForKey:key]) {
+		// Send what was held back, so the chat shows as read right away.
+		[AYReceiptQueue revealKey:key completion:^(BOOL ok) {
+			presentToast([ayTELELocalization localizedStringForKey:ok ? @"EYE_CHAT_SEEN" : @"REVEAL_READ_FAILED"]);
+		}];
+	} else {
+		presentToast([ayTELELocalization localizedStringForKey:seen ? @"EYE_CHAT_SEEN" : @"EYE_CHAT_HIDDEN"]);
+	}
 }
 + (void)dragged:(UIPanGestureRecognizer *)pan {
 	UIView *eye = pan.view;

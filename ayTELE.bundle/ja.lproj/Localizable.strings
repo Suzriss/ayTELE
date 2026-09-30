@@ -169,3 +169,6 @@
 "SPEECH_UNAVAILABLE" = "この言語では現在音声認識を利用できません";
 "SPEECH_NOTHING" = "聞き取れませんでした";
 "SPEECH_LANGUAGE_TITLE" = "音声入力の言語";
+"EYE_CHAT_UNKNOWN" = "このチャットを判別できません";
+"EYE_CHAT_SEEN" = "👁️ このチャットでは既読が送信されます";
+"EYE_CHAT_HIDDEN" = "🙈 このチャットでは既読を隠します";

@@ -167,3 +167,6 @@
 "SPEECH_UNAVAILABLE" = "التعرّف على الكلام مو متوفر هسه لهاي اللغة";
 "SPEECH_NOTHING" = "ما سمعت شي";
 "SPEECH_LANGUAGE_TITLE" = "لغة الإملاء";
+"EYE_CHAT_UNKNOWN" = "العين ما عرفت هاي أي محادثة";
+"EYE_CHAT_SEEN" = "👁️ القراءة هنا صارت تنشاف";
+"EYE_CHAT_HIDDEN" = "🙈 القراءة هنا مخفية";

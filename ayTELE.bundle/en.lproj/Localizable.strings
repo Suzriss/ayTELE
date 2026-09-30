@@ -169,3 +169,6 @@
 "SPEECH_UNAVAILABLE" = "Speech recognition isn't available right now for this language";
 "SPEECH_NOTHING" = "Didn't catch anything";
 "SPEECH_LANGUAGE_TITLE" = "Dictation Language";
+"EYE_CHAT_UNKNOWN" = "The eye can't tell which chat this is";
+"EYE_CHAT_SEEN" = "👁️ Reads here are sent now";
+"EYE_CHAT_HIDDEN" = "🙈 Reads here stay hidden";
