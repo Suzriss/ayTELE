@@ -336,6 +336,13 @@ static void updateSpeechButton(UITextView *textView) {
 	if ([AYSpeechInput shared].button == button) [[AYSpeechInput shared] relayoutLive];
 }
 
+void AYUpdateVoiceFileButton(UITextView *textView, Class chatControllerClass); // VoiceFile.xm
+
+static void updateInputButtons(UITextView *textView) {
+	updateSpeechButton(textView);
+	AYUpdateVoiceFileButton(textView, chatControllerClass);
+}
+
 // The input panel moves with the keyboard without re-laying out the text view, so follow it
 // frame by frame for a short while after keyboard changes instead of polling all the time.
 @interface AYSpeechFollower : NSObject
@@ -359,7 +366,7 @@ static void updateSpeechButton(UITextView *textView) {
 }
 - (void)tick:(CADisplayLink *)link {
 	for (UITextView *textView in speechTextViews.allObjects) {
-		if (textView.window) updateSpeechButton(textView);
+		if (textView.window) updateInputButtons(textView);
 	}
 	if (CACurrentMediaTime() > self.until) {
 		[self.link invalidate];
@@ -372,12 +379,14 @@ static void updateSpeechButton(UITextView *textView) {
 %hook ChatInputTextView
 - (void)didMoveToWindow {
 	%orig;
-	updateSpeechButton((UITextView *)self);
-	if (((UITextView *)self).window) [[AYSpeechFollower shared] followFor:0.6];
+	UITextView *textView = (UITextView *)self;
+	if (textView.window) [speechTextViews addObject:textView];
+	updateInputButtons(textView);
+	if (textView.window) [[AYSpeechFollower shared] followFor:0.6];
 }
 - (void)layoutSubviews {
 	%orig;
-	updateSpeechButton((UITextView *)self);
+	updateInputButtons((UITextView *)self);
 }
 %end
 %end

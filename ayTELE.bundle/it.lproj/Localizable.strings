@@ -174,3 +174,12 @@
 "EYE_CHAT_UNKNOWN" = "L'occhio non riconosce questa chat";
 "EYE_CHAT_SEEN" = "👁️ Qui le letture ora vengono inviate";
 "EYE_CHAT_HIDDEN" = "🙈 Qui le letture restano nascoste";
+"VOICE_FILE_TITLE" = "Vocale da file";
+"VOICE_FILE_SUBTITLE" = "Una freccia sopra il campo di testo: scegli un audio o un video, poi registra col microfono di Telegram. Parte l'audio del file al posto della tua voce.";
+"VOICE_FILE_HOWTO" = "Scegli un file, poi tieni premuto il microfono di Telegram (o bloccalo): il file parte come vocale.";
+"VOICE_FILE_FROM_FILES" = "📁 Da File";
+"VOICE_FILE_FROM_PHOTOS" = "🖼️ Da Foto (video)";
+"VOICE_FILE_AGAIN" = "🔁 Stesso file di nuovo";
+"VOICE_FILE_DISARM" = "Annulla il file pronto";
+"VOICE_FILE_READY" = "✅ Pronto — registra col microfono e invia";
+"VOICE_FILE_INSERTED" = "🎙️ File inserito nella registrazione — rilascia per inviare";

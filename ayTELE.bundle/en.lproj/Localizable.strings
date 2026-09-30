@@ -172,3 +172,12 @@
 "EYE_CHAT_UNKNOWN" = "The eye can't tell which chat this is";
 "EYE_CHAT_SEEN" = "👁️ Reads here are sent now";
 "EYE_CHAT_HIDDEN" = "🙈 Reads here stay hidden";
+"VOICE_FILE_TITLE" = "Voice from File";
+"VOICE_FILE_SUBTITLE" = "An arrow above the text field in chats: pick an audio or video, then record with Telegram's mic as usual. The file's audio goes out as the voice message instead of your voice.";
+"VOICE_FILE_HOWTO" = "Pick a file, then hold Telegram's mic (or lock it) — the file is sent as your voice message.";
+"VOICE_FILE_FROM_FILES" = "📁 From Files";
+"VOICE_FILE_FROM_PHOTOS" = "🖼️ From Photos (video)";
+"VOICE_FILE_AGAIN" = "🔁 Same file again";
+"VOICE_FILE_DISARM" = "Cancel the ready file";
+"VOICE_FILE_READY" = "✅ Ready — now record with the mic and send";
+"VOICE_FILE_INSERTED" = "🎙️ File inserted into the recording — release to send";

@@ -31,11 +31,17 @@
 // documentAttributeAudio waveform field. Any failure returns a non-nil error.
 + (void)convertURL:(NSURL *)url
         completion:(void (^)(NSData *oggOpusData, NSTimeInterval duration, NSData *waveform, NSError *error))completion;
++ (void)decodeURL:(NSURL *)url completion:(void (^)(NSData *pcm, NSError *error))completion;
++ (BOOL)writePCM:(NSData *)pcm toWriter:(TGOggOpusWriter *)writer;
 @end
 
 // Telegram voice messages are 48 kHz mono Opus.
 static const double kAYVoiceSampleRate = 48000.0;
 static const int kAYWaveformBars = 100;
+#define kAYVoiceFrameSamples 960
+
+// Marks writers that are ours, so the voice-file hook never feeds them a file.
+const void *AYVoiceOwnWriterKey = &AYVoiceOwnWriterKey;
 
 @implementation AYVoiceConverter
 
@@ -55,28 +61,20 @@ static const int kAYWaveformBars = 100;
 	});
 }
 
-+ (void)performConversion:(NSURL *)url finish:(void (^)(NSData *, NSTimeInterval, NSData *, NSError *))finish {
-	Class writerClass = objc_getClass("TGOggOpusWriter");
-	Class dataItemClass = objc_getClass("TGDataItem");
-	if (!writerClass || !dataItemClass) {
-		finish(nil, 0, nil, [self errorWithReason:@"Opus encoder unavailable"]);
-		return;
-	}
-
+// Decodes the first audio track of url to 48 kHz mono 16-bit PCM.
++ (NSData *)decodePCMFromURL:(NSURL *)url error:(NSError **)error {
 	AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:nil];
 	AVAssetTrack *track = [asset tracksWithMediaType:AVMediaTypeAudio].firstObject;
 	if (!track) {
-		finish(nil, 0, nil, [self errorWithReason:@"No audio track in file"]);
-		return;
+		*error = [self errorWithReason:@"No audio track in file"];
+		return nil;
 	}
-
 	NSError *readerError = nil;
 	AVAssetReader *reader = [AVAssetReader assetReaderWithAsset:asset error:&readerError];
 	if (!reader) {
-		finish(nil, 0, nil, readerError ?: [self errorWithReason:@"Cannot read file"]);
-		return;
+		*error = readerError ?: [self errorWithReason:@"Cannot read file"];
+		return nil;
 	}
-
 	NSDictionary *settings = @{
 		AVFormatIDKey: @(kAudioFormatLinearPCM),
 		AVSampleRateKey: @(kAYVoiceSampleRate),
@@ -89,75 +87,76 @@ static const int kAYWaveformBars = 100;
 	AVAssetReaderTrackOutput *output = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:track outputSettings:settings];
 	output.alwaysCopiesSampleData = NO;
 	if (![reader canAddOutput:output]) {
-		finish(nil, 0, nil, [self errorWithReason:@"Unsupported audio format"]);
-		return;
+		*error = [self errorWithReason:@"Unsupported audio format"];
+		return nil;
 	}
 	[reader addOutput:output];
-
-	TGDataItem *dataItem = [[dataItemClass alloc] init];
-	TGOggOpusWriter *writer = [[writerClass alloc] init];
-	if (![writer beginWithDataItem:dataItem]) {
-		finish(nil, 0, nil, [self errorWithReason:@"Encoder init failed"]);
-		return;
-	}
-
-	// Estimate bar width so we bucket the whole clip into ~100 waveform bars.
-	double durationSeconds = CMTimeGetSeconds(asset.duration);
-	if (!(durationSeconds > 0)) durationSeconds = 0;
-	int64_t estimatedSamples = (int64_t)(durationSeconds * kAYVoiceSampleRate);
-	int64_t samplesPerBar = MAX((int64_t)1, estimatedSamples / kAYWaveformBars);
-
-	uint16_t bars[kAYWaveformBars] = {0};
-	int barIndex = 0;
-	int64_t samplesInBar = 0;
-	uint16_t barPeak = 0;
-	uint16_t overallPeak = 0;
-
 	if (![reader startReading]) {
-		finish(nil, 0, nil, reader.error ?: [self errorWithReason:@"Read failed"]);
-		return;
+		*error = reader.error ?: [self errorWithReason:@"Read failed"];
+		return nil;
 	}
-
+	NSMutableData *pcm = [NSMutableData data];
 	while (reader.status == AVAssetReaderStatusReading) {
 		CMSampleBufferRef sampleBuffer = [output copyNextSampleBuffer];
 		if (!sampleBuffer) break;
 		CMBlockBufferRef blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
-		if (blockBuffer) {
-			size_t length = CMBlockBufferGetDataLength(blockBuffer);
-			if (length > 0) {
-				NSMutableData *pcm = [NSMutableData dataWithLength:length];
-				if (CMBlockBufferCopyDataBytes(blockBuffer, 0, length, pcm.mutableBytes) == kCMBlockBufferNoErr) {
-					[writer writeFrame:(uint8_t *)pcm.mutableBytes frameByteCount:length];
-
-					// Waveform: bucket the absolute sample peaks into bars.
-					const int16_t *samples = (const int16_t *)pcm.bytes;
-					NSUInteger count = length / sizeof(int16_t);
-					for (NSUInteger i = 0; i < count; i++) {
-						uint16_t magnitude = (uint16_t)ABS((int)samples[i]);
-						if (magnitude > barPeak) barPeak = magnitude;
-						if (++samplesInBar >= samplesPerBar && barIndex < kAYWaveformBars) {
-							bars[barIndex++] = barPeak;
-							if (barPeak > overallPeak) overallPeak = barPeak;
-							barPeak = 0;
-							samplesInBar = 0;
-						}
-					}
-				}
+		size_t length = blockBuffer ? CMBlockBufferGetDataLength(blockBuffer) : 0;
+		if (length > 0) {
+			NSUInteger start = pcm.length;
+			[pcm increaseLengthBy:length];
+			if (CMBlockBufferCopyDataBytes(blockBuffer, 0, length, (uint8_t *)pcm.mutableBytes + start) != kCMBlockBufferNoErr) {
+				pcm.length = start;
 			}
 		}
 		CFRelease(sampleBuffer);
 	}
-
 	if (reader.status == AVAssetReaderStatusFailed) {
-		finish(nil, 0, nil, reader.error ?: [self errorWithReason:@"Decoding failed"]);
+		*error = reader.error ?: [self errorWithReason:@"Decoding failed"];
+		return nil;
+	}
+	if (pcm.length < 2) {
+		*error = [self errorWithReason:@"No audio in file"];
+		return nil;
+	}
+	return pcm;
+}
+
++ (void)decodeURL:(NSURL *)url completion:(void (^)(NSData *pcm, NSError *error))completion {
+	dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+		@autoreleasepool {
+			NSError *error = nil;
+			NSData *pcm = [self decodePCMFromURL:url error:&error];
+			dispatch_async(dispatch_get_main_queue(), ^{ if (completion) completion(pcm, error); });
+		}
+	});
+}
+
++ (void)performConversion:(NSURL *)url finish:(void (^)(NSData *, NSTimeInterval, NSData *, NSError *))finish {
+	Class writerClass = objc_getClass("TGOggOpusWriter");
+	Class dataItemClass = objc_getClass("TGDataItem");
+	if (!writerClass || !dataItemClass) {
+		finish(nil, 0, nil, [self errorWithReason:@"Opus encoder unavailable"]);
+		return;
+	}
+	NSError *error = nil;
+	NSData *pcm = [self decodePCMFromURL:url error:&error];
+	if (!pcm) {
+		finish(nil, 0, nil, error);
 		return;
 	}
 
-	// Flush a trailing partial bar.
-	if (barIndex < kAYWaveformBars && (samplesInBar > 0 || barPeak > 0)) {
-		bars[barIndex++] = barPeak;
-		if (barPeak > overallPeak) overallPeak = barPeak;
+	TGDataItem *dataItem = [[dataItemClass alloc] init];
+	TGOggOpusWriter *writer = [[writerClass alloc] init];
+	objc_setAssociatedObject(writer, AYVoiceOwnWriterKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+	if (![writer beginWithDataItem:dataItem]) {
+		finish(nil, 0, nil, [self errorWithReason:@"Encoder init failed"]);
+		return;
 	}
+	if (![self writePCM:pcm toWriter:writer]) {
+		finish(nil, 0, nil, [self errorWithReason:@"Encoding failed"]);
+		return;
+	}
+	[writer writeFrame:NULL frameByteCount:0]; // end of stream, as Telegram's recorder does
 
 	NSData *oggData = [dataItem data];
 	if (oggData.length == 0) {
@@ -165,10 +164,42 @@ static const int kAYWaveformBars = 100;
 		return;
 	}
 	NSTimeInterval encodedDuration = [writer encodedDuration];
-	if (!(encodedDuration > 0)) encodedDuration = durationSeconds;
+	if (!(encodedDuration > 0)) encodedDuration = pcm.length / 2 / kAYVoiceSampleRate;
+	finish(oggData, encodedDuration, [self waveformFromPCM:pcm], nil);
+}
 
-	NSData *waveform = [self waveformBitstreamFromBars:bars count:barIndex peak:overallPeak];
-	finish(oggData, encodedDuration, waveform, nil);
+// The writer encodes exactly one 20 ms frame (960 samples at 48 kHz) per call, and a shorter
+// frame marks the end of the stream, so feed whole frames and zero-pad the last one.
++ (BOOL)writePCM:(NSData *)pcm toWriter:(TGOggOpusWriter *)writer {
+	const NSUInteger frameBytes = kAYVoiceFrameSamples * 2;
+	const uint8_t *bytes = pcm.bytes;
+	uint8_t padded[kAYVoiceFrameSamples * 2];
+	for (NSUInteger offset = 0; offset < pcm.length; offset += frameBytes) {
+		NSUInteger count = MIN(frameBytes, pcm.length - offset);
+		const uint8_t *frame = bytes + offset;
+		if (count < frameBytes) {
+			memset(padded, 0, frameBytes);
+			memcpy(padded, frame, count);
+			frame = padded;
+		}
+		if (![writer writeFrame:(uint8_t *)frame frameByteCount:frameBytes]) return NO;
+	}
+	return YES;
+}
+
+// Telegram's 5-bit waveform: the peak of each of 100 equal slices.
++ (NSData *)waveformFromPCM:(NSData *)pcm {
+	const int16_t *samples = pcm.bytes;
+	NSUInteger count = pcm.length / 2;
+	uint16_t bars[kAYWaveformBars] = {0};
+	uint16_t peak = 0;
+	for (NSUInteger i = 0; i < count; i++) {
+		int bar = (int)(i * kAYWaveformBars / count);
+		uint16_t magnitude = (uint16_t)ABS((int)samples[i]);
+		if (magnitude > bars[bar]) bars[bar] = magnitude;
+		if (magnitude > peak) peak = magnitude;
+	}
+	return [self waveformBitstreamFromBars:bars count:kAYWaveformBars peak:peak];
 }
 
 // Packs per-bar peaks into Telegram's 5-bit waveform bitstream via TGAudioWaveform.

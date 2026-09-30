@@ -172,3 +172,12 @@
 "EYE_CHAT_UNKNOWN" = "このチャットを判別できません";
 "EYE_CHAT_SEEN" = "👁️ このチャットでは既読が送信されます";
 "EYE_CHAT_HIDDEN" = "🙈 このチャットでは既読を隠します";
+"VOICE_FILE_TITLE" = "ファイルからボイス";
+"VOICE_FILE_SUBTITLE" = "チャット入力欄の上の矢印：音声か動画を選び、いつも通りTelegramのマイクで録音すると、声の代わりにファイルの音声が送られます。";
+"VOICE_FILE_HOWTO" = "ファイルを選んでからTelegramのマイクを長押し（またはロック）— ファイルがボイスメッセージとして送られます。";
+"VOICE_FILE_FROM_FILES" = "📁 ファイルから";
+"VOICE_FILE_FROM_PHOTOS" = "🖼️ 写真から（動画）";
+"VOICE_FILE_AGAIN" = "🔁 同じファイルをもう一度";
+"VOICE_FILE_DISARM" = "準備したファイルを取り消す";
+"VOICE_FILE_READY" = "✅ 準備完了 — マイクで録音して送信";
+"VOICE_FILE_INSERTED" = "🎙️ ファイルを録音に挿入しました — 指を離すと送信";

@@ -183,7 +183,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		case FAKE_LOCATION:
 		   return 2;
 		case CHAT_TWEAKS:
-		   return 2;
+		   return 3;
 		case LANGUAGE:
 		   return 1;
 		case CREDITS:
@@ -556,6 +556,10 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 			cell.textLabel.text = TGLoc(@"SPEECH_TO_TEXT_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"SPEECH_TO_TEXT_SUBTITLE");
 		}
+		else if (indexPath.row == 2) {
+			cell.textLabel.text = TGLoc(@"VOICE_FILE_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"VOICE_FILE_SUBTITLE");
+		}
 
 		UISwitch *toggle = (UISwitch *)cell.accessoryView;
 		if (!toggle || ![toggle isKindOfClass:[UISwitch class]]) {
@@ -797,6 +801,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
             switch (indexPath.row) {
                 case 0: return kDoubleTapCopy;
                 case 1: return kSpeechToText;
+                case 2: return kVoiceFromFile;
                 default: return nil;
             }
         default:

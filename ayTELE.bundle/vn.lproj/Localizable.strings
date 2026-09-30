@@ -172,3 +172,12 @@
 "EYE_CHAT_UNKNOWN" = "Không xác định được cuộc trò chuyện này";
 "EYE_CHAT_SEEN" = "👁️ Đã xem ở đây giờ sẽ được gửi";
 "EYE_CHAT_HIDDEN" = "🙈 Đã xem ở đây được ẩn";
+"VOICE_FILE_TITLE" = "Tin nhắn thoại từ tệp";
+"VOICE_FILE_SUBTITLE" = "Mũi tên phía trên ô nhập: chọn âm thanh hoặc video, rồi ghi âm bằng mic của Telegram như bình thường. Âm thanh của tệp được gửi thay cho giọng bạn.";
+"VOICE_FILE_HOWTO" = "Chọn tệp, rồi giữ mic của Telegram (hoặc khóa) — tệp sẽ được gửi như tin nhắn thoại.";
+"VOICE_FILE_FROM_FILES" = "📁 Từ Tệp";
+"VOICE_FILE_FROM_PHOTOS" = "🖼️ Từ Ảnh (video)";
+"VOICE_FILE_AGAIN" = "🔁 Dùng lại tệp đó";
+"VOICE_FILE_DISARM" = "Hủy tệp đã sẵn sàng";
+"VOICE_FILE_READY" = "✅ Sẵn sàng — ghi âm bằng mic và gửi";
+"VOICE_FILE_INSERTED" = "🎙️ Đã chèn tệp vào bản ghi — thả tay để gửi";

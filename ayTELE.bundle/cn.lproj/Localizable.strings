@@ -173,3 +173,12 @@
 "EYE_CHAT_UNKNOWN" = "无法识别当前聊天";
 "EYE_CHAT_SEEN" = "👁️ 此聊天现在会发送已读";
 "EYE_CHAT_HIDDEN" = "🙈 此聊天的已读保持隐藏";
+"VOICE_FILE_TITLE" = "文件转语音";
+"VOICE_FILE_SUBTITLE" = "聊天输入框上方的箭头：选择音频或视频，然后照常用 Telegram 麦克风录音，发送的是文件的声音。";
+"VOICE_FILE_HOWTO" = "选择文件后按住 Telegram 麦克风（或锁定）——文件将作为语音消息发送。";
+"VOICE_FILE_FROM_FILES" = "📁 从文件";
+"VOICE_FILE_FROM_PHOTOS" = "🖼️ 从相册（视频）";
+"VOICE_FILE_AGAIN" = "🔁 再用同一个文件";
+"VOICE_FILE_DISARM" = "取消已准备的文件";
+"VOICE_FILE_READY" = "✅ 已就绪——现在用麦克风录音并发送";
+"VOICE_FILE_INSERTED" = "🎙️ 文件已插入录音——松开即可发送";

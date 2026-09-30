@@ -172,3 +172,12 @@
 "EYE_CHAT_UNKNOWN" = "無法識別目前聊天";
 "EYE_CHAT_SEEN" = "👁️ 此聊天現在會傳送已讀";
 "EYE_CHAT_HIDDEN" = "🙈 此聊天的已讀保持隱藏";
+"VOICE_FILE_TITLE" = "檔案轉語音";
+"VOICE_FILE_SUBTITLE" = "聊天輸入框上方的箭頭：選擇音訊或影片，然後照常用 Telegram 麥克風錄音，傳送的是檔案的聲音。";
+"VOICE_FILE_HOWTO" = "選擇檔案後按住 Telegram 麥克風（或鎖定）——檔案將作為語音訊息傳送。";
+"VOICE_FILE_FROM_FILES" = "📁 從檔案";
+"VOICE_FILE_FROM_PHOTOS" = "🖼️ 從相簿（影片）";
+"VOICE_FILE_AGAIN" = "🔁 再用同一個檔案";
+"VOICE_FILE_DISARM" = "取消已準備的檔案";
+"VOICE_FILE_READY" = "✅ 已就緒——現在用麥克風錄音並傳送";
+"VOICE_FILE_INSERTED" = "🎙️ 檔案已插入錄音——放開即可傳送";

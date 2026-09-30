@@ -255,7 +255,7 @@ do {
 			switch field.type {
 			case .flags: let f = v as? UInt32 ?? 0; flags[i] = f; u32(f)
 			case .int: u32(UInt32(bitPattern: v as? Int32 ?? 0))
-			case .long: withUnsafeBytes(of: (v as? Int64 ?? 0).littleEndian) { out.append(contentsOf: $0) }
+			case .long, .double: withUnsafeBytes(of: (v as? Int64 ?? 0).littleEndian) { out.append(contentsOf: $0) }
 			case .bytes:
 				let b = Data((v as? String ?? "").utf8)
 				precondition(b.count < 254)

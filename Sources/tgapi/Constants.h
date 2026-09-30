@@ -81,3 +81,6 @@
 // Mic button above the chat text field: dictate with Apple speech recognition into the field.
 #define kSpeechToText @"ayTELESpeechToText"
 #define kSpeechLocale @"ayTELESpeechLocale"
+
+// Arrow button above the chat text field: the next voice recording sends a picked file instead.
+#define kVoiceFromFile @"ayTELEVoiceFromFile"

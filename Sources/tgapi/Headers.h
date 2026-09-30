@@ -52,6 +52,8 @@ void AYPresentToast(NSString *message);
 @interface AYVoiceConverter : NSObject
 + (void)convertURL:(NSURL *)url
         completion:(void (^)(NSData *oggOpusData, NSTimeInterval duration, NSData *waveform, NSError *error))completion;
++ (void)decodeURL:(NSURL *)url completion:(void (^)(NSData *pcm, NSError *error))completion;
++ (BOOL)writePCM:(NSData *)pcm toWriter:(id)writer;
 @end
 
 @interface AYNotes : NSObject
