@@ -114,23 +114,23 @@ static void driveVoiceSend(void) {
 	autoDriving = YES;
 	voiceInjectionFired = NO;
 	AYPresentToast(VFLoc(@"VOICE_FILE_SENDING"));
-	NSTimeInterval dur = MAX(1.0, armedDurationSeconds);
+	// Hold for at least the file's length, and never cut it short: the recorder can take ~1s to
+	// activate the audio session and emit its first Opus frame (that frame is when the file gets
+	// swapped in). Checking too early and cancelling was killing the recording before it started.
+	NSTimeInterval dur = MAX(2.0, armedDurationSeconds);
 	((void (*)(id, SEL))objc_msgSend)(delegate, began);
-	// After a beat, confirm the file was swapped into an Opus (voice) recording.
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-		if (!voiceInjectionFired) {
-			// Mic was in video mode (or recording never started): cancel, keep armed for manual use.
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(dur * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		if (voiceInjectionFired) {
+			// The file is in the Opus stream — release to send it as a real voice message.
+			((void (*)(id, SEL, CGFloat))objc_msgSend)(delegate, completed, (CGFloat)0);
+		} else {
+			// No Opus frame ever arrived → the mic is in round-video mode (or recording never
+			// started). Discard and keep the file armed so manual hold-to-record still works.
 			if ([delegate respondsToSelector:cancelled])
 				((void (*)(id, SEL, CGFloat))objc_msgSend)(delegate, cancelled, (CGFloat)0);
-			autoDriving = NO;
 			AYPresentToast(VFLoc(@"VOICE_FILE_SWITCH_VOICE"));
-			return;
 		}
-		// Hold for the file's length so Telegram stamps the right duration, then release to send.
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(MAX(0.5, dur - 0.5) * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-			((void (*)(id, SEL, CGFloat))objc_msgSend)(delegate, completed, (CGFloat)0);
-			autoDriving = NO;
-		});
+		autoDriving = NO;
 	});
 }
 
