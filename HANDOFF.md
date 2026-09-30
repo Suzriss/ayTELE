@@ -1,9 +1,16 @@
 # ayTELE — وين وكفنا (للجلسة الجاية)
 
-> آخر جلسة: 2026-09-30 · الفرع `ci-test` · آخر دايلِب بالمجلد: `141baa8` (CI run `36769915696`، أخضر) 
+> آخر جلسة: 2026-09-30 · الفرع `ci-test` · آخر دايلِب بالمجلد: `2d51877` (CI run `36782654126`، أخضر) 
 > **حجي ويا المستخدم بالعراقي دائماً.** اقرأ هالملف أول شي، بعدين `TODO.md` (الخطة والمراجع) و`PROGRESS.md` (السجل القديم).
 
 ---
+
+## 🆕 جلسة 2026-09-30 (الليلية ٢) — إرسال مباشر كصوتية + حفظ ملف الفيديو الحقيقي
+
+- **إرسال الملف كصوتية مباشرة (`a017563`، `VoiceFile.xm`):** بدل ما المستخدم يضغط المايك، نشغّل زر المايك مال تيليگرام برمجياً. الزر `TGModernConversationInputMicButton` **ObjC قديم** والـ delegate مالته (`ChatTextInputPanelNode`) يطبّق بروتوكول `TGModernConversationInputMicButtonDelegate` ObjC. فبعد ما نسلّح الملف: `micButtonInteractionBegan` → هوك `writeFrame` يبدّل الملف بالمايك → ننتظر طول الملف → `micButtonInteractionCompleted:` = يرسل. بدون ضغط. إذا المايك بوضع فيديو (ما تجي frame Opus خلال 0.5ث) → `micButtonInteractionCancelled:` ويضل مسلّح للتسجيل اليدوي.
+  - **⚠️ يحتاج تجربة جهاز:** مؤكد إنها ObjC وممكنة، بس أول مرة تنشغّل على الجهاز — لازم نتأكد إن `began/completed` فعلاً يرسل (ممكن يحتاج `micButtonInteractionStopped` أو ضبط توقيت).
+- **حفظ ملف الفيديو الحقيقي (`a017563`، `MediaFile.swift` + `DeletedBadge.xm`):** المسار النظيف `MediaBox.resourcePath` **Swift بلا رمز ObjC** = جدار. الحل: `AYMediaFile.videoByteSizeFrom:` يمشي بـ `Mirror` على object العارض (view القصة/controller السر) يلگه `TelegramMediaFile` فيديو وياخذ حجمه بالبايت. بعدين ObjC يدوّر بمجلد `postbox/media` عن ملف بنفس الحجم **بالضبط** ورأسه `ftyp` → ينسخه `.mp4` → `UISaveVideoAtPathToSavedPhotosAlbum`. **مطابقة الحجم المضبوط آمنة** (تلگه ذاك الملف أو ولا شي، مستحيل تحفظ فيديو غلط). إذا ما لگت → ترجع للقطة (`SAVE_MEDIA_FRAME`).
+  - **⚠️ يحتاج تجربة جهاز:** الـ Mirror على العارضين و«وين مجلد postbox» ما انجرّبوا. إذا ما اشتغل: نضيف لوگ لحجم الوسيط وللمجلدات الملگاة عشان نشخّص. الصور تشتغل أكيد (مسار الصورة ما تغيّر).
 
 ## 🆕 جلسة 2026-09-30 (الليلية) — زر حفظ بالقصص والوسائط المؤقتة (المسار B)
 
