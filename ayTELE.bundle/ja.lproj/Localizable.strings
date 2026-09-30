@@ -188,3 +188,8 @@
 "SAVE_MEDIA_BUTTON" = "保存";
 "SAVE_MEDIA_DONE" = "✅ 写真に保存しました";
 "SAVE_MEDIA_FAILED" = "保存できませんでした";
+
+// Direct voice send + video frame note
+"VOICE_FILE_SENDING" = "⏳ ボイスメッセージとして送信中…";
+"VOICE_FILE_SWITCH_VOICE" = "マイクを（ビデオでなく）音声モードにしてから、ファイルをもう一度選んでください。";
+"SAVE_MEDIA_FRAME" = "✅ 1フレームを保存しました（完全な動画はTelegramの保存が必要）";

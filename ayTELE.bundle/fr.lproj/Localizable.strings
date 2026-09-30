@@ -186,3 +186,8 @@
 "SAVE_MEDIA_BUTTON" = "Enregistrer";
 "SAVE_MEDIA_DONE" = "✅ Enregistré dans Photos";
 "SAVE_MEDIA_FAILED" = "Échec de l'enregistrement";
+
+// Direct voice send + video frame note
+"VOICE_FILE_SENDING" = "⏳ Envoi en message vocal…";
+"VOICE_FILE_SWITCH_VOICE" = "Mettez le micro en mode vocal (pas vidéo), puis choisissez de nouveau le fichier.";
+"SAVE_MEDIA_FRAME" = "✅ Image enregistrée (la vidéo complète nécessite la sauvegarde de Telegram)";

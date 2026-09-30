@@ -56,6 +56,12 @@ void AYPresentToast(NSString *message);
 + (BOOL)writePCM:(NSData *)pcm toWriter:(id)writer;
 @end
 
+// Reflects a story/secret-media viewer object for the byte size of the video it shows, so the
+// Save button can find that exact file in the Postbox media cache (see DeletedBadge.xm).
+@interface AYMediaFile : NSObject
++ (NSNumber *)videoByteSizeFrom:(NSObject *)root;
+@end
+
 @interface AYNotes : NSObject
 @property (class, nonatomic, readonly) NSNotificationName changedNotification;
 + (BOOL)hasNoteWithNode:(NSObject *)node;

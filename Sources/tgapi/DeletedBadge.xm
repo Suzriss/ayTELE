@@ -415,40 +415,155 @@ static UIImage *snapshotOfView(UIView *v, UIView *hide) {
 	return out;
 }
 
+// The enclosing view controller of a view (to reflect a viewer's Swift state for the media size).
+static UIViewController *enclosingController(UIView *view) {
+	for (UIResponder *r = view.nextResponder; r; r = r.nextResponder) {
+		if ([r isKindOfClass:[UIViewController class]]) return (UIViewController *)r;
+	}
+	return nil;
+}
+
+// Postbox media cache directories, found once by scanning the app container for a "postbox/media"
+// folder. We look at directories only and never descend into the media folder itself, so it is cheap.
+static NSArray<NSString *> *postboxMediaDirs(void) {
+	static NSArray *cached;
+	static dispatch_once_t once;
+	dispatch_once(&once, ^{
+		NSMutableArray<NSString *> *found = [NSMutableArray array];
+		NSFileManager *fm = [NSFileManager defaultManager];
+		// Search the app's home and a couple of levels up (shared/app-group containers).
+		NSMutableArray<NSString *> *roots = [NSMutableArray arrayWithObject:NSHomeDirectory()];
+		NSString *up1 = [NSHomeDirectory() stringByDeletingLastPathComponent];
+		NSString *up2 = [up1 stringByDeletingLastPathComponent];
+		if (up1) [roots addObject:up1];
+		if (up2) [roots addObject:up2];
+		NSMutableArray<NSString *> *stack = [NSMutableArray arrayWithArray:roots];
+		NSMutableDictionary<NSString *, NSNumber *> *depths = [NSMutableDictionary dictionary];
+		for (NSString *r in roots) depths[r] = @0;
+		int scanned = 0;
+		while (stack.count && scanned < 20000) {
+			NSString *dir = stack.lastObject; [stack removeLastObject];
+			int depth = depths[dir].intValue;
+			scanned++;
+			if ([dir hasSuffix:@"postbox/media"]) { [found addObject:dir]; continue; }  // don't descend
+			if (depth >= 7) continue;
+			NSArray<NSString *> *items = [fm contentsOfDirectoryAtPath:dir error:nil];
+			for (NSString *name in items) {
+				NSString *full = [dir stringByAppendingPathComponent:name];
+				BOOL isDir = NO;
+				if ([fm fileExistsAtPath:full isDirectory:&isDir] && isDir) {
+					[stack addObject:full];
+					depths[full] = @(depth + 1);
+				}
+			}
+		}
+		cached = found;
+	});
+	return cached;
+}
+
+// True when the first bytes look like an MP4/QuickTime container ("....ftyp").
+static BOOL looksLikeVideoFile(NSString *path) {
+	NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath:path];
+	if (!fh) return NO;
+	NSData *head = [fh readDataOfLength:12];
+	[fh closeFile];
+	if (head.length < 12) return NO;
+	const uint8_t *b = (const uint8_t *)head.bytes;
+	return b[4] == 'f' && b[5] == 't' && b[6] == 'y' && b[7] == 'p';
+}
+
+// The cached file whose size is exactly `size` bytes and that is an MP4/MOV (the video being shown).
+static NSString *findVideoFileWithSize(long long size) {
+	if (size <= 0) return nil;
+	NSFileManager *fm = [NSFileManager defaultManager];
+	for (NSString *dir in postboxMediaDirs()) {
+		NSDirectoryEnumerator *en = [fm enumeratorAtPath:dir];
+		en.skipsSubdirectoryDescendants = NO;
+		NSString *rel;
+		int checked = 0;
+		for (rel in en) {
+			if (++checked > 200000) break;
+			NSString *full = [dir stringByAppendingPathComponent:rel];
+			NSDictionary *attrs = [fm attributesOfItemAtPath:full error:nil];
+			if ([attrs.fileType isEqualToString:NSFileTypeDirectory]) continue;
+			if ((long long)attrs.fileSize != size) continue;
+			if (looksLikeVideoFile(full)) return full;
+		}
+	}
+	return nil;
+}
+
 @interface AYMediaSaveHandler : NSObject
 @end
 @implementation AYMediaSaveHandler
-+ (void)commit:(UIImage *)img {
++ (void)commit:(UIImage *)img note:(NSString *)note {
 	if (!img) { presentToast([ayTELELocalization localizedStringForKey:@"SAVE_MEDIA_FAILED"]); return; }
-	UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
+	// Carry the "this is only a frame" note through to the completion callback via associated object.
+	UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), (void *)CFBridgingRetain(note ?: @"SAVE_MEDIA_DONE"));
 }
 + (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)ctx {
+	NSString *okKey = ctx ? (NSString *)CFBridgingRelease(ctx) : @"SAVE_MEDIA_DONE";
+	presentToast([ayTELELocalization localizedStringForKey:error ? @"SAVE_MEDIA_FAILED" : okKey]);
+}
+// Copies the cached video to a .mp4 temp Photos will accept, then saves it.
++ (void)saveVideoAtPath:(NSString *)path {
+	NSString *tmp = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"ayTELE-%@.mp4", [NSUUID UUID].UUIDString]];
+	NSError *err = nil;
+	[[NSFileManager defaultManager] copyItemAtPath:path toPath:tmp error:&err];
+	if (err || !UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(tmp)) {
+		[[NSFileManager defaultManager] removeItemAtPath:tmp error:nil];
+		presentToast([ayTELELocalization localizedStringForKey:@"SAVE_MEDIA_FAILED"]);
+		return;
+	}
+	UISaveVideoAtPathToSavedPhotosAlbum(tmp, self, @selector(video:didFinishSavingWithError:contextInfo:), (void *)CFBridgingRetain(tmp));
+}
++ (void)video:(NSString *)path didFinishSavingWithError:(NSError *)error contextInfo:(void *)ctx {
+	if (ctx) { NSString *tmp = (NSString *)CFBridgingRelease(ctx); [[NSFileManager defaultManager] removeItemAtPath:tmp error:nil]; }
 	presentToast([ayTELELocalization localizedStringForKey:error ? @"SAVE_MEDIA_FAILED" : @"SAVE_MEDIA_DONE"]);
 }
-// container: the viewer view. contentClass: media view to snapshot when there is
-// no still image (video). hide: our button, kept out of the snapshot.
-+ (void)saveFromContainer:(UIView *)container contentClass:(Class)contentClass hide:(UIView *)hide {
-	if (!container) { [self commit:nil]; return; }
-	UIImage *img = nil;
+// container: the view to read pixels from. reflect: the Swift viewer object to read the video size
+// from. contentClass: the media view to snapshot as a last resort. hide: our button, kept out of it.
++ (void)saveFromContainer:(UIView *)container reflect:(NSObject *)reflect contentClass:(Class)contentClass hide:(UIView *)hide {
+	if (!container) { [self commit:nil note:nil]; return; }
+	// 1) A photo: grab the displayed image at full resolution.
 	@try {
-		// A reasonably large still means it is a photo; grab it at full resolution.
 		UIImageView *iv = bestImageView(container, 200.0 * 200.0);
-		if (iv) img = iv.image;
-		if (!img) {
-			UIView *content = contentClass ? firstDescendantOfClass(container, contentClass) : nil;
-			img = snapshotOfView(content ?: container, hide);
-		}
-	} @catch (NSException *e) { img = nil; }
-	[self commit:img];
+		if (iv && iv.image) { [self commit:iv.image note:@"SAVE_MEDIA_DONE"]; return; }
+	} @catch (NSException *e) {}
+	// A still frame of whatever is on screen — captured now on the main thread, used if the real
+	// video file can't be located (this method's own screen pixels can't be read off-thread).
+	UIImage *frame = nil;
+	@try {
+		UIView *content = contentClass ? firstDescendantOfClass(container, contentClass) : nil;
+		frame = snapshotOfView(content ?: container, hide);
+	} @catch (NSException *e) {}
+	// 2) A video: read its exact byte size, then match it against the Postbox cache off the main
+	// thread (the cache scan can be large) and save the real file; fall back to the frame.
+	long long size = 0;
+	@try { size = [AYMediaFile videoByteSizeFrom:reflect].longLongValue; } @catch (NSException *e) {}
+	if (size > 0) {
+		dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+			NSString *path = findVideoFileWithSize(size);
+			dispatch_async(dispatch_get_main_queue(), ^{
+				if (path) [self saveVideoAtPath:path];
+				else [self commit:frame note:@"SAVE_MEDIA_FRAME"];
+			});
+		});
+		return;
+	}
+	// 3) Not a video we could size (or a photo we missed): keep the frame.
+	[self commit:frame note:@"SAVE_MEDIA_FRAME"];
 }
 + (void)saveStory:(UIButton *)sender {
 	Class content = objc_getClass("_TtCC20StoryContainerScreen16StoryContentItem4View");
-	[self saveFromContainer:sender.superview contentClass:content hide:sender];
+	// The container view is itself the Swift component view holding the current story item.
+	[self saveFromContainer:sender.superview reflect:sender.superview contentClass:content hide:sender];
 	[[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight] impactOccurred];
 }
 + (void)saveSecret:(UIButton *)sender {
-	// The button sits on the controller's root view, which is essentially the media.
-	[self saveFromContainer:sender.superview contentClass:nil hide:sender];
+	// The button sits on the controller's root view; reflect the controller for the message media.
+	[self saveFromContainer:sender.superview reflect:enclosingController(sender) contentClass:nil hide:sender];
 	[[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight] impactOccurred];
 }
 @end

@@ -188,3 +188,8 @@
 "SAVE_MEDIA_BUTTON" = "Сохранить";
 "SAVE_MEDIA_DONE" = "✅ Сохранено в Фото";
 "SAVE_MEDIA_FAILED" = "Не удалось сохранить";
+
+// Direct voice send + video frame note
+"VOICE_FILE_SENDING" = "⏳ Отправка голосовым…";
+"VOICE_FILE_SWITCH_VOICE" = "Переключите микрофон в голосовой режим (не видео) и выберите файл снова.";
+"SAVE_MEDIA_FRAME" = "✅ Сохранён кадр (полное видео требует сохранения самого Telegram)";

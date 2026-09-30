@@ -158,6 +158,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SAVE_MEDIA_BUTTON": @"حفظ",
 		@"SAVE_MEDIA_DONE": @"✅ انحفظ بالصور",
 		@"SAVE_MEDIA_FAILED": @"ما نگدر نحفظ",
+		@"VOICE_FILE_SENDING": @"⏳ جاري الإرسال كرسالة صوتية…",
+		@"VOICE_FILE_SWITCH_VOICE": @"خلّي المايك بوضع الصوت (مو فيديو)، وبعدين اختر الملف مرة ثانية.",
+		@"SAVE_MEDIA_FRAME": @"✅ انحفظت لقطة (الفيديو الكامل يحتاج حفظ تيلگرام نفسه)",
 	};
 	if ([code isEqualToString:@"cn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隐身模式",
@@ -300,6 +303,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SAVE_MEDIA_BUTTON": @"保存",
 		@"SAVE_MEDIA_DONE": @"✅ 已保存到照片",
 		@"SAVE_MEDIA_FAILED": @"无法保存",
+		@"VOICE_FILE_SENDING": @"⏳ 正在作为语音消息发送…",
+		@"VOICE_FILE_SWITCH_VOICE": @"将麦克风切换到语音模式（非视频），然后重新选择文件。",
+		@"SAVE_MEDIA_FRAME": @"✅ 已保存一帧（完整视频需要 Telegram 自带的保存）",
 	};
 	if ([code isEqualToString:@"en"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Ghost Mode",
@@ -443,6 +449,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SAVE_MEDIA_BUTTON": @"Save",
 		@"SAVE_MEDIA_DONE": @"✅ Saved to Photos",
 		@"SAVE_MEDIA_FAILED": @"Couldn't save",
+		@"VOICE_FILE_SENDING": @"⏳ Sending as a voice message…",
+		@"VOICE_FILE_SWITCH_VOICE": @"Set the mic to voice mode (not video), then pick the file again.",
+		@"SAVE_MEDIA_FRAME": @"✅ Saved a frame (the full video needs Telegram's own save)",
 	};
 	if ([code isEqualToString:@"fr"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Mode Fantôme",
@@ -585,6 +594,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SAVE_MEDIA_BUTTON": @"Enregistrer",
 		@"SAVE_MEDIA_DONE": @"✅ Enregistré dans Photos",
 		@"SAVE_MEDIA_FAILED": @"Échec de l'enregistrement",
+		@"VOICE_FILE_SENDING": @"⏳ Envoi en message vocal…",
+		@"VOICE_FILE_SWITCH_VOICE": @"Mettez le micro en mode vocal (pas vidéo), puis choisissez de nouveau le fichier.",
+		@"SAVE_MEDIA_FRAME": @"✅ Image enregistrée (la vidéo complète nécessite la sauvegarde de Telegram)",
 	};
 	if ([code isEqualToString:@"it"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modalità Fantasma",
@@ -728,6 +740,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SAVE_MEDIA_BUTTON": @"Salva",
 		@"SAVE_MEDIA_DONE": @"✅ Salvato in Foto",
 		@"SAVE_MEDIA_FAILED": @"Impossibile salvare",
+		@"VOICE_FILE_SENDING": @"⏳ Invio come messaggio vocale…",
+		@"VOICE_FILE_SWITCH_VOICE": @"Imposta il microfono in modalità voce (non video), poi riseleziona il file.",
+		@"SAVE_MEDIA_FRAME": @"✅ Salvato un fotogramma (il video completo richiede il salvataggio di Telegram)",
 	};
 	if ([code isEqualToString:@"ja"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"ゴーストモード",
@@ -871,6 +886,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SAVE_MEDIA_BUTTON": @"保存",
 		@"SAVE_MEDIA_DONE": @"✅ 写真に保存しました",
 		@"SAVE_MEDIA_FAILED": @"保存できませんでした",
+		@"VOICE_FILE_SENDING": @"⏳ ボイスメッセージとして送信中…",
+		@"VOICE_FILE_SWITCH_VOICE": @"マイクを（ビデオでなく）音声モードにしてから、ファイルをもう一度選んでください。",
+		@"SAVE_MEDIA_FRAME": @"✅ 1フレームを保存しました（完全な動画はTelegramの保存が必要）",
 	};
 	if ([code isEqualToString:@"ru"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Режим призрака",
@@ -1014,6 +1032,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SAVE_MEDIA_BUTTON": @"Сохранить",
 		@"SAVE_MEDIA_DONE": @"✅ Сохранено в Фото",
 		@"SAVE_MEDIA_FAILED": @"Не удалось сохранить",
+		@"VOICE_FILE_SENDING": @"⏳ Отправка голосовым…",
+		@"VOICE_FILE_SWITCH_VOICE": @"Переключите микрофон в голосовой режим (не видео) и выберите файл снова.",
+		@"SAVE_MEDIA_FRAME": @"✅ Сохранён кадр (полное видео требует сохранения самого Telegram)",
 	};
 	if ([code isEqualToString:@"es"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modo Fantasma",
@@ -1157,6 +1178,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SAVE_MEDIA_BUTTON": @"Guardar",
 		@"SAVE_MEDIA_DONE": @"✅ Guardado en Fotos",
 		@"SAVE_MEDIA_FAILED": @"No se pudo guardar",
+		@"VOICE_FILE_SENDING": @"⏳ Enviando como mensaje de voz…",
+		@"VOICE_FILE_SWITCH_VOICE": @"Pon el micrófono en modo voz (no vídeo) y elige el archivo de nuevo.",
+		@"SAVE_MEDIA_FRAME": @"✅ Se guardó un fotograma (el vídeo completo requiere el guardado propio de Telegram)",
 	};
 	if ([code isEqualToString:@"tw"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隱身模式",
@@ -1300,6 +1324,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SAVE_MEDIA_BUTTON": @"儲存",
 		@"SAVE_MEDIA_DONE": @"✅ 已儲存到照片",
 		@"SAVE_MEDIA_FAILED": @"無法儲存",
+		@"VOICE_FILE_SENDING": @"⏳ 正在作為語音訊息發送…",
+		@"VOICE_FILE_SWITCH_VOICE": @"將麥克風切換到語音模式（非影片），然後重新選擇檔案。",
+		@"SAVE_MEDIA_FRAME": @"✅ 已儲存一幀（完整影片需要 Telegram 自帶的儲存）",
 	};
 	if ([code isEqualToString:@"vn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Chế độ ma",
@@ -1443,6 +1470,9 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"SAVE_MEDIA_BUTTON": @"Lưu",
 		@"SAVE_MEDIA_DONE": @"✅ Đã lưu vào Ảnh",
 		@"SAVE_MEDIA_FAILED": @"Không thể lưu",
+		@"VOICE_FILE_SENDING": @"⏳ Đang gửi dưới dạng tin nhắn thoại…",
+		@"VOICE_FILE_SWITCH_VOICE": @"Đặt micro ở chế độ thoại (không phải video), rồi chọn lại tệp.",
+		@"SAVE_MEDIA_FRAME": @"✅ Đã lưu một khung hình (video đầy đủ cần chức năng lưu của Telegram)",
 	};
 	return nil;
 }

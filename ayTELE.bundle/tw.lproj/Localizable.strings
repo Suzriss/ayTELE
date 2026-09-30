@@ -188,3 +188,8 @@
 "SAVE_MEDIA_BUTTON" = "儲存";
 "SAVE_MEDIA_DONE" = "✅ 已儲存到照片";
 "SAVE_MEDIA_FAILED" = "無法儲存";
+
+// Direct voice send + video frame note
+"VOICE_FILE_SENDING" = "⏳ 正在作為語音訊息發送…";
+"VOICE_FILE_SWITCH_VOICE" = "將麥克風切換到語音模式（非影片），然後重新選擇檔案。";
+"SAVE_MEDIA_FRAME" = "✅ 已儲存一幀（完整影片需要 Telegram 自帶的儲存）";

@@ -188,3 +188,8 @@
 "SAVE_MEDIA_BUTTON" = "Lưu";
 "SAVE_MEDIA_DONE" = "✅ Đã lưu vào Ảnh";
 "SAVE_MEDIA_FAILED" = "Không thể lưu";
+
+// Direct voice send + video frame note
+"VOICE_FILE_SENDING" = "⏳ Đang gửi dưới dạng tin nhắn thoại…";
+"VOICE_FILE_SWITCH_VOICE" = "Đặt micro ở chế độ thoại (không phải video), rồi chọn lại tệp.";
+"SAVE_MEDIA_FRAME" = "✅ Đã lưu một khung hình (video đầy đủ cần chức năng lưu của Telegram)";

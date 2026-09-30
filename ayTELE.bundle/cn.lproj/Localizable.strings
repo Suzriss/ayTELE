@@ -189,3 +189,8 @@
 "SAVE_MEDIA_BUTTON" = "保存";
 "SAVE_MEDIA_DONE" = "✅ 已保存到照片";
 "SAVE_MEDIA_FAILED" = "无法保存";
+
+// Direct voice send + video frame note
+"VOICE_FILE_SENDING" = "⏳ 正在作为语音消息发送…";
+"VOICE_FILE_SWITCH_VOICE" = "将麦克风切换到语音模式（非视频），然后重新选择文件。";
+"SAVE_MEDIA_FRAME" = "✅ 已保存一帧（完整视频需要 Telegram 自带的保存）";

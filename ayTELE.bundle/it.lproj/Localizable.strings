@@ -190,3 +190,8 @@
 "SAVE_MEDIA_BUTTON" = "Salva";
 "SAVE_MEDIA_DONE" = "✅ Salvato in Foto";
 "SAVE_MEDIA_FAILED" = "Impossibile salvare";
+
+// Direct voice send + video frame note
+"VOICE_FILE_SENDING" = "⏳ Invio come messaggio vocale…";
+"VOICE_FILE_SWITCH_VOICE" = "Imposta il microfono in modalità voce (non video), poi riseleziona il file.";
+"SAVE_MEDIA_FRAME" = "✅ Salvato un fotogramma (il video completo richiede il salvataggio di Telegram)";
