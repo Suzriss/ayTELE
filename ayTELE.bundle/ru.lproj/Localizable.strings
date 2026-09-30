@@ -181,3 +181,10 @@
 "VOICE_FILE_DISARM" = "Отменить готовый файл";
 "VOICE_FILE_READY" = "✅ Готово — запишите микрофоном и отправьте";
 "VOICE_FILE_INSERTED" = "🎙️ Файл вставлен в запись — отпустите, чтобы отправить";
+
+// Save button in story viewer and view-once / self-destruct viewer
+"SAVE_IN_VIEWERS_TITLE" = "Кнопка сохранения в историях и временных медиа";
+"SAVE_IN_VIEWERS_SUBTITLE" = "Добавляет кнопку сохранения в просмотр историй и одноразовых/исчезающих медиа. Сохраняет показанное прямо в Фото (полное качество для фото, кадр для видео).";
+"SAVE_MEDIA_BUTTON" = "Сохранить";
+"SAVE_MEDIA_DONE" = "✅ Сохранено в Фото";
+"SAVE_MEDIA_FAILED" = "Не удалось сохранить";

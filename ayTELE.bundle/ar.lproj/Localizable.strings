@@ -179,3 +179,10 @@
 "VOICE_FILE_DISARM" = "إلغاء الملف الجاهز";
 "VOICE_FILE_READY" = "✅ جاهز — هسه سجّل بالمايك ودزّ";
 "VOICE_FILE_INSERTED" = "🎙️ الملف دخل بالتسجيل — اترك المايك حتى ينرسل";
+
+// Save button in story viewer and view-once / self-destruct viewer
+"SAVE_IN_VIEWERS_TITLE" = "زر حفظ بالقصص والوسائط المؤقتة";
+"SAVE_IN_VIEWERS_SUBTITLE" = "يحط زر حفظ بعارض القصص وعارض «العرض لمرة وحدة»/ذاتي التدمير. يحفظ اللي معروض مباشرة بالصور (جودة كاملة للصور، لقطة للفيديو).";
+"SAVE_MEDIA_BUTTON" = "حفظ";
+"SAVE_MEDIA_DONE" = "✅ انحفظ بالصور";
+"SAVE_MEDIA_FAILED" = "ما نگدر نحفظ";

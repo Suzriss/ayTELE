@@ -183,3 +183,10 @@
 "VOICE_FILE_DISARM" = "Cancelar el archivo listo";
 "VOICE_FILE_READY" = "✅ Listo — ahora graba con el micrófono y envía";
 "VOICE_FILE_INSERTED" = "🎙️ Archivo insertado en la grabación — suelta para enviar";
+
+// Save button in story viewer and view-once / self-destruct viewer
+"SAVE_IN_VIEWERS_TITLE" = "Botón Guardar en historias y medios temporales";
+"SAVE_IN_VIEWERS_SUBTITLE" = "Añade un botón Guardar al visor de historias y al visor de ver una vez/autodestructivo. Guarda lo que se muestra directamente en Fotos (calidad completa para fotos, un fotograma para vídeo).";
+"SAVE_MEDIA_BUTTON" = "Guardar";
+"SAVE_MEDIA_DONE" = "✅ Guardado en Fotos";
+"SAVE_MEDIA_FAILED" = "No se pudo guardar";

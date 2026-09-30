@@ -181,3 +181,10 @@
 "VOICE_FILE_DISARM" = "Hủy tệp đã sẵn sàng";
 "VOICE_FILE_READY" = "✅ Sẵn sàng — ghi âm bằng mic và gửi";
 "VOICE_FILE_INSERTED" = "🎙️ Đã chèn tệp vào bản ghi — thả tay để gửi";
+
+// Save button in story viewer and view-once / self-destruct viewer
+"SAVE_IN_VIEWERS_TITLE" = "Nút Lưu trong Tin & phương tiện tạm thời";
+"SAVE_IN_VIEWERS_SUBTITLE" = "Thêm nút Lưu vào trình xem tin và trình xem xem một lần/tự hủy. Lưu nội dung đang hiển thị trực tiếp vào Ảnh (chất lượng đầy đủ cho ảnh, một khung hình cho video).";
+"SAVE_MEDIA_BUTTON" = "Lưu";
+"SAVE_MEDIA_DONE" = "✅ Đã lưu vào Ảnh";
+"SAVE_MEDIA_FAILED" = "Không thể lưu";

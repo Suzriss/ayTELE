@@ -182,3 +182,10 @@
 "VOICE_FILE_DISARM" = "取消已准备的文件";
 "VOICE_FILE_READY" = "✅ 已就绪——现在用麦克风录音并发送";
 "VOICE_FILE_INSERTED" = "🎙️ 文件已插入录音——松开即可发送";
+
+// Save button in story viewer and view-once / self-destruct viewer
+"SAVE_IN_VIEWERS_TITLE" = "在快拍和临时媒体中添加保存按钮";
+"SAVE_IN_VIEWERS_SUBTITLE" = "在快拍查看器和阅后即焚/一次性查看器中添加保存按钮。将显示的内容直接保存到照片（照片为完整画质，视频为一帧）。";
+"SAVE_MEDIA_BUTTON" = "保存";
+"SAVE_MEDIA_DONE" = "✅ 已保存到照片";
+"SAVE_MEDIA_FAILED" = "无法保存";

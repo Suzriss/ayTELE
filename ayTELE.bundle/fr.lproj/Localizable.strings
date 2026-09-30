@@ -179,3 +179,10 @@
 "VOICE_FILE_DISARM" = "Annuler le fichier prêt";
 "VOICE_FILE_READY" = "✅ Prêt — enregistrez avec le micro et envoyez";
 "VOICE_FILE_INSERTED" = "🎙️ Fichier inséré dans l'enregistrement — relâchez pour envoyer";
+
+// Save button in story viewer and view-once / self-destruct viewer
+"SAVE_IN_VIEWERS_TITLE" = "Bouton Enregistrer dans les stories et médias temporaires";
+"SAVE_IN_VIEWERS_SUBTITLE" = "Ajoute un bouton Enregistrer au lecteur de stories et au lecteur à vue unique/éphémère. Enregistre ce qui est affiché directement dans Photos (pleine qualité pour les photos, une image pour la vidéo).";
+"SAVE_MEDIA_BUTTON" = "Enregistrer";
+"SAVE_MEDIA_DONE" = "✅ Enregistré dans Photos";
+"SAVE_MEDIA_FAILED" = "Échec de l'enregistrement";

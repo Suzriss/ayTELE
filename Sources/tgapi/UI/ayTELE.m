@@ -173,7 +173,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	switch (section) {
 		case GHOST_MODE:
-		   return 19;
+		   return 20;
 		case READ_RECEIPT:
 		   return 2;
 		case MISC:
@@ -325,6 +325,10 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		else if (indexPath.row == 18) {
 			cell.textLabel.text = TGLoc(@"KEEP_VIEW_ONCE_MEDIA_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"KEEP_VIEW_ONCE_MEDIA_SUBTITLE");
+		}
+		else if (indexPath.row == 19) {
+			cell.textLabel.text = TGLoc(@"SAVE_IN_VIEWERS_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"SAVE_IN_VIEWERS_SUBTITLE");
 		}
 
 		UISwitch *toggle = (UISwitch *)cell.accessoryView;
@@ -771,6 +775,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
                 case 16: return kDisableEmojiAcknowledgementStatus;
                 case 17: return kDisableReadMessageContents;
                 case 18: return kKeepViewOnceMedia;
+                case 19: return kSaveInViewers;
                 default: return nil;
             }
         case 1:

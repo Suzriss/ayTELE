@@ -181,3 +181,10 @@
 "VOICE_FILE_DISARM" = "準備したファイルを取り消す";
 "VOICE_FILE_READY" = "✅ 準備完了 — マイクで録音して送信";
 "VOICE_FILE_INSERTED" = "🎙️ ファイルを録音に挿入しました — 指を離すと送信";
+
+// Save button in story viewer and view-once / self-destruct viewer
+"SAVE_IN_VIEWERS_TITLE" = "ストーリーと一時メディアに保存ボタン";
+"SAVE_IN_VIEWERS_SUBTITLE" = "ストーリービューアと一回表示／自動消去ビューアに保存ボタンを追加します。表示中の内容を直接「写真」に保存します（写真はフル画質、動画は1フレーム）。";
+"SAVE_MEDIA_BUTTON" = "保存";
+"SAVE_MEDIA_DONE" = "✅ 写真に保存しました";
+"SAVE_MEDIA_FAILED" = "保存できませんでした";

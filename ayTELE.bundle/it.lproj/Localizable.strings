@@ -183,3 +183,10 @@
 "VOICE_FILE_DISARM" = "Annulla il file pronto";
 "VOICE_FILE_READY" = "✅ Pronto — registra col microfono e invia";
 "VOICE_FILE_INSERTED" = "🎙️ File inserito nella registrazione — rilascia per inviare";
+
+// Save button in story viewer and view-once / self-destruct viewer
+"SAVE_IN_VIEWERS_TITLE" = "Pulsante Salva nelle storie e media temporanei";
+"SAVE_IN_VIEWERS_SUBTITLE" = "Aggiunge un pulsante Salva al visualizzatore di storie e a quello visualizza una volta/autodistruttivo. Salva ciò che è mostrato direttamente in Foto (qualità piena per le foto, un fotogramma per i video).";
+"SAVE_MEDIA_BUTTON" = "Salva";
+"SAVE_MEDIA_DONE" = "✅ Salvato in Foto";
+"SAVE_MEDIA_FAILED" = "Impossibile salvare";

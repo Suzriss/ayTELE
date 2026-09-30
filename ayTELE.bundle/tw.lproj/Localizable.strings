@@ -181,3 +181,10 @@
 "VOICE_FILE_DISARM" = "取消已準備的檔案";
 "VOICE_FILE_READY" = "✅ 已就緒——現在用麥克風錄音並傳送";
 "VOICE_FILE_INSERTED" = "🎙️ 檔案已插入錄音——放開即可傳送";
+
+// Save button in story viewer and view-once / self-destruct viewer
+"SAVE_IN_VIEWERS_TITLE" = "在限時動態與臨時媒體中加入儲存按鈕";
+"SAVE_IN_VIEWERS_SUBTITLE" = "在限時動態檢視器與閱後即焚／一次性檢視器中加入儲存按鈕。將顯示的內容直接儲存到照片（照片為完整畫質，影片為一幀）。";
+"SAVE_MEDIA_BUTTON" = "儲存";
+"SAVE_MEDIA_DONE" = "✅ 已儲存到照片";
+"SAVE_MEDIA_FAILED" = "無法儲存";

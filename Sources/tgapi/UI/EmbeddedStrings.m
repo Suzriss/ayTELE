@@ -153,6 +153,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"VOICE_FILE_DISARM": @"إلغاء الملف الجاهز",
 		@"VOICE_FILE_READY": @"✅ جاهز — هسه سجّل بالمايك ودزّ",
 		@"VOICE_FILE_INSERTED": @"🎙️ الملف دخل بالتسجيل — اترك المايك حتى ينرسل",
+		@"SAVE_IN_VIEWERS_TITLE": @"زر حفظ بالقصص والوسائط المؤقتة",
+		@"SAVE_IN_VIEWERS_SUBTITLE": @"يحط زر حفظ بعارض القصص وعارض «العرض لمرة وحدة»/ذاتي التدمير. يحفظ اللي معروض مباشرة بالصور (جودة كاملة للصور، لقطة للفيديو).",
+		@"SAVE_MEDIA_BUTTON": @"حفظ",
+		@"SAVE_MEDIA_DONE": @"✅ انحفظ بالصور",
+		@"SAVE_MEDIA_FAILED": @"ما نگدر نحفظ",
 	};
 	if ([code isEqualToString:@"cn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隐身模式",
@@ -290,6 +295,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"VOICE_FILE_DISARM": @"取消已准备的文件",
 		@"VOICE_FILE_READY": @"✅ 已就绪——现在用麦克风录音并发送",
 		@"VOICE_FILE_INSERTED": @"🎙️ 文件已插入录音——松开即可发送",
+		@"SAVE_IN_VIEWERS_TITLE": @"在快拍和临时媒体中添加保存按钮",
+		@"SAVE_IN_VIEWERS_SUBTITLE": @"在快拍查看器和阅后即焚/一次性查看器中添加保存按钮。将显示的内容直接保存到照片（照片为完整画质，视频为一帧）。",
+		@"SAVE_MEDIA_BUTTON": @"保存",
+		@"SAVE_MEDIA_DONE": @"✅ 已保存到照片",
+		@"SAVE_MEDIA_FAILED": @"无法保存",
 	};
 	if ([code isEqualToString:@"en"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Ghost Mode",
@@ -428,6 +438,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"VOICE_FILE_DISARM": @"Cancel the ready file",
 		@"VOICE_FILE_READY": @"✅ Ready — now record with the mic and send",
 		@"VOICE_FILE_INSERTED": @"🎙️ File inserted into the recording — release to send",
+		@"SAVE_IN_VIEWERS_TITLE": @"Save Button in Stories & Temporary Media",
+		@"SAVE_IN_VIEWERS_SUBTITLE": @"Adds a Save button to the story viewer and the view-once / self-destruct viewer. Saves what's shown straight to Photos (full quality for photos, a frame for video).",
+		@"SAVE_MEDIA_BUTTON": @"Save",
+		@"SAVE_MEDIA_DONE": @"✅ Saved to Photos",
+		@"SAVE_MEDIA_FAILED": @"Couldn't save",
 	};
 	if ([code isEqualToString:@"fr"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Mode Fantôme",
@@ -565,6 +580,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"VOICE_FILE_DISARM": @"Annuler le fichier prêt",
 		@"VOICE_FILE_READY": @"✅ Prêt — enregistrez avec le micro et envoyez",
 		@"VOICE_FILE_INSERTED": @"🎙️ Fichier inséré dans l'enregistrement — relâchez pour envoyer",
+		@"SAVE_IN_VIEWERS_TITLE": @"Bouton Enregistrer dans les stories et médias temporaires",
+		@"SAVE_IN_VIEWERS_SUBTITLE": @"Ajoute un bouton Enregistrer au lecteur de stories et au lecteur à vue unique/éphémère. Enregistre ce qui est affiché directement dans Photos (pleine qualité pour les photos, une image pour la vidéo).",
+		@"SAVE_MEDIA_BUTTON": @"Enregistrer",
+		@"SAVE_MEDIA_DONE": @"✅ Enregistré dans Photos",
+		@"SAVE_MEDIA_FAILED": @"Échec de l'enregistrement",
 	};
 	if ([code isEqualToString:@"it"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modalità Fantasma",
@@ -703,6 +723,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"VOICE_FILE_DISARM": @"Annulla il file pronto",
 		@"VOICE_FILE_READY": @"✅ Pronto — registra col microfono e invia",
 		@"VOICE_FILE_INSERTED": @"🎙️ File inserito nella registrazione — rilascia per inviare",
+		@"SAVE_IN_VIEWERS_TITLE": @"Pulsante Salva nelle storie e media temporanei",
+		@"SAVE_IN_VIEWERS_SUBTITLE": @"Aggiunge un pulsante Salva al visualizzatore di storie e a quello visualizza una volta/autodistruttivo. Salva ciò che è mostrato direttamente in Foto (qualità piena per le foto, un fotogramma per i video).",
+		@"SAVE_MEDIA_BUTTON": @"Salva",
+		@"SAVE_MEDIA_DONE": @"✅ Salvato in Foto",
+		@"SAVE_MEDIA_FAILED": @"Impossibile salvare",
 	};
 	if ([code isEqualToString:@"ja"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"ゴーストモード",
@@ -841,6 +866,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"VOICE_FILE_DISARM": @"準備したファイルを取り消す",
 		@"VOICE_FILE_READY": @"✅ 準備完了 — マイクで録音して送信",
 		@"VOICE_FILE_INSERTED": @"🎙️ ファイルを録音に挿入しました — 指を離すと送信",
+		@"SAVE_IN_VIEWERS_TITLE": @"ストーリーと一時メディアに保存ボタン",
+		@"SAVE_IN_VIEWERS_SUBTITLE": @"ストーリービューアと一回表示／自動消去ビューアに保存ボタンを追加します。表示中の内容を直接「写真」に保存します（写真はフル画質、動画は1フレーム）。",
+		@"SAVE_MEDIA_BUTTON": @"保存",
+		@"SAVE_MEDIA_DONE": @"✅ 写真に保存しました",
+		@"SAVE_MEDIA_FAILED": @"保存できませんでした",
 	};
 	if ([code isEqualToString:@"ru"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Режим призрака",
@@ -979,6 +1009,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"VOICE_FILE_DISARM": @"Отменить готовый файл",
 		@"VOICE_FILE_READY": @"✅ Готово — запишите микрофоном и отправьте",
 		@"VOICE_FILE_INSERTED": @"🎙️ Файл вставлен в запись — отпустите, чтобы отправить",
+		@"SAVE_IN_VIEWERS_TITLE": @"Кнопка сохранения в историях и временных медиа",
+		@"SAVE_IN_VIEWERS_SUBTITLE": @"Добавляет кнопку сохранения в просмотр историй и одноразовых/исчезающих медиа. Сохраняет показанное прямо в Фото (полное качество для фото, кадр для видео).",
+		@"SAVE_MEDIA_BUTTON": @"Сохранить",
+		@"SAVE_MEDIA_DONE": @"✅ Сохранено в Фото",
+		@"SAVE_MEDIA_FAILED": @"Не удалось сохранить",
 	};
 	if ([code isEqualToString:@"es"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modo Fantasma",
@@ -1117,6 +1152,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"VOICE_FILE_DISARM": @"Cancelar el archivo listo",
 		@"VOICE_FILE_READY": @"✅ Listo — ahora graba con el micrófono y envía",
 		@"VOICE_FILE_INSERTED": @"🎙️ Archivo insertado en la grabación — suelta para enviar",
+		@"SAVE_IN_VIEWERS_TITLE": @"Botón Guardar en historias y medios temporales",
+		@"SAVE_IN_VIEWERS_SUBTITLE": @"Añade un botón Guardar al visor de historias y al visor de ver una vez/autodestructivo. Guarda lo que se muestra directamente en Fotos (calidad completa para fotos, un fotograma para vídeo).",
+		@"SAVE_MEDIA_BUTTON": @"Guardar",
+		@"SAVE_MEDIA_DONE": @"✅ Guardado en Fotos",
+		@"SAVE_MEDIA_FAILED": @"No se pudo guardar",
 	};
 	if ([code isEqualToString:@"tw"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隱身模式",
@@ -1255,6 +1295,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"VOICE_FILE_DISARM": @"取消已準備的檔案",
 		@"VOICE_FILE_READY": @"✅ 已就緒——現在用麥克風錄音並傳送",
 		@"VOICE_FILE_INSERTED": @"🎙️ 檔案已插入錄音——放開即可傳送",
+		@"SAVE_IN_VIEWERS_TITLE": @"在限時動態與臨時媒體中加入儲存按鈕",
+		@"SAVE_IN_VIEWERS_SUBTITLE": @"在限時動態檢視器與閱後即焚／一次性檢視器中加入儲存按鈕。將顯示的內容直接儲存到照片（照片為完整畫質，影片為一幀）。",
+		@"SAVE_MEDIA_BUTTON": @"儲存",
+		@"SAVE_MEDIA_DONE": @"✅ 已儲存到照片",
+		@"SAVE_MEDIA_FAILED": @"無法儲存",
 	};
 	if ([code isEqualToString:@"vn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Chế độ ma",
@@ -1393,6 +1438,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"VOICE_FILE_DISARM": @"Hủy tệp đã sẵn sàng",
 		@"VOICE_FILE_READY": @"✅ Sẵn sàng — ghi âm bằng mic và gửi",
 		@"VOICE_FILE_INSERTED": @"🎙️ Đã chèn tệp vào bản ghi — thả tay để gửi",
+		@"SAVE_IN_VIEWERS_TITLE": @"Nút Lưu trong Tin & phương tiện tạm thời",
+		@"SAVE_IN_VIEWERS_SUBTITLE": @"Thêm nút Lưu vào trình xem tin và trình xem xem một lần/tự hủy. Lưu nội dung đang hiển thị trực tiếp vào Ảnh (chất lượng đầy đủ cho ảnh, một khung hình cho video).",
+		@"SAVE_MEDIA_BUTTON": @"Lưu",
+		@"SAVE_MEDIA_DONE": @"✅ Đã lưu vào Ảnh",
+		@"SAVE_MEDIA_FAILED": @"Không thể lưu",
 	};
 	return nil;
 }

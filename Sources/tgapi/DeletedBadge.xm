@@ -362,33 +362,182 @@ static void revealReceipt(NSString *key) {
 }
 @end
 
+// ---------------------------------------------------------------------------
+// Save button for the story viewer and the view-once / self-destruct viewer.
+// Telegram hides its own save action for protected and ephemeral media; this
+// captures exactly what is on screen (a full-resolution still for photos, a
+// frame for video) and writes it to Photos. No TL layer, no Swift symbols.
+// ---------------------------------------------------------------------------
+
+// The largest UIImageView holding a real image inside root: for a photo story or
+// a view-once photo this is the decoded media at full resolution (the avatar and
+// small chrome images are far smaller and fall below minArea).
+static UIImageView *bestImageView(UIView *root, CGFloat minArea) {
+	if (!root) return nil;
+	UIImageView *best = nil;
+	CGFloat bestArea = minArea;
+	for (UIView *sub in root.subviews) {
+		if ([sub isKindOfClass:[UIImageView class]]) {
+			UIImage *img = ((UIImageView *)sub).image;
+			if (img) {
+				CGFloat area = img.size.width * img.size.height;
+				if (area >= bestArea && !sub.hidden && sub.alpha > 0.01) { best = (UIImageView *)sub; bestArea = area; }
+			}
+		}
+		UIImageView *deeper = bestImageView(sub, bestArea);
+		if (deeper) { best = deeper; bestArea = deeper.image.size.width * deeper.image.size.height; }
+	}
+	return best;
+}
+
+// First descendant that is a kind of cls (the media content view, free of chrome).
+static UIView *firstDescendantOfClass(UIView *root, Class cls) {
+	if (!root || !cls) return nil;
+	for (UIView *sub in root.subviews) {
+		if ([sub isKindOfClass:cls]) return sub;
+		UIView *deeper = firstDescendantOfClass(sub, cls);
+		if (deeper) return deeper;
+	}
+	return nil;
+}
+
+// Renders a view (with hide temporarily removed from the frame) to an image.
+static UIImage *snapshotOfView(UIView *v, UIView *hide) {
+	if (!v || v.bounds.size.width < 1 || v.bounds.size.height < 1) return nil;
+	BOOL wasHidden = hide.hidden;
+	hide.hidden = YES;
+	UIGraphicsImageRendererFormat *fmt = [UIGraphicsImageRendererFormat preferredFormat];
+	UIGraphicsImageRenderer *r = [[UIGraphicsImageRenderer alloc] initWithBounds:v.bounds format:fmt];
+	UIImage *out = [r imageWithActions:^(UIGraphicsImageRendererContext *ctx) {
+		[v drawViewHierarchyInRect:v.bounds afterScreenUpdates:YES];
+	}];
+	if (hide) hide.hidden = wasHidden;
+	return out;
+}
+
+@interface AYMediaSaveHandler : NSObject
+@end
+@implementation AYMediaSaveHandler
++ (void)commit:(UIImage *)img {
+	if (!img) { presentToast([ayTELELocalization localizedStringForKey:@"SAVE_MEDIA_FAILED"]); return; }
+	UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
+}
++ (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)ctx {
+	presentToast([ayTELELocalization localizedStringForKey:error ? @"SAVE_MEDIA_FAILED" : @"SAVE_MEDIA_DONE"]);
+}
+// container: the viewer view. contentClass: media view to snapshot when there is
+// no still image (video). hide: our button, kept out of the snapshot.
++ (void)saveFromContainer:(UIView *)container contentClass:(Class)contentClass hide:(UIView *)hide {
+	if (!container) { [self commit:nil]; return; }
+	UIImage *img = nil;
+	@try {
+		// A reasonably large still means it is a photo; grab it at full resolution.
+		UIImageView *iv = bestImageView(container, 200.0 * 200.0);
+		if (iv) img = iv.image;
+		if (!img) {
+			UIView *content = contentClass ? firstDescendantOfClass(container, contentClass) : nil;
+			img = snapshotOfView(content ?: container, hide);
+		}
+	} @catch (NSException *e) { img = nil; }
+	[self commit:img];
+}
++ (void)saveStory:(UIButton *)sender {
+	Class content = objc_getClass("_TtCC20StoryContainerScreen16StoryContentItem4View");
+	[self saveFromContainer:sender.superview contentClass:content hide:sender];
+	[[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight] impactOccurred];
+}
++ (void)saveSecret:(UIButton *)sender {
+	// The button sits on the controller's root view, which is essentially the media.
+	[self saveFromContainer:sender.superview contentClass:nil hide:sender];
+	[[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight] impactOccurred];
+}
+@end
+
+// Builds (once) and positions a round Save button as a subview of view.
+static UIButton *ensureSaveButton(UIView *view, const void *key, id target, SEL action) {
+	UIButton *save = objc_getAssociatedObject(view, key);
+	if (!save) {
+		save = [UIButton buttonWithType:UIButtonTypeSystem];
+		UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:18 weight:UIImageSymbolWeightSemibold];
+		[save setImage:[UIImage systemImageNamed:@"square.and.arrow.down.fill" withConfiguration:config] forState:UIControlStateNormal];
+		save.tintColor = [UIColor whiteColor];
+		save.backgroundColor = [UIColor colorWithWhite:0 alpha:0.35];
+		save.layer.cornerRadius = 18;
+		save.accessibilityLabel = [ayTELELocalization localizedStringForKey:@"SAVE_MEDIA_BUTTON"];
+		[save addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
+		objc_setAssociatedObject(view, key, save, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+		[view addSubview:save];
+	}
+	return save;
+}
+
 static const void *kStoryEyeKey = &kStoryEyeKey;
+static const void *kStorySaveKey = &kStorySaveKey;
 
 %group StoryEye
 %hook StoryItemSetContainerView
 - (void)layoutSubviews {
 	%orig;
 	UIView *view = (UIView *)self;
+	NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+	CGFloat top = view.safeAreaInsets.top > 0 ? view.safeAreaInsets.top : 20;
+	CGFloat right = view.bounds.size.width - 36 - 16;
+
+	// Eye button (reveal that you watched) — shown while story receipts are blocked.
+	BOOL eyeOn = [d boolForKey:kDisableStoriesReadReceipt];
 	UIButton *eye = objc_getAssociatedObject(view, kStoryEyeKey);
-	if (![[NSUserDefaults standardUserDefaults] boolForKey:kDisableStoriesReadReceipt]) {
+	if (eyeOn) {
+		if (!eye) {
+			eye = [UIButton buttonWithType:UIButtonTypeSystem];
+			[eye setImage:[UIImage systemImageNamed:@"eye.fill"] forState:UIControlStateNormal];
+			eye.tintColor = [UIColor whiteColor];
+			eye.backgroundColor = [UIColor colorWithWhite:0 alpha:0.35];
+			eye.layer.cornerRadius = 18;
+			eye.accessibilityLabel = [ayTELELocalization localizedStringForKey:@"MSG_ACTION_REVEAL_READ"];
+			[eye addTarget:[AYStoryEyeHandler class] action:@selector(tapped:) forControlEvents:UIControlEventTouchUpInside];
+			objc_setAssociatedObject(view, kStoryEyeKey, eye, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+			[view addSubview:eye];
+		}
+		eye.hidden = NO;
+		eye.frame = CGRectMake(right, top + 64, 36, 36);
+		[view bringSubviewToFront:eye];
+	} else if (eye) {
 		eye.hidden = YES;
+	}
+
+	// Save button — captures the story to Photos. Stacks under the eye when both show.
+	BOOL saveOn = [d boolForKey:kSaveInViewers];
+	UIButton *save = objc_getAssociatedObject(view, kStorySaveKey);
+	if (saveOn) {
+		save = ensureSaveButton(view, kStorySaveKey, [AYMediaSaveHandler class], @selector(saveStory:));
+		save.hidden = NO;
+		save.frame = CGRectMake(right, eyeOn ? top + 64 + 44 : top + 64, 36, 36);
+		[view bringSubviewToFront:save];
+	} else if (save) {
+		save.hidden = YES;
+	}
+}
+%end
+%end
+
+static const void *kSecretSaveKey = &kSecretSaveKey;
+
+%group SecretMediaSave
+%hook SecretMediaPreviewController
+- (void)viewDidLayoutSubviews {
+	%orig;
+	UIViewController *ctrl = (UIViewController *)self;
+	UIView *view = ctrl.view;
+	UIButton *save = objc_getAssociatedObject(view, kSecretSaveKey);
+	if (![[NSUserDefaults standardUserDefaults] boolForKey:kSaveInViewers]) {
+		save.hidden = YES;
 		return;
 	}
-	if (!eye) {
-		eye = [UIButton buttonWithType:UIButtonTypeSystem];
-		[eye setImage:[UIImage systemImageNamed:@"eye.fill"] forState:UIControlStateNormal];
-		eye.tintColor = [UIColor whiteColor];
-		eye.backgroundColor = [UIColor colorWithWhite:0 alpha:0.35];
-		eye.layer.cornerRadius = 18;
-		eye.accessibilityLabel = [ayTELELocalization localizedStringForKey:@"MSG_ACTION_REVEAL_READ"];
-		[eye addTarget:[AYStoryEyeHandler class] action:@selector(tapped:) forControlEvents:UIControlEventTouchUpInside];
-		objc_setAssociatedObject(view, kStoryEyeKey, eye, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-		[view addSubview:eye];
-	}
-	eye.hidden = NO;
+	save = ensureSaveButton(view, kSecretSaveKey, [AYMediaSaveHandler class], @selector(saveSecret:));
+	save.hidden = NO;
 	CGFloat top = view.safeAreaInsets.top > 0 ? view.safeAreaInsets.top : 20;
-	eye.frame = CGRectMake(view.bounds.size.width - 36 - 16, top + 64, 36, 36);
-	[view bringSubviewToFront:eye];
+	save.frame = CGRectMake(view.bounds.size.width - 36 - 16, top + 8, 36, 36);
+	[view bringSubviewToFront:save];
 }
 %end
 %end
@@ -703,4 +852,6 @@ static void trackAndUpdate(ASDisplayNode *node) {
 	if (storyView) %init(StoryEye, StoryItemSetContainerView = storyView);
 	Class chatController = objc_getClass("_TtC10TelegramUI18ChatControllerImpl");
 	if (chatController) %init(ChatEye, ChatControllerImpl = chatController);
+	Class secretViewer = objc_getClass("_TtC9GalleryUI28SecretMediaPreviewController");
+	if (secretViewer) %init(SecretMediaSave, SecretMediaPreviewController = secretViewer);
 }

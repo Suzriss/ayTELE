@@ -68,6 +68,11 @@
 // become ordinary, savable messages (read by AYProtected in Swift under the same key).
 #define kKeepViewOnceMedia @"keepViewOnceMedia"
 
+// Adds our own Save button to the story viewer and the view-once/self-destruct media
+// viewer. Captures what is shown (full-res still for photos) straight to Photos, so it
+// works even when Telegram hides its own save action for protected/ephemeral media.
+#define kSaveInViewers @"saveInViewers"
+
 #define FAKE_LOCATION_ENABLED_KEY @"ayTELEFakeLocation"
 #define FAKE_LATITUDE_KEY @"ayTELESavedLatitude"
 #define FAKE_LONGITUDE_KEY @"ayTELESavedLongitude"

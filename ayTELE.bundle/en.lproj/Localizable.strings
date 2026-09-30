@@ -181,3 +181,10 @@
 "VOICE_FILE_DISARM" = "Cancel the ready file";
 "VOICE_FILE_READY" = "✅ Ready — now record with the mic and send";
 "VOICE_FILE_INSERTED" = "🎙️ File inserted into the recording — release to send";
+
+// Save button in story viewer and view-once / self-destruct viewer
+"SAVE_IN_VIEWERS_TITLE" = "Save Button in Stories & Temporary Media";
+"SAVE_IN_VIEWERS_SUBTITLE" = "Adds a Save button to the story viewer and the view-once / self-destruct viewer. Saves what's shown straight to Photos (full quality for photos, a frame for video).";
+"SAVE_MEDIA_BUTTON" = "Save";
+"SAVE_MEDIA_DONE" = "✅ Saved to Photos";
+"SAVE_MEDIA_FAILED" = "Couldn't save";
