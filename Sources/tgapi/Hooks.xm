@@ -27,8 +27,14 @@
 	receipt.service = service;
 	@synchronized (self) {
 		[self held][key] = receipt;
-		if ([key hasPrefix:@"s:"]) [self latest][@"story"] = key;
+		[self latest][[key hasPrefix:@"s:"] ? @"story" : @"chat"] = key;
 	}
+	[self postChanged];
+}
++ (void)postChanged {
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[[NSNotificationCenter defaultCenter] postNotificationName:kAYReceiptsChangedNotification object:nil];
+	});
 }
 // Most recent held story key: the story viewer's fallback when reflection can't name the peer.
 + (NSMutableDictionary<NSString *, NSString *> *)latest {
@@ -39,6 +45,10 @@
 }
 + (NSString *)latestStoryKey {
 	@synchronized (self) { return [self latest][@"story"]; }
+}
+// Most recent held chat (messages/channels.readHistory) key: the chat eye's fallback.
++ (NSString *)latestChatKey {
+	@synchronized (self) { return [self latest][@"chat"]; }
 }
 + (BOOL)hasHeldForKey:(NSString *)key {
 	if (!key) return NO;
@@ -63,6 +73,7 @@
 			@synchronized (self) {
 				if ([self held][key] == receipt) [[self held] removeObjectForKey:key];
 			}
+			[self postChanged];
 		}
 		if (completion) dispatch_async(dispatch_get_main_queue(), ^{ completion(ok); });
 	};

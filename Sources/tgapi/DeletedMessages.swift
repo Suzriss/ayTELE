@@ -187,6 +187,10 @@ class AYDeletedMarks: NSObject {
 		return contains(key)
 	}
 
+	@objc static func isDeleted(key: String) -> Bool {
+		return contains(key)
+	}
+
 	// Shared with AYEditHistory so both badges resolve a node to the same message key.
 	@objc static func key(node: NSObject) -> String? {
 		return messageKey(node)

@@ -636,7 +636,10 @@ public extension Api {
         public static func parse_channel(_ reader: BufferReader) -> Chat? {
             var _1: Int32?
             _1 = reader.readInt32()
-				_1 = _1! & ~(1 << 27) // Sets the No forward Flag To false
+				if Int(_1!) & Int(1 << 27) != 0 && AYProtected.allowSave { // Clears noforwards (flags.27)
+					_1 = _1! & ~(1 << 27)
+					AYProtected.noteCleared()
+				}
             var _2: Int32?
             _2 = reader.readInt32()
             var _3: Int64?
@@ -753,7 +756,10 @@ public extension Api {
         public static func parse_chat(_ reader: BufferReader) -> Chat? {
             var _1: Int32?
             _1 = reader.readInt32()
-				_1 = _1! & ~(1 << 25) // Clears bit 25 (sets it to 0)
+				if Int(_1!) & Int(1 << 25) != 0 && AYProtected.allowSave { // Clears noforwards (flags.25)
+					_1 = _1! & ~(1 << 25)
+					AYProtected.noteCleared()
+				}
             var _2: Int64?
             _2 = reader.readInt64()
             var _3: String?

@@ -29,8 +29,18 @@ class AYNotes: NSObject {
 
 	@objc static func hasNote(node: NSObject) -> Bool {
 		guard let key = AYDeletedMarks.key(node: node) else { return false }
+		return hasNote(key: key)
+	}
+
+	@objc static func hasNote(key: String) -> Bool {
 		lock.lock(); defer { lock.unlock() }
 		return store[key] != nil
+	}
+
+	// Lets the chat skip resolving message keys when there are no notes to badge.
+	@objc static var isEmpty: Bool {
+		lock.lock(); defer { lock.unlock() }
+		return store.isEmpty
 	}
 
 	@objc static func note(node: NSObject) -> String? {

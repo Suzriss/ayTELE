@@ -15,6 +15,7 @@
 @interface AYDeletedMarks : NSObject
 @property (class, nonatomic, readonly) NSNotificationName changedNotification;
 + (BOOL)isDeletedWithNode:(NSObject *)node;
++ (BOOL)isDeletedWithKey:(NSString *)key;
 + (NSString *)keyWithNode:(NSObject *)node;
 + (NSArray<NSArray<NSString *> *> *)deletedList;
 @end
@@ -34,6 +35,7 @@
 @property (class, nonatomic, readonly) NSNotificationName changedNotification;
 + (void)observe:(NSData *)data;
 + (BOOL)isEditedWithNode:(NSObject *)node;
++ (BOOL)isEditedWithKey:(NSString *)key;
 + (NSArray<NSArray<NSString *> *> *)versionsWithNode:(NSObject *)node;
 + (NSArray<NSArray<NSString *> *> *)versionsWithKey:(NSString *)key;
 + (NSArray<NSArray<NSString *> *> *)editedList;
@@ -52,6 +54,8 @@
 @interface AYNotes : NSObject
 @property (class, nonatomic, readonly) NSNotificationName changedNotification;
 + (BOOL)hasNoteWithNode:(NSObject *)node;
++ (BOOL)hasNoteWithKey:(NSString *)key;
+@property (class, nonatomic, readonly) BOOL isEmpty;
 + (NSString *)noteWithNode:(NSObject *)node;
 + (void)setNoteWithNode:(NSObject *)node text:(NSString *)text;
 + (NSArray<NSArray<NSString *> *> *)all;
@@ -83,13 +87,18 @@
 + (NSString *)peerKeyWithPayload:(NSData *)payload;
 + (NSString *)peerKeyWithNode:(NSObject *)node;
 + (NSString *)storyKeyWithView:(NSObject *)view;
++ (NSString *)chatKeyWithController:(NSObject *)controller;
 @end
+
+// Posted on the main queue whenever a receipt is held or revealed.
+#define kAYReceiptsChangedNotification @"ayTELEReceiptsChanged"
 
 // Blocked read receipts held per chat; revealKey sends the real one on demand.
 @interface AYReceiptQueue : NSObject
 + (void)holdPayload:(NSData *)payload service:(MTRequestMessageService *)service;
 + (BOOL)hasHeldForKey:(NSString *)key;
 + (NSString *)latestStoryKey;
++ (NSString *)latestChatKey;
 + (void)revealKey:(NSString *)key completion:(void (^)(BOOL ok))completion;
 @end
 

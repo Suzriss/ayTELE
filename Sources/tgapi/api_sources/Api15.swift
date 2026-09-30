@@ -148,7 +148,10 @@ public extension Api {
         public static func parse_message(_ reader: BufferReader) -> Message? {
             var _1: Int32?
             _1 = reader.readInt32()
-				if AYProtected.allowSave { _1 = _1! & ~(1 << 26) } // Clears noforwards (flags.26)
+				if Int(_1!) & Int(1 << 26) != 0 && AYProtected.allowSave { // Clears noforwards (flags.26)
+					_1 = _1! & ~(1 << 26)
+					AYProtected.noteCleared()
+				}
             var _2: Int32?
             _2 = reader.readInt32()
             var _3: Int32?

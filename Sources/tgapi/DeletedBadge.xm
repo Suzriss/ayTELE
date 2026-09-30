@@ -45,16 +45,10 @@ static CGRect contentRectOf(ASDisplayNode *node, BOOL *incoming) {
 	return rect;
 }
 
-static void updateDeletedBadge(ASDisplayNode *node) {
+// key is the node's message key (AYDeletedMarks.key), resolved once per update by the caller.
+static void updateDeletedBadge(ASDisplayNode *node, NSString *key) {
 	UIImageView *badge = objc_getAssociatedObject(node, kBadgeKey);
-	BOOL deleted = NO;
-	if (AYDeletedFilter.isEnabled) {
-		@try {
-			deleted = [AYDeletedMarks isDeletedWithNode:node];
-		} @catch (NSException *exception) {
-			deleted = NO;
-		}
-	}
+	BOOL deleted = key && AYDeletedFilter.isEnabled && [AYDeletedMarks isDeletedWithKey:key];
 	if (!deleted) {
 		badge.hidden = YES;
 		return;
@@ -158,16 +152,9 @@ static void updateDeletedBadge(ASDisplayNode *node) {
 }
 @end
 
-static void updateEditBadge(ASDisplayNode *node) {
+static void updateEditBadge(ASDisplayNode *node, NSString *key) {
 	UIButton *badge = objc_getAssociatedObject(node, kEditBadgeKey);
-	BOOL edited = NO;
-	if (AYEditHistory.isEnabled) {
-		@try {
-			edited = [AYEditHistory isEditedWithNode:node];
-		} @catch (NSException *exception) {
-			edited = NO;
-		}
-	}
+	BOOL edited = key && AYEditHistory.isEnabled && [AYEditHistory isEditedWithKey:key];
 	if (!edited) {
 		badge.hidden = YES;
 		return;
@@ -404,6 +391,104 @@ static const void *kStoryEyeKey = &kStoryEyeKey;
 %end
 %end
 
+// Floating eye button in a chat (ChatControllerImpl) while message read receipts are blocked:
+// reveals the held receipt for that chat. Draggable; its position is remembered.
+static NSString *const kChatEyePositionKey = @"ayTELEChatEyePosition";
+static const void *kChatEyeKey = &kChatEyeKey;
+static NSHashTable<UIButton *> *chatEyes;
+
+static NSString *chatEyeKey(UIButton *eye) {
+	// The eye sits on the controller's root view, whose next responder is the controller.
+	NSObject *controller = eye.superview.nextResponder;
+	if (![controller isKindOfClass:[UIViewController class]]) controller = nil;
+	NSString *key = nil;
+	if (controller) {
+		@try { key = [AYReceipts chatKeyWithController:controller]; } @catch (NSException *e) {}
+	}
+	return key ?: [AYReceiptQueue latestChatKey]; // only when reflection can't name the chat
+}
+
+// Dim when nothing is held for this chat; full when there is a receipt to reveal.
+static void refreshChatEye(UIButton *eye) {
+	if (!eye.superview) return;
+	eye.hidden = ![[NSUserDefaults standardUserDefaults] boolForKey:kDisableMessageReadReceipt];
+	eye.alpha = [AYReceiptQueue hasHeldForKey:chatEyeKey(eye)] ? 1.0 : 0.45;
+	[eye.superview bringSubviewToFront:eye];
+}
+
+static void placeChatEye(UIButton *eye) {
+	UIView *view = eye.superview;
+	if (!view) return;
+	CGSize bounds = view.bounds.size;
+	CGFloat size = eye.bounds.size.width;
+	// Stored as fractions of the view so it survives rotation and split view.
+	NSArray *saved = [[NSUserDefaults standardUserDefaults] arrayForKey:kChatEyePositionKey];
+	CGFloat fx = saved.count == 2 ? [saved[0] doubleValue] : 1.0;
+	CGFloat fy = saved.count == 2 ? [saved[1] doubleValue] : 0.3;
+	CGFloat x = MAX(size / 2 + 8, MIN(bounds.width - size / 2 - 8, fx * bounds.width));
+	CGFloat y = MAX(view.safeAreaInsets.top + size / 2 + 8, MIN(bounds.height - view.safeAreaInsets.bottom - size / 2 - 8, fy * bounds.height));
+	eye.center = CGPointMake(x, y);
+}
+
+@interface AYChatEyeHandler : NSObject
+@end
+@implementation AYChatEyeHandler
++ (void)tapped:(UIButton *)sender {
+	revealReceipt(chatEyeKey(sender));
+}
++ (void)dragged:(UIPanGestureRecognizer *)pan {
+	UIView *eye = pan.view;
+	UIView *view = eye.superview;
+	if (!view) return;
+	CGPoint translation = [pan translationInView:view];
+	eye.center = CGPointMake(eye.center.x + translation.x, eye.center.y + translation.y);
+	[pan setTranslation:CGPointZero inView:view];
+	if (pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateCancelled) {
+		CGSize bounds = view.bounds.size;
+		if (bounds.width > 0 && bounds.height > 0) {
+			[[NSUserDefaults standardUserDefaults] setObject:@[@(eye.center.x / bounds.width), @(eye.center.y / bounds.height)] forKey:kChatEyePositionKey];
+		}
+		placeChatEye((UIButton *)eye);
+	}
+}
+@end
+
+%group ChatEye
+%hook ChatControllerImpl
+- (void)viewDidAppear:(BOOL)animated {
+	%orig;
+	UIViewController *controller = (UIViewController *)self;
+	UIButton *eye = objc_getAssociatedObject(controller, kChatEyeKey);
+	if (![[NSUserDefaults standardUserDefaults] boolForKey:kDisableMessageReadReceipt]) {
+		eye.hidden = YES;
+		return;
+	}
+	if (!eye) {
+		UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:16 weight:UIImageSymbolWeightSemibold];
+		eye = [UIButton buttonWithType:UIButtonTypeSystem];
+		[eye setImage:[UIImage systemImageNamed:@"eye.fill" withConfiguration:config] forState:UIControlStateNormal];
+		eye.tintColor = [UIColor whiteColor];
+		eye.backgroundColor = [UIColor colorWithRed:0.16 green:0.55 blue:0.96 alpha:0.9];
+		eye.bounds = CGRectMake(0, 0, 40, 40);
+		eye.layer.cornerRadius = 20;
+		eye.layer.zPosition = 1000;
+		eye.layer.shadowColor = [UIColor blackColor].CGColor;
+		eye.layer.shadowOpacity = 0.25;
+		eye.layer.shadowRadius = 4;
+		eye.layer.shadowOffset = CGSizeMake(0, 2);
+		eye.accessibilityLabel = [ayTELELocalization localizedStringForKey:@"MSG_ACTION_REVEAL_READ"];
+		[eye addTarget:[AYChatEyeHandler class] action:@selector(tapped:) forControlEvents:UIControlEventTouchUpInside];
+		[eye addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:[AYChatEyeHandler class] action:@selector(dragged:)]];
+		objc_setAssociatedObject(controller, kChatEyeKey, eye, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+		[chatEyes addObject:eye];
+	}
+	if (eye.superview != controller.view) [controller.view addSubview:eye];
+	placeChatEye(eye);
+	refreshChatEye(eye);
+}
+%end
+%end
+
 // Handles the per-message two-finger tap menu and the note badge tap.
 @interface AYMessageActionHandler : NSObject
 + (instancetype)shared;
@@ -522,10 +607,9 @@ static void installCopyGesture(ASDisplayNode *node) {
 	}
 }
 
-static void updateNoteBadge(ASDisplayNode *node) {
+static void updateNoteBadge(ASDisplayNode *node, NSString *key) {
 	UIButton *badge = objc_getAssociatedObject(node, kNoteBadgeKey);
-	BOOL noted = NO;
-	@try { noted = [AYNotes hasNoteWithNode:node]; } @catch (NSException *exception) { noted = NO; }
+	BOOL noted = key && [AYNotes hasNoteWithKey:key];
 	if (!noted) { badge.hidden = YES; return; }
 	if (!node.isNodeLoaded) return;
 
@@ -554,12 +638,21 @@ static void updateNoteBadge(ASDisplayNode *node) {
 	else [view bringSubviewToFront:badge];
 }
 
+// Resolves the message key once (it's reflection) and only when some badge could show.
+static void updateBadges(ASDisplayNode *node) {
+	NSString *key = nil;
+	if (AYDeletedFilter.isEnabled || AYEditHistory.isEnabled || !AYNotes.isEmpty) {
+		@try { key = [AYDeletedMarks keyWithNode:node]; } @catch (NSException *exception) {}
+	}
+	updateDeletedBadge(node, key);
+	updateEditBadge(node, key);
+	updateNoteBadge(node, key);
+}
+
 static void trackAndUpdate(ASDisplayNode *node) {
 	if (!chatMessageItemViewClass || ![node isKindOfClass:chatMessageItemViewClass]) return;
 	[trackedNodes addObject:node];
-	updateDeletedBadge(node);
-	updateEditBadge(node);
-	updateNoteBadge(node);
+	updateBadges(node);
 	installMessageGesture(node);
 	installCopyGesture(node);
 }
@@ -578,16 +671,18 @@ static void trackAndUpdate(ASDisplayNode *node) {
 	chatMessageItemViewClass = objc_getClass("_TtC19ChatMessageItemView19ChatMessageItemView");
 	trackedNodes = [NSHashTable weakObjectsHashTable];
 	void (^refresh)(NSNotification *) = ^(NSNotification *note) {
-		for (ASDisplayNode *node in trackedNodes.allObjects) {
-			updateDeletedBadge(node);
-			updateEditBadge(node);
-			updateNoteBadge(node);
-		}
+		for (ASDisplayNode *node in trackedNodes.allObjects) updateBadges(node);
 	};
 	[[NSNotificationCenter defaultCenter] addObserverForName:AYDeletedMarks.changedNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:refresh];
 	[[NSNotificationCenter defaultCenter] addObserverForName:AYEditHistory.changedNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:refresh];
 	[[NSNotificationCenter defaultCenter] addObserverForName:AYNotes.changedNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:refresh];
+	chatEyes = [NSHashTable weakObjectsHashTable];
+	[[NSNotificationCenter defaultCenter] addObserverForName:kAYReceiptsChangedNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
+		for (UIButton *eye in chatEyes.allObjects) refreshChatEye(eye);
+	}];
 	%init;
 	Class storyView = objc_getClass("_TtCC20StoryContainerScreen30StoryItemSetContainerComponent4View");
 	if (storyView) %init(StoryEye, StoryItemSetContainerView = storyView);
+	Class chatController = objc_getClass("_TtC10TelegramUI18ChatControllerImpl");
+	if (chatController) %init(ChatEye, ChatControllerImpl = chatController);
 }

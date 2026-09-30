@@ -46,11 +46,22 @@ class AYReceipts: NSObject {
 		guard let component = AYDeletedMarks.child(Mirror(reflecting: view), "component"),
 		      let slice = AYDeletedMarks.child(Mirror(reflecting: component), "slice"),
 		      let peer = AYDeletedMarks.child(Mirror(reflecting: slice), "peer") else { return nil }
-		var queue: [(Any, Int)] = [(peer, 0)]
+		return findPeerIdKey(in: peer).map { "s:\($0)" }
+	}
+
+	// Chat key for a ChatControllerImpl: its chatLocation (.peer(id:) / .replyThread) -> PeerId.
+	@objc static func chatKey(controller: NSObject) -> String? {
+		guard let location = AYDeletedMarks.child(Mirror(reflecting: controller), "chatLocation") else { return nil }
+		return findPeerIdKey(in: location)
+	}
+
+	// Breadth-first search (depth 3) for the first PeerId inside value.
+	private static func findPeerIdKey(in value: Any) -> String? {
+		var queue: [(Any, Int)] = [(value, 0)]
 		while !queue.isEmpty {
 			let (value, depth) = queue.removeFirst()
 			if String(describing: type(of: value)) == "PeerId", let found = peerIdKey(value) {
-				return "s:\(found)"
+				return found
 			}
 			if depth < 3 {
 				queue.append(contentsOf: Mirror(reflecting: value).children.compactMap { c in AYDeletedMarks.unwrap(c.value).map { ($0, depth + 1) } })

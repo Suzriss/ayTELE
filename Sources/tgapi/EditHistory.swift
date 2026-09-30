@@ -84,6 +84,7 @@ class AYEditHistory: NSObject {
 				let labels = Set(tuple.children.compactMap { $0.label })
 				if labels.contains("id"), labels.contains("peerId"), labels.contains("message") {
 					if let entry = messageEntry(tuple) { found.append(entry) }
+					return // nothing else we collect lives inside a message (media, entities, ...)
 				}
 			case "user":
 				if let id = int64(tuple, "id") {
@@ -91,10 +92,13 @@ class AYEditHistory: NSObject {
 					let fallback = string(tuple, "username").map { "@" + $0 }
 					if let n = name.isEmpty ? fallback : name { names["u\(id)"] = n }
 				}
+				return
 			case "chat":
 				if let id = int64(tuple, "id"), let title = string(tuple, "title") { names["g\(id)"] = title }
+				return
 			case "channel":
 				if let id = int64(tuple, "id"), let title = string(tuple, "title") { names["c\(id)"] = title }
+				return
 			default:
 				break
 			}

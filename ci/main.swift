@@ -187,7 +187,17 @@ do {
 	d.set(true, forKey: "disableForwardRestriction"); d.set(false, forKey: "keepViewOnceMedia")
 	expect("protected: story noforwards dropped", reparsed(AYProtected.filter(pushed(.updateStory(peer: peer, story: story((1 << 10) | (1 << 5)))))) == str(.updateStory(peer: peer, story: story(1 << 5))))
 	expect("protected: ttl kept without view-once toggle", AYProtected.filter(pushed(mediaMsg(photo))) == nil)
+	// Chats pushed alongside updates: channel noforwards (flags.27), basic group noforwards (flags.25).
+	func channel(_ flags: Int32) -> Api.Chat { .channel(flags: flags, flags2: 0, id: 9, accessHash: nil, title: "C", username: nil, photo: .chatPhotoEmpty, date: 1, restrictionReason: nil, adminRights: nil, bannedRights: nil, defaultBannedRights: nil, participantsCount: nil, usernames: nil, storiesMaxId: nil, color: nil, profileColor: nil, emojiStatus: nil, level: nil, subscriptionUntilDate: nil, botVerificationIcon: nil, sendPaidMessagesStars: nil) }
+	func group(_ flags: Int32) -> Api.Chat { .chat(flags: flags, id: 8, title: "G", photo: .chatPhotoEmpty, participantsCount: 2, date: 1, version: 1, migratedTo: nil, adminRights: nil, defaultBannedRights: nil) }
+	func withChats(_ chats: [Api.Chat]) -> Api.Updates { .updates(updates: [], users: [], chats: chats, date: 1, seq: 1) }
+	expect("protected: channel noforwards dropped", reparsed(AYProtected.filter(ser(withChats([channel(1 << 27)])))) == "\(withChats([channel(0)]))")
+	expect("protected: group noforwards dropped", reparsed(AYProtected.filter(ser(withChats([group(1 << 25)])))) == "\(withChats([group(0)]))")
+	expect("protected: unprotected chats untouched", AYProtected.filter(ser(withChats([channel(0), group(0)]))) == nil)
+	func textMsg(_ flags: Int32) -> Api.Update { .updateNewMessage(message: .message(flags: flags, flags2: 0, id: 1, fromId: nil, fromBoostsApplied: nil, peerId: peer, savedPeerId: nil, fwdFrom: nil, viaBotId: nil, viaBusinessBotId: nil, replyTo: nil, date: 1, message: "hi", media: nil, replyMarkup: nil, entities: nil, views: nil, forwards: nil, replies: nil, editDate: nil, postAuthor: nil, groupedId: nil, reactions: nil, restrictionReason: nil, ttlPeriod: nil, quickReplyShortcutId: nil, effect: nil, factcheck: nil, reportDeliveryUntilDate: nil, paidMessageStars: nil), pts: 1, ptsCount: 1) }
+	expect("protected: message noforwards dropped", reparsed(AYProtected.filter(pushed(textMsg(1 << 26)))) == str(textMsg(0)))
 	d.set(false, forKey: "disableForwardRestriction")
+	expect("protected: channel kept protected without save toggle", AYProtected.filter(ser(withChats([channel(1 << 27)]))) == nil)
 }
 
 // AYReceipts: chat key of a held readHistory / readStories payload.
