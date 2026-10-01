@@ -97,11 +97,14 @@ void AYPresentToast(NSString *message);
 // Swift payload builder (DirectSend.swift): serializes layer-229 upload/send requests.
 @interface AYDirectSend : NSObject
 + (NSData *)saveFilePartWithFileId:(long long)fileId part:(int)part chunk:(NSData *)chunk;
-+ (NSData *)sendVoiceToSelfWithFileId:(long long)fileId parts:(int)parts duration:(int)duration waveform:(NSData *)waveform randomId:(long long)randomId;
++ (NSData *)sendVoiceWithFileId:(long long)fileId parts:(int)parts duration:(int)duration waveform:(NSData *)waveform randomId:(long long)randomId peer:(NSData *)peer;
 @end
 
 // Records the live main-API request service so AYVoiceSend can issue its own requests through it.
 void AYCaptureRequestService(MTRequestMessageService *service);
+
+// Remembers the current chat's InputPeer by sniffing outgoing getHistory/readHistory payloads.
+void AYCaptureOutgoingPeer(NSData *payload);
 
 // Uploads an OGG/Opus clip and sends it as a real voice message (no mic), via raw MTProto.
 @interface AYVoiceSend : NSObject

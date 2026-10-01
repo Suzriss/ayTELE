@@ -193,5 +193,5 @@
 "SAVE_MEDIA_FRAME" = "✅ Image enregistrée (la vidéo complète nécessite la sauvegarde de Telegram)";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ Vocal envoyé aux Messages enregistrés";
+"VOICE_SEND_DONE" = "✅ Message vocal envoyé";
 "VOICE_SEND_FAILED" = "Impossible d'envoyer le message vocal";

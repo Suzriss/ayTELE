@@ -195,5 +195,5 @@
 "SAVE_MEDIA_FRAME" = "✅ Saved a frame (the full video needs Telegram's own save)";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ Voice sent to Saved Messages";
+"VOICE_SEND_DONE" = "✅ Voice message sent";
 "VOICE_SEND_FAILED" = "Couldn't send the voice message";

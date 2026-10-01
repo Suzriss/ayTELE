@@ -20,13 +20,16 @@ public class AYDirectSend: NSObject {
 		return b.makeData()
 	}
 
-	// messages.sendMedia to Saved Messages with the uploaded file as a voice document.
-	@objc public static func sendVoiceToSelf(fileId: Int64, parts: Int32, duration: Int32, waveform: Data?, randomId: Int64) -> Data {
+	// messages.sendMedia with the uploaded file as a voice document. `peer` is the raw serialized
+	// InputPeer bytes (captured from an outgoing getHistory/readHistory, or inputPeerSelf as fallback).
+	@objc public static func sendVoice(fileId: Int64, parts: Int32, duration: Int32, waveform: Data?, randomId: Int64, peer: Data) -> Data {
 		let b = Buffer()
 		// messages.sendMedia#330e77f flags:# peer:InputPeer media:InputMedia message:string random_id:long ...
 		b.appendInt32(fid(0x0330e77f))
 		b.appendInt32(0)                      // flags: none (no reply_to, silent, etc.)
-		b.appendInt32(fid(0x7da07ec9))        // peer: inputPeerSelf#7da07ec9
+		peer.withUnsafeBytes { raw in       // peer: InputPeer (already serialized)
+			if let base = raw.baseAddress { b.appendBytes(base, length: UInt(peer.count)) }
+		}
 		appendUploadedVoice(b, fileId: fileId, parts: parts, duration: duration, waveform: waveform)
 		serializeString("", buffer: b, boxed: false)   // message
 		b.appendInt64(randomId)               // random_id

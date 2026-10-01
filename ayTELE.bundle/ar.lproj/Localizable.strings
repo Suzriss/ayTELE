@@ -193,5 +193,5 @@
 "SAVE_MEDIA_FRAME" = "✅ انحفظت لقطة (الفيديو الكامل يحتاج حفظ تيلگرام نفسه)";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ انرسلت الصوتية للرسائل المحفوظة";
+"VOICE_SEND_DONE" = "✅ انرسلت الصوتية";
 "VOICE_SEND_FAILED" = "ما نگدر نرسل الصوتية";

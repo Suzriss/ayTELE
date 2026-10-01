@@ -196,5 +196,5 @@
 "SAVE_MEDIA_FRAME" = "✅ 已保存一帧（完整视频需要 Telegram 自带的保存）";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ 语音已发送到“收藏夹”";
+"VOICE_SEND_DONE" = "✅ 语音消息已发送";
 "VOICE_SEND_FAILED" = "无法发送语音消息";

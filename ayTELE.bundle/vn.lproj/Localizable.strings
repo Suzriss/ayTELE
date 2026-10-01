@@ -195,5 +195,5 @@
 "SAVE_MEDIA_FRAME" = "✅ Đã lưu một khung hình (video đầy đủ cần chức năng lưu của Telegram)";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ Đã gửi thoại đến Tin đã lưu";
+"VOICE_SEND_DONE" = "✅ Đã gửi tin nhắn thoại";
 "VOICE_SEND_FAILED" = "Không thể gửi tin nhắn thoại";

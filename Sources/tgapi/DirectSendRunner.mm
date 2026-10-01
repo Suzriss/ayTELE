@@ -18,6 +18,38 @@ void AYCaptureRequestService(MTRequestMessageService *service) {
 	if (service) gService = service;
 }
 
+// The InputPeer of the chat the user is most likely looking at, sniffed from outgoing
+// getHistory/readHistory requests (peer is their first field). Raw serialized InputPeer bytes.
+static NSData *gCurrentPeer;
+static NSTimeInterval gCurrentPeerTime;
+
+void AYCaptureOutgoingPeer(NSData *payload) {
+	if (payload.length < 8) return;
+	uint32_t fid = 0;
+	[payload getBytes:&fid length:4];
+	if (fid != 0x4423e6c5 /* messages.getHistory */ && fid != 0x0e306d3a /* messages.readHistory */) return;
+	uint32_t ctor = 0;
+	[payload getBytes:&ctor range:NSMakeRange(4, 4)];
+	NSUInteger len;
+	switch (ctor) {
+		case 0x7da07ec9: len = 4; break;   // inputPeerSelf
+		case 0x35a95cb9: len = 12; break;  // inputPeerChat
+		case 0xdde8a54c: len = 20; break;  // inputPeerUser
+		case 0x27bcbbfc: len = 20; break;  // inputPeerChannel
+		default: return;
+	}
+	if (payload.length < 4 + len) return;
+	gCurrentPeer = [payload subdataWithRange:NSMakeRange(4, len)];
+	gCurrentPeerTime = [NSDate date].timeIntervalSince1970;
+}
+
+// The captured peer if it's fresh enough, else inputPeerSelf (Saved Messages) as a safe fallback.
+static NSData *currentPeerOrSelf(void) {
+	if (gCurrentPeer && ([NSDate date].timeIntervalSince1970 - gCurrentPeerTime) < 3600) return gCurrentPeer;
+	uint32_t self = 0x7da07ec9;  // inputPeerSelf
+	return [NSData dataWithBytes:&self length:4];
+}
+
 static void toast(NSString *key) {
 	AYPresentToast([ayTELELocalization localizedStringForKey:key]);
 }
@@ -75,8 +107,8 @@ static MTRequest *makeRequest(NSData *payload, int functionId, void (^completed)
 
 + (void)sendMediaWithFileId:(long long)fileId parts:(int)parts duration:(int)duration
 		waveform:(NSData *)waveform service:(MTRequestMessageService *)service {
-	NSData *payload = [AYDirectSend sendVoiceToSelfWithFileId:fileId parts:parts duration:duration
-		waveform:waveform randomId:randomLong()];
+	NSData *payload = [AYDirectSend sendVoiceWithFileId:fileId parts:parts duration:duration
+		waveform:waveform randomId:randomLong() peer:currentPeerOrSelf()];
 	MTRequest *req = makeRequest(payload, (int)0x0330e77f, ^(id result, MTRpcError *error) {
 		dispatch_async(dispatch_get_main_queue(), ^{
 			toast(error ? @"VOICE_SEND_FAILED" : @"VOICE_SEND_DONE");

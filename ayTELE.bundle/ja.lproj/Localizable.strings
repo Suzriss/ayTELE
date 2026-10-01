@@ -195,5 +195,5 @@
 "SAVE_MEDIA_FRAME" = "✅ 1フレームを保存しました（完全な動画はTelegramの保存が必要）";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ ボイスを「保存済みメッセージ」に送信しました";
+"VOICE_SEND_DONE" = "✅ ボイスメッセージを送信しました";
 "VOICE_SEND_FAILED" = "ボイスメッセージを送信できませんでした";

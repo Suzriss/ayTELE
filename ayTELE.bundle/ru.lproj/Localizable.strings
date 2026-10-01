@@ -195,5 +195,5 @@
 "SAVE_MEDIA_FRAME" = "✅ Сохранён кадр (полное видео требует сохранения самого Telegram)";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ Голосовое отправлено в «Избранное»";
+"VOICE_SEND_DONE" = "✅ Голосовое отправлено";
 "VOICE_SEND_FAILED" = "Не удалось отправить голосовое";

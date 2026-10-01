@@ -195,5 +195,5 @@
 "SAVE_MEDIA_FRAME" = "✅ 已儲存一幀（完整影片需要 Telegram 自帶的儲存）";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ 語音已發送到「儲存的訊息」";
+"VOICE_SEND_DONE" = "✅ 語音訊息已發送";
 "VOICE_SEND_FAILED" = "無法發送語音訊息";

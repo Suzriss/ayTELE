@@ -93,6 +93,9 @@
 	int32_t functionID;
 	[payload getBytes:&functionID length:4];
 	self.functionID = [NSNumber numberWithInt:functionID];
+
+	// Learn which chat the user is in, so AYVoiceSend can target it (not Saved Messages).
+	AYCaptureOutgoingPeer(payload);
 	
 	//customLog(@"Function id: %d", functionID);
 	
