@@ -17,13 +17,15 @@ class AYMediaFile: NSObject {
 	// Same walk, but returns a human-readable trace of what it saw alongside the size, so the ObjC
 	// save path can log why a story resolved to a photo (e.g. the media was never reached, or it was
 	// reached but had size 0). Returns "size|debug".
+	// Returns "size|fileId|dc|debug". fileId is the resource's file id (0 if unknown); the ObjC save
+	// path uses it to find the cached file by name when a story video is not stored by its byte size.
 	@objc static func videoByteSizeDebugFrom(_ root: NSObject?) -> String {
-		let (size, debug) = walk(root)
-		return "\(size?.int64Value ?? 0)|\(debug)"
+		let (size, fileId, dc, debug) = walk(root)
+		return "\(size?.int64Value ?? 0)|\(fileId)|\(dc)|\(debug)"
 	}
 
-	private static func walk(_ root: NSObject?) -> (NSNumber?, String) {
-		guard let root = root else { return (nil, "nil root") }
+	private static func walk(_ root: NSObject?) -> (NSNumber?, Int64, Int64, String) {
+		guard let root = root else { return (nil, 0, 0, "nil root") }
 		var queue: [(Any, Int)] = [(root, 0)]
 		var visited = 0
 		var maxDepth = 0
@@ -44,7 +46,8 @@ class AYMediaFile: NSObject {
 				let sz = integer(child(mirror, "size")) ?? integer(child(Mirror(reflecting: child(mirror, "resource") ?? 0), "size")) ?? 0
 				if firstAnyFileNote.isEmpty { firstAnyFileNote = "file(mime=\(mime),size=\(sz))" }
 				if let size = videoSize(value, mirror) {
-					return (NSNumber(value: size), "found video size=\(size) after \(visited) nodes, depth\(maxDepth)")
+					let (fileId, dc) = resourceIds(mirror)
+					return (NSNumber(value: size), fileId, dc, "found video size=\(size) fileId=\(fileId) dc=\(dc) after \(visited) nodes, depth\(maxDepth)")
 				}
 			}
 			for child in mirror.children {
@@ -59,7 +62,17 @@ class AYMediaFile: NSObject {
 			}
 		}
 		let debug = "no video: \(visited) nodes, depth\(maxDepth), mediaFiles=\(mediaSeen)\(firstAnyFileNote.isEmpty ? "" : ", first \(firstAnyFileNote)")"
-		return (nil, debug)
+		return (nil, 0, 0, debug)
+	}
+
+	// The resource's (fileId, datacenterId) for a media file, read by reflection. MediaBox names the
+	// cached file from these, so they let us find a story video that is not stored by its byte size.
+	private static func resourceIds(_ fileMirror: Mirror) -> (Int64, Int64) {
+		guard let resource = child(fileMirror, "resource") else { return (0, 0) }
+		let rm = Mirror(reflecting: resource)
+		let fileId = integer(child(rm, "fileId")) ?? integer(child(rm, "id")) ?? 0
+		let dc = integer(child(rm, "datacenterId")) ?? 0
+		return (fileId, dc)
 	}
 
 	// Returns the byte size only when the media file looks like a video (mime or a video attribute).

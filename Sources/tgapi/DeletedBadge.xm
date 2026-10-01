@@ -532,35 +532,45 @@ static NSArray<NSString *> *mediaSearchRoots(void) {
 	return cached;
 }
 
-// The cached file whose size is exactly `size` bytes and that is the video being shown. We prefer
-// a file whose header is an MP4/QuickTime container, but an exact byte-size match this large is
-// specific enough to trust on its own, so we fall back to it. `debugOut` gets a short trace.
-static NSString *findVideoFileWithSize(long long size, NSString **debugOut) {
-	if (size <= 0) { if (debugOut) *debugOut = @"size<=0"; return nil; }
+// Finds the cached story/secret video. Telegram's MediaBox names a cached file from the resource's
+// fileId, so a filename containing `fileId` is the strongest match (a streamed story is not stored
+// by its byte size). Falls back to an exact byte-size match, preferring an MP4/QuickTime header.
+// `debugOut` gets a trace, including the largest files seen so a miss shows how the video is stored.
+static NSString *findVideoFileWithSize(long long size, long long fileId, NSString **debugOut) {
 	NSFileManager *fm = [NSFileManager defaultManager];
-	NSString *ftypMatch = nil;      // exact size AND looks like a video container
-	NSString *sizeOnlyMatch = nil;  // exact size, header not recognized
-	int matches = 0, scanned = 0;
-	NSMutableArray<NSString *> *sampleMatches = [NSMutableArray array];
+	NSString *idStr = fileId != 0 ? [NSString stringWithFormat:@"%lld", fileId] : nil;
+	NSString *nameMatch = nil, *ftypMatch = nil, *sizeOnlyMatch = nil;
+	int sizeMatches = 0, scanned = 0;
+	// Track the few largest files for diagnostics when nothing matches.
+	long long big1 = 0, big2 = 0; NSString *big1Name = nil, *big2Name = nil;
 	for (NSString *dir in mediaSearchRoots()) {
 		NSDirectoryEnumerator *en = [fm enumeratorAtPath:dir];
 		for (NSString *rel in en) {
 			if (++scanned > 600000) break;
 			NSDictionary *attrs = [en fileAttributes];  // no extra stat; provided by the enumerator
 			if ([attrs.fileType isEqualToString:NSFileTypeDirectory]) continue;
-			if ((long long)attrs.fileSize != size) continue;
-			matches++;
-			NSString *full = [dir stringByAppendingPathComponent:rel];
-			if (sampleMatches.count < 4) [sampleMatches addObject:[rel lastPathComponent]];
-			if (looksLikeVideoFile(full)) { ftypMatch = full; break; }
-			else if (!sizeOnlyMatch) sizeOnlyMatch = full;
+			long long fsize = (long long)attrs.fileSize;
+			NSString *name = [rel lastPathComponent];
+			// A file named after the resource and big enough to be the video (not its thumbnail).
+			if (idStr && fsize > 65536 && [name rangeOfString:idStr].location != NSNotFound) {
+				nameMatch = [dir stringByAppendingPathComponent:rel]; break;
+			}
+			if (fsize > big1) { big2 = big1; big2Name = big1Name; big1 = fsize; big1Name = name; }
+			else if (fsize > big2) { big2 = fsize; big2Name = name; }
+			if (size > 0 && fsize == size) {
+				sizeMatches++;
+				NSString *full = [dir stringByAppendingPathComponent:rel];
+				if (looksLikeVideoFile(full)) { if (!ftypMatch) ftypMatch = full; }
+				else if (!sizeOnlyMatch) sizeOnlyMatch = full;
+			}
 		}
-		if (ftypMatch) break;
+		if (nameMatch) break;
 	}
-	NSString *chosen = ftypMatch ?: sizeOnlyMatch;
-	if (debugOut) *debugOut = [NSString stringWithFormat:@"scanned %d, size-matches %d%@, %@",
-		scanned, matches, sampleMatches.count ? [@" [" stringByAppendingString:[[sampleMatches componentsJoinedByString:@","] stringByAppendingString:@"]"]] : @"",
-		ftypMatch ? @"ftyp hit" : (sizeOnlyMatch ? @"size-only hit" : @"no hit")];
+	NSString *chosen = nameMatch ?: ftypMatch ?: sizeOnlyMatch;
+	if (debugOut) *debugOut = [NSString stringWithFormat:@"scanned %d, size-matches %d, %@; biggest %lld(%@),%lld(%@)",
+		scanned, sizeMatches,
+		nameMatch ? @"NAME hit" : (ftypMatch ? @"ftyp hit" : (sizeOnlyMatch ? @"size-only hit" : @"no hit")),
+		big1, big1Name ?: @"-", big2, big2Name ?: @"-"];
 	return chosen;
 }
 
@@ -614,16 +624,19 @@ static NSString *findVideoFileWithSize(long long size, NSString **debugOut) {
 	// Everything else that has to be read on the main thread, gathered up front. Reflect the viewer
 	// for the video's byte size; if that comes up empty, try the inner content view, whose component
 	// state is where the story item (and its media) actually lives.
-	long long size = 0;
+	long long size = 0, fileId = 0;
 	NSString *sizeDebug = nil;
 	@try {
 		NSString *r = [AYMediaFile videoByteSizeDebugFrom:reflect];
-		size = [r componentsSeparatedByString:@"|"].firstObject.longLongValue;
+		NSArray<NSString *> *parts = [r componentsSeparatedByString:@"|"];
+		size = parts.count > 0 ? parts[0].longLongValue : 0;
+		fileId = parts.count > 1 ? parts[1].longLongValue : 0;
 		sizeDebug = r;
 		if (size <= 0 && content) {
 			NSString *r2 = [AYMediaFile videoByteSizeDebugFrom:content];
-			long long s2 = [r2 componentsSeparatedByString:@"|"].firstObject.longLongValue;
-			if (s2 > 0) { size = s2; sizeDebug = [@"content:" stringByAppendingString:r2]; }
+			NSArray<NSString *> *p2 = [r2 componentsSeparatedByString:@"|"];
+			long long s2 = p2.count > 0 ? p2[0].longLongValue : 0;
+			if (s2 > 0) { size = s2; fileId = p2.count > 1 ? p2[1].longLongValue : 0; sizeDebug = [@"content:" stringByAppendingString:r2]; }
 		}
 	} @catch (NSException *e) {}
 	UIImage *photo = nil;
@@ -647,9 +660,9 @@ static NSString *findVideoFileWithSize(long long size, NSString **debugOut) {
 	if (size > 0) {
 		dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
 			NSString *dbg = nil;
-			NSString *path = findVideoFileWithSize(size, &dbg);
+			NSString *path = findVideoFileWithSize(size, fileId, &dbg);
 			dispatch_async(dispatch_get_main_queue(), ^{
-				customLog(@"save: cache match for %lld bytes -> %@ (roots: %lu; %@)", size, path.lastPathComponent ?: @"none", (unsigned long)mediaSearchRoots().count, dbg ?: @"-");
+				customLog(@"save: cache match for %lld bytes (fileId %lld) -> %@ (roots: %lu; %@)", size, fileId, path.lastPathComponent ?: @"none", (unsigned long)mediaSearchRoots().count, dbg ?: @"-");
 				if (path) [self saveVideoAtPath:path];
 				else [self commit:frame note:@"SAVE_MEDIA_FRAME"];
 			});

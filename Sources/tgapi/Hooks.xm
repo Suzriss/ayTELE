@@ -192,6 +192,11 @@
     }
     // Remember this live service so AYVoiceSend can push its own upload/send requests through it.
     AYCaptureRequestService(self);
+    // getHistory / readHistory / sendMessage always ride the account's home datacenter. Pin that
+    // service for our upload+sendMedia, so they don't go out on a download/CDN DC and come back
+    // with 303 USER_MIGRATE_X.
+    uint32_t fid = (uint32_t)request.functionID.intValue;
+    if (fid == 0x4423e6c5 || fid == 0x0e306d3a || fid == 0xfef48f62) AYCaptureHomeService(self);
     %orig;
 }
 

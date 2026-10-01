@@ -13,9 +13,21 @@ void AYPresentToast(NSString *message);
 @end
 
 static __weak MTRequestMessageService *gService;
+static __weak MTRequestMessageService *gHomeService;
 
 void AYCaptureRequestService(MTRequestMessageService *service) {
 	if (service) gService = service;
+}
+
+// The service that carries getHistory/sendMessage — i.e. the account's home datacenter. Our
+// upload+sendMedia must ride this one; a download/CDN service gives back 303 USER_MIGRATE_X.
+void AYCaptureHomeService(MTRequestMessageService *service) {
+	if (service) gHomeService = service;
+}
+
+// Prefer the pinned home-DC service; fall back to the most recent one only if we never saw it.
+static MTRequestMessageService *activeService(void) {
+	return gHomeService ?: gService;
 }
 
 // InputPeers sniffed from outgoing getHistory/readHistory/sendMessage requests (peer is the first
@@ -150,7 +162,7 @@ static MTRequest *makeRequest(NSData *payload, int functionId, void (^completed)
 // Shared plumbing so other raw-MTProto features (e.g. translate) reuse the live service, the
 // sniffed current peer, and the request builder instead of duplicating any of it.
 BOOL AYIssueRequest(NSData *payload, int functionId, void (^completed)(id result, MTRpcError *error)) {
-	MTRequestMessageService *service = gService;
+	MTRequestMessageService *service = activeService();
 	if (!service || payload.length == 0) return NO;
 	[service addRequest:makeRequest(payload, functionId, completed)];
 	return YES;
@@ -161,7 +173,7 @@ NSData *AYCurrentPeerOrSelf(void) { return currentPeerOrSelf(); }
 @implementation AYVoiceSend
 
 + (void)sendOGG:(NSData *)ogg duration:(int)duration waveform:(NSData *)waveform chatKey:(NSString *)chatKey {
-	MTRequestMessageService *service = gService;
+	MTRequestMessageService *service = activeService();
 	if (ogg.length == 0 || !service) {
 		customLog(@"voice: cannot send (ogg=%lu bytes, service=%@)", (unsigned long)ogg.length, service ? @"yes" : @"none captured yet");
 		toast(@"VOICE_SEND_FAILED");

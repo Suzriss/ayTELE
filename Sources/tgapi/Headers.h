@@ -111,6 +111,10 @@ void AYPresentToast(NSString *message);
 // Records the live main-API request service so AYVoiceSend can issue its own requests through it.
 void AYCaptureRequestService(MTRequestMessageService *service);
 
+// Records the service that carries home-DC operations (getHistory/sendMessage). Uploads and
+// sendMedia must go through this one, or the server rejects them with USER_MIGRATE_X.
+void AYCaptureHomeService(MTRequestMessageService *service);
+
 // Remembers the current chat's InputPeer by sniffing outgoing getHistory/readHistory payloads.
 void AYCaptureOutgoingPeer(NSData *payload);
 
