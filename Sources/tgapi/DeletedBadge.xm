@@ -576,9 +576,21 @@ static NSString *findVideoFileWithSize(long long size) {
 		return;
 	}
 
-	// Everything else that has to be read on the main thread, gathered up front.
+	// Everything else that has to be read on the main thread, gathered up front. Reflect the viewer
+	// for the video's byte size; if that comes up empty, try the inner content view, whose component
+	// state is where the story item (and its media) actually lives.
 	long long size = 0;
-	@try { size = [AYMediaFile videoByteSizeFrom:reflect].longLongValue; } @catch (NSException *e) {}
+	NSString *sizeDebug = nil;
+	@try {
+		NSString *r = [AYMediaFile videoByteSizeDebugFrom:reflect];
+		size = [r componentsSeparatedByString:@"|"].firstObject.longLongValue;
+		sizeDebug = r;
+		if (size <= 0 && content) {
+			NSString *r2 = [AYMediaFile videoByteSizeDebugFrom:content];
+			long long s2 = [r2 componentsSeparatedByString:@"|"].firstObject.longLongValue;
+			if (s2 > 0) { size = s2; sizeDebug = [@"content:" stringByAppendingString:r2]; }
+		}
+	} @catch (NSException *e) {}
 	UIImage *photo = nil;
 	@try {
 		UIImageView *iv = bestImageView(media, 200.0 * 200.0);
@@ -590,9 +602,10 @@ static NSString *findVideoFileWithSize(long long size) {
 	} @catch (NSException *e) {}
 	UIImage *frame = nil;
 	@try { frame = snapshotOfView(media, hide); } @catch (NSException *e) {}
-	customLog(@"save: viewer=%@ content=%@ videoSize=%lld photo=%.0fx%.0f",
+	customLog(@"save: viewer=%@ content=%@ videoSize=%lld photo=%.0fx%.0f [%@]",
 		NSStringFromClass([reflect class]), content ? NSStringFromClass([content class]) : @"-", size,
-		photo.size.width * photo.scale, photo.size.height * photo.scale);
+		photo.size.width * photo.scale, photo.size.height * photo.scale,
+		sizeDebug ?: @"-");
 
 	// 2) A video: match its exact byte size against the Postbox cache off the main thread. Checked
 	// before the photo, because a video story also shows its still preview underneath.

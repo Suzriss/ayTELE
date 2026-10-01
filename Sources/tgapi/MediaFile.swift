@@ -11,17 +11,41 @@ class AYMediaFile: NSObject {
 	// Breadth-first, depth- and count-bounded walk of a viewer object graph for a TelegramMediaFile
 	// that is a video; returns its size in bytes, or nil if none is found.
 	@objc static func videoByteSizeFrom(_ root: NSObject?) -> NSNumber? {
-		guard let root = root else { return nil }
+		return walk(root).0
+	}
+
+	// Same walk, but returns a human-readable trace of what it saw alongside the size, so the ObjC
+	// save path can log why a story resolved to a photo (e.g. the media was never reached, or it was
+	// reached but had size 0). Returns "size|debug".
+	@objc static func videoByteSizeDebugFrom(_ root: NSObject?) -> String {
+		let (size, debug) = walk(root)
+		return "\(size?.int64Value ?? 0)|\(debug)"
+	}
+
+	private static func walk(_ root: NSObject?) -> (NSNumber?, String) {
+		guard let root = root else { return (nil, "nil root") }
 		var queue: [(Any, Int)] = [(root, 0)]
 		var visited = 0
-		while !queue.isEmpty && visited < 6000 {
+		var maxDepth = 0
+		var mediaSeen = 0
+		var firstAnyFileNote = ""
+		// Walk a bit wider/deeper than before: the story media sits behind the per-item component
+		// state, and the earlier 9/6000 bound could be exhausted by the view's own model first.
+		while !queue.isEmpty && visited < 20000 {
 			let (value, depth) = queue.removeFirst()
 			visited += 1
-			if depth > 9 { continue }
+			if depth > maxDepth { maxDepth = depth }
+			if depth > 14 { continue }
 			let mirror = Mirror(reflecting: value)
 			let typeName = String(describing: mirror.subjectType)
 			if typeName.contains("TelegramMediaFile") {
-				if let size = videoSize(value, mirror) { return NSNumber(value: size) }
+				mediaSeen += 1
+				let mime = (child(mirror, "mimeType") as? String) ?? "-"
+				let sz = integer(child(mirror, "size")) ?? integer(child(Mirror(reflecting: child(mirror, "resource") ?? 0), "size")) ?? 0
+				if firstAnyFileNote.isEmpty { firstAnyFileNote = "file(mime=\(mime),size=\(sz))" }
+				if let size = videoSize(value, mirror) {
+					return (NSNumber(value: size), "found video size=\(size) after \(visited) nodes, depth\(maxDepth)")
+				}
 			}
 			for child in mirror.children {
 				let cv = child.value
@@ -34,7 +58,8 @@ class AYMediaFile: NSObject {
 				}
 			}
 		}
-		return nil
+		let debug = "no video: \(visited) nodes, depth\(maxDepth), mediaFiles=\(mediaSeen)\(firstAnyFileNote.isEmpty ? "" : ", first \(firstAnyFileNote)")"
+		return (nil, debug)
 	}
 
 	// Returns the byte size only when the media file looks like a video (mime or a video attribute).

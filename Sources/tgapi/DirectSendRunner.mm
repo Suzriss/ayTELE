@@ -101,6 +101,38 @@ static long long randomLong(void) {
 	return ((long long)arc4random() << 32) | (long long)arc4random();
 }
 
+// Names the server's reply to messages.sendMedia and says whether it actually carries a new
+// message. The completion only gets raw TL bytes (our responseParser passes them straight through),
+// so without reading the constructor here a silently-empty `updates` looks the same as a real send.
+// updateMessageID / updateNewMessage / updateShortSentMessage are the markers that a message was
+// truly created; their absence means the server accepted the call but produced nothing.
+static NSString *describeSendMediaResponse(NSData *resp) {
+	if (resp.length < 4) return [NSString stringWithFormat:@"empty (%lu bytes)", (unsigned long)resp.length];
+	uint32_t ctor = 0; [resp getBytes:&ctor length:4];
+	const char *name = "?";
+	switch (ctor) {
+		case 0x74ae4240: name = "updates"; break;
+		case 0x725b04c3: name = "updatesCombined"; break;
+		case 0x78d4dec1: name = "updateShort"; break;
+		case 0xe317af7e: name = "updatesTooLong"; break;
+		case 0x9015e101: name = "updateShortSentMessage"; break;
+		case 0x313bc7f8: name = "updateShortMessage"; break;
+		case 0x4d6deea5: name = "updateShortChatMessage"; break;
+		case 0xf35c6d01: name = "rpc_error?"; break;
+	}
+	// Scan for a new-message / sent-message update ctor anywhere in the reply. These ids are
+	// distinctive enough that a false hit in a short reply is unlikely.
+	BOOL hasMsg = (ctor == 0x9015e101 /* updateShortSentMessage is itself the proof */);
+	const uint8_t *b = (const uint8_t *)resp.bytes;
+	for (NSUInteger i = 0; !hasMsg && i + 4 <= resp.length; i++) {
+		uint32_t w = (uint32_t)b[i] | ((uint32_t)b[i+1] << 8) | ((uint32_t)b[i+2] << 16) | ((uint32_t)b[i+3] << 24);
+		if (w == 0x1f2b0afd /* updateNewMessage */ || w == 0x62ba04d9 /* updateNewChannelMessage */ ||
+		    w == 0x4e90bfd6 /* updateMessageID */) { hasMsg = YES; break; }
+	}
+	return [NSString stringWithFormat:@"%s(0x%08x) len=%lu newMsg=%@", name, ctor,
+		(unsigned long)resp.length, hasMsg ? @"YES" : @"NO"];
+}
+
 // A fresh MTRequest carrying our serialized payload; completed(result, error) fires on response.
 static MTRequest *makeRequest(NSData *payload, int functionId, void (^completed)(id result, MTRpcError *error)) {
 	Class reqCls = objc_getClass("MTRequest");
@@ -183,10 +215,15 @@ NSData *AYCurrentPeerOrSelf(void) { return currentPeerOrSelf(); }
 	NSData *payload = [AYDirectSend sendVoiceWithFileId:fileId parts:parts big:big duration:duration
 		waveform:waveform randomId:randomLong() peer:(peer ?: currentPeerOrSelf())];
 	MTRequest *req = makeRequest(payload, (int)0x0330e77f, ^(id result, MTRpcError *error) {
+		NSData *resp = [result isKindOfClass:[NSData class]] ? result : nil;
+		NSString *desc = error ? nil : describeSendMediaResponse(resp);
 		dispatch_async(dispatch_get_main_queue(), ^{
 			if (error) customLog(@"voice: sendMedia failed: %@", error);
-			else customLog(@"voice: sendMedia ok (%d part(s))", parts);
-			toast(error ? @"VOICE_SEND_FAILED" : @"VOICE_SEND_DONE");
+			else customLog(@"voice: sendMedia reply %@ (%d part(s))", desc, parts);
+			// Only call it a success when the server's reply actually carries a new message; an
+			// accepted-but-empty reply means nothing was created, so tell the user it failed.
+			BOOL created = !error && [desc hasSuffix:@"newMsg=YES"];
+			toast(created ? @"VOICE_SEND_DONE" : @"VOICE_SEND_FAILED");
 		});
 	});
 	[service addRequest:req];
