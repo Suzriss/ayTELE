@@ -65,6 +65,7 @@ void AYPresentToast(NSString *message);
 // Save button can find that exact file in the Postbox media cache (see DeletedBadge.xm).
 @interface AYMediaFile : NSObject
 + (NSNumber *)videoByteSizeFrom:(NSObject *)root;
++ (NSString *)videoByteSizeDebugFrom:(NSObject *)root;
 @end
 
 @interface AYNotes : NSObject
