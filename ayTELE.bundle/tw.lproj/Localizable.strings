@@ -197,3 +197,42 @@
 // Direct voice send (raw MTProto)
 "VOICE_SEND_DONE" = "✅ 語音訊息已發送";
 "VOICE_SEND_FAILED" = "無法發送語音訊息";
+
+
+// ayTELE batch: input tweaks + keyword alerts
+"CHAR_COUNTER_TITLE" = "Character counter";
+"CHAR_COUNTER_SUBTITLE" = "Shows how many characters you have typed above the text field, and warns as you near the limit.";
+"FORMAT_BAR_TITLE" = "Formatting bar";
+"FORMAT_BAR_SUBTITLE" = "A bar above the text field that wraps the selection: bold, italic, mono, strikethrough or spoiler.";
+"READ_ALOUD_TITLE" = "Read message aloud";
+"READ_ALOUD_SUBTITLE" = "Adds a Read aloud item to the two-finger message menu (on-device voice, no network).";
+"MSG_ACTION_READ_ALOUD" = "🔊 Read aloud";
+"READ_ALOUD_EMPTY" = "No text in this message";
+"KEYWORD_ALERT_TITLE" = "Keyword alerts";
+"KEYWORD_ALERT_SUBTITLE" = "Get a notification when one of your words is mentioned, even in muted chats.";
+"KEYWORD_ALERT_EDIT_TITLE" = "My alert words";
+"KEYWORD_ALERT_EDIT_SUBTITLE" = "Type the words separated by commas or new lines.";
+"KEYWORD_ALERT_PROMPT" = "Alert words";
+"KEYWORD_ALERT_PLACEHOLDER" = "your name, sale, product…";
+
+
+// ayTELE extras: translate, sticker, screen blur, account limit
+"EXTRAS_SECTION_HEADER" = "Extras";
+"SCREEN_BLUR_TITLE" = "Blur on screen recording";
+"SCREEN_BLUR_SUBTITLE" = "While the screen is being recorded or mirrored, everything is covered with a blur so names, photos and messages do not leak.";
+"SCREEN_BLUR_OVERLAY" = "Recording in progress — content hidden";
+"MORE_ACCOUNTS_TITLE" = "Raise account limit";
+"MORE_ACCOUNTS_SUBTITLE" = "Allows more accounts in the app. Needs a restart (apply button above).";
+"TRANSLATE_TITLE" = "Translate before sending";
+"TRANSLATE_SUBTITLE" = "A globe button above the text field translates your draft in place so you can review and send it. Long-press for the language.";
+"TRANSLATE_WORKING" = "Translating…";
+"TRANSLATE_FAILED" = "Couldn't translate";
+"TRANSLATE_EMPTY" = "Type something first";
+"TRANSLATE_LANG_TITLE" = "Translation language";
+"STICKER_TITLE" = "Sticker from a photo";
+"STICKER_SUBTITLE" = "A scissors button above the text field: pick a photo, its background is removed, and it is sent to the chat.";
+"STICKER_WORKING" = "Processing the image…";
+"STICKER_SENDING" = "Sending…";
+"STICKER_SENT" = "✅ Sent";
+"STICKER_FAILED" = "Couldn't make the sticker";
+"STICKER_NO_SUBJECT" = "No subject found in the image";

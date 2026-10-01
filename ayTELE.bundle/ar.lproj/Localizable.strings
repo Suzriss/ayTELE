@@ -195,3 +195,42 @@
 // Direct voice send (raw MTProto)
 "VOICE_SEND_DONE" = "✅ انرسلت الصوتية";
 "VOICE_SEND_FAILED" = "ما نگدر نرسل الصوتية";
+
+
+// ayTELE batch: input tweaks + keyword alerts
+"CHAR_COUNTER_TITLE" = "عدّاد الحروف";
+"CHAR_COUNTER_SUBTITLE" = "يبيّن عدد الحروف فوق حقل الكتابة، ويحذّرك لمّا تقرب من حد الرسالة.";
+"FORMAT_BAR_TITLE" = "أزرار التنسيق";
+"FORMAT_BAR_SUBTITLE" = "شريط فوق حقل الكتابة يغلّف النص المحدّد: عريض، مائل، مونو، مشطوب، أو سبويلر.";
+"READ_ALOUD_TITLE" = "اقرأ الرسالة بصوت";
+"READ_ALOUD_SUBTITLE" = "يضيف خيار «اقرأ بصوت» لقائمة الضغطة بإصبعين على الرسالة (صوت الجهاز، بدون إنترنت).";
+"MSG_ACTION_READ_ALOUD" = "🔊 اقرأ بصوت";
+"READ_ALOUD_EMPTY" = "ماكو نص بالرسالة";
+"KEYWORD_ALERT_TITLE" = "تنبيه بالكلمات";
+"KEYWORD_ALERT_SUBTITLE" = "يوصلك إشعار لمّا تنذكر وحدة من كلماتك، حتى لو المحادثة مكتومة.";
+"KEYWORD_ALERT_EDIT_TITLE" = "كلماتي للتنبيه";
+"KEYWORD_ALERT_EDIT_SUBTITLE" = "اكتب الكلمات مفصولة بفاصلة أو سطر جديد.";
+"KEYWORD_ALERT_PROMPT" = "كلمات التنبيه";
+"KEYWORD_ALERT_PLACEHOLDER" = "اسمك، عرض، منتج…";
+
+
+// ayTELE extras: translate, sticker, screen blur, account limit
+"EXTRAS_SECTION_HEADER" = "ميزات إضافية";
+"SCREEN_BLUR_TITLE" = "تمويه عند تسجيل الشاشة";
+"SCREEN_BLUR_SUBTITLE" = "إذا بلّش تسجيل شاشة أو بث/عكس، يتغطّى كلشي بطبقة ضبابية حتى ما تتسرّب أسماء وصور ورسائل.";
+"SCREEN_BLUR_OVERLAY" = "التسجيل شغّال — المحتوى مغطّى";
+"MORE_ACCOUNTS_TITLE" = "أكثر من حد الحسابات";
+"MORE_ACCOUNTS_SUBTITLE" = "يرفع عدد الحسابات المسموح بالتطبيق. يحتاج إعادة تشغيل (زر التطبيق فوق).";
+"TRANSLATE_TITLE" = "ترجمة قبل الإرسال";
+"TRANSLATE_SUBTITLE" = "زر كروي فوق حقل الكتابة: يترجم اللي كاتبه ويحطّه مكانه حتى تراجعه وترسله. ضغطة مطوّلة = اللغة.";
+"TRANSLATE_WORKING" = "قاعد يترجم…";
+"TRANSLATE_FAILED" = "ما نگدر نترجم";
+"TRANSLATE_EMPTY" = "اكتب شي أول";
+"TRANSLATE_LANG_TITLE" = "لغة الترجمة";
+"STICKER_TITLE" = "ستيكر من صورة";
+"STICKER_SUBTITLE" = "زر مقص فوق حقل الكتابة: تختار صورة، تنقص الخلفية، وينرسل بالمحادثة.";
+"STICKER_WORKING" = "قاعد يعالج الصورة…";
+"STICKER_SENDING" = "قاعد يرسل…";
+"STICKER_SENT" = "✅ انرسل";
+"STICKER_FAILED" = "ما نگدر نسوي الستيكر";
+"STICKER_NO_SUBJECT" = "ما لگينا شي نقصّه بالصورة";

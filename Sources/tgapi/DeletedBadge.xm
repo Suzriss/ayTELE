@@ -834,6 +834,15 @@ static void placeChatEye(UIButton *eye) {
 	[sheet addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"MSG_ACTION_NOTE"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
 		[self showNoteEditorForNode:node];
 	}]];
+	// Read the message aloud on-device (opt-in).
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:kReadAloud]) {
+		[sheet addAction:[UIAlertAction actionWithTitle:[ayTELELocalization localizedStringForKey:@"MSG_ACTION_READ_ALOUD"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
+			NSString *text = nil;
+			@try { text = [AYMessageDetails textWithNode:node]; } @catch (NSException *e) {}
+			if (text.length) [AYReadAloud speak:text];
+			else presentToast([ayTELELocalization localizedStringForKey:@"READ_ALOUD_EMPTY"]);
+		}]];
+	}
 	// Offered whenever read receipts are blocked; says so when nothing is held for this chat.
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:kDisableMessageReadReceipt]) {
 		NSString *peerKey = nil;

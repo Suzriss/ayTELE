@@ -72,6 +72,17 @@ static MTRequest *makeRequest(NSData *payload, int functionId, void (^completed)
 	return req;
 }
 
+// Shared plumbing so other raw-MTProto features (e.g. translate) reuse the live service, the
+// sniffed current peer, and the request builder instead of duplicating any of it.
+BOOL AYIssueRequest(NSData *payload, int functionId, void (^completed)(id result, MTRpcError *error)) {
+	MTRequestMessageService *service = gService;
+	if (!service || payload.length == 0) return NO;
+	[service addRequest:makeRequest(payload, functionId, completed)];
+	return YES;
+}
+
+NSData *AYCurrentPeerOrSelf(void) { return currentPeerOrSelf(); }
+
 @implementation AYVoiceSend
 
 + (void)sendOGG:(NSData *)ogg duration:(int)duration waveform:(NSData *)waveform {

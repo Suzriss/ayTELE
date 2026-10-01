@@ -49,6 +49,17 @@ void AYPresentToast(NSString *message);
 + (NSString *)textWithNode:(NSObject *)node;
 @end
 
+// Speaks a message's text on-device with AVSpeechSynthesizer (ReadAloud.m, #29).
+@interface AYReadAloud : NSObject
++ (void)speak:(NSString *)text;
+@end
+
+// Scans an incoming update's raw TL bytes for the user's keywords; returns a matched snippet or nil
+// (KeywordAlert.swift, #22). Read-only — it never changes the bytes.
+@interface AYKeywordAlert : NSObject
++ (NSString *)scan:(NSData *)data;
+@end
+
 @interface AYVoiceConverter : NSObject
 + (void)convertURL:(NSURL *)url
         completion:(void (^)(NSData *oggOpusData, NSTimeInterval duration, NSData *waveform, NSError *error))completion;
@@ -98,6 +109,7 @@ void AYPresentToast(NSString *message);
 @interface AYDirectSend : NSObject
 + (NSData *)saveFilePartWithFileId:(long long)fileId part:(int)part chunk:(NSData *)chunk;
 + (NSData *)sendVoiceWithFileId:(long long)fileId parts:(int)parts duration:(int)duration waveform:(NSData *)waveform randomId:(long long)randomId peer:(NSData *)peer;
++ (NSData *)sendImageDocumentWithFileId:(long long)fileId parts:(int)parts fileName:(NSString *)fileName mime:(NSString *)mime width:(int)width height:(int)height randomId:(long long)randomId peer:(NSData *)peer;
 @end
 
 // Records the live main-API request service so AYVoiceSend can issue its own requests through it.
@@ -109,6 +121,18 @@ void AYCaptureOutgoingPeer(NSData *payload);
 // Uploads an OGG/Opus clip and sends it as a real voice message (no mic), via raw MTProto.
 @interface AYVoiceSend : NSObject
 + (void)sendOGG:(NSData *)ogg duration:(int)duration waveform:(NSData *)waveform;
+@end
+
+// Shared raw-MTProto plumbing (DirectSendRunner.mm): issue a serialized request through the live
+// service (NO if none captured yet), and the InputPeer of the chat the user is looking at. Declared
+// without extern "C" to match the ObjC++ definitions, like AYCaptureRequestService above.
+BOOL AYIssueRequest(NSData *payload, int functionId, void (^completed)(id result, MTRpcError *error));
+NSData *AYCurrentPeerOrSelf(void);
+
+// messages.translateText serializer / result reader (Translate.swift, #25).
+@interface AYTranslate : NSObject
++ (NSData *)buildTranslateText:(NSString *)text toLang:(NSString *)toLang;
++ (NSString *)parseTranslated:(NSData *)data;
 @end
 
 @interface AYReceipts : NSObject

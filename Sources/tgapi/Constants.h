@@ -89,3 +89,32 @@
 
 // Arrow button above the chat text field: the next voice recording sends a picked file instead.
 #define kVoiceFromFile @"ayTELEVoiceFromFile"
+
+// Live character counter above the chat text field (#40).
+#define kCharCounter @"ayTELECharCounter"
+
+// Formatting bar above the chat text field: wrap the selection in bold/italic/mono/spoiler (#38).
+#define kFormatBar @"ayTELEFormatBar"
+
+// "Read aloud" action in the two-finger message menu: speaks the message with AVSpeechSynthesizer (#29).
+#define kReadAloud @"ayTELEReadAloud"
+
+// Keyword alerts: a local notification when one of the user's words appears, even in muted chats (#22).
+#define kKeywordAlert @"ayTELEKeywordAlert"
+#define kKeywordList  @"ayTELEKeywords"
+
+// Privacy cover while the screen is being recorded / mirrored (#33).
+#define kScreenBlur @"ayTELEScreenBlur"
+
+// Raise the in-app account limit past Telegram's default (#77).
+#define kMoreAccounts @"ayTELEMoreAccounts"
+
+// Allow voice/video-note playback speed beyond Telegram's own cap (#26).
+#define kFastPlayback @"ayTELEFastPlayback"
+
+// Sticker from a photo: cut the subject out with Vision and send it as a sticker (#42).
+#define kStickerFromImage @"ayTELEStickerFromImage"
+
+// Translate the draft before sending, via Telegram's own translateText (#25).
+#define kTranslateOutgoing @"ayTELETranslateOutgoing"
+#define kTranslateLang     @"ayTELETranslateLang"

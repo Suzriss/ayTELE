@@ -337,10 +337,18 @@ static void updateSpeechButton(UITextView *textView) {
 }
 
 void AYUpdateVoiceFileButton(UITextView *textView, Class chatControllerClass); // VoiceFile.xm
+void AYUpdateCharCounter(UITextView *textView, Class chatControllerClass);     // CharCounter.xm
+void AYUpdateFormatBar(UITextView *textView, Class chatControllerClass);       // FormatBar.xm
+void AYUpdateTranslateButton(UITextView *textView, Class chatControllerClass); // Translate.xm
+void AYUpdateStickerButton(UITextView *textView, Class chatControllerClass);   // StickerSend.mm
 
 static void updateInputButtons(UITextView *textView) {
 	updateSpeechButton(textView);
 	AYUpdateVoiceFileButton(textView, chatControllerClass);
+	AYUpdateCharCounter(textView, chatControllerClass);
+	AYUpdateFormatBar(textView, chatControllerClass);
+	AYUpdateTranslateButton(textView, chatControllerClass);
+	AYUpdateStickerButton(textView, chatControllerClass);
 }
 
 // The input panel moves with the keyboard without re-laying out the text view, so follow it

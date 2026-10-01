@@ -203,6 +203,13 @@
 %hook _TtC12TelegramCore13Serialization
 
 - (id)parseMessage:(NSData *)data {
+	if (data && [[NSUserDefaults standardUserDefaults] boolForKey:kKeywordAlert]) {
+		@try {
+			[AYKeywordAlert scan:data];
+		} @catch (NSException *exception) {
+			customLog2(@"Keyword alert scan failed: %@", exception);
+		}
+	}
 	if (data && AYEditHistory.shouldObserve) {
 		@try {
 			[AYEditHistory observe:data];

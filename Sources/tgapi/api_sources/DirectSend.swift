@@ -36,6 +36,35 @@ public class AYDirectSend: NSObject {
 		return b.makeData()
 	}
 
+	// messages.sendMedia carrying an uploaded image document (transparent PNG cut-out for #42).
+	@objc public static func sendImageDocument(fileId: Int64, parts: Int32, fileName: String, mime: String, width: Int32, height: Int32, randomId: Int64, peer: Data) -> Data {
+		let b = Buffer()
+		b.appendInt32(fid(0x0330e77f))        // messages.sendMedia
+		b.appendInt32(0)                      // flags
+		peer.withUnsafeBytes { raw in
+			if let base = raw.baseAddress { b.appendBytes(base, length: UInt(peer.count)) }
+		}
+		// inputMediaUploadedDocument
+		b.appendInt32(fid(0x037c9330))
+		b.appendInt32(0)                      // flags: plain document
+		b.appendInt32(fid(0xf52ff27f))        // file: inputFile
+		b.appendInt64(fileId)
+		b.appendInt32(parts)
+		serializeString(fileName, buffer: b, boxed: false)
+		serializeString("", buffer: b, boxed: false)
+		serializeString(mime, buffer: b, boxed: false) // mime_type
+		b.appendInt32(fid(0x1cb5c415))        // attributes vector
+		b.appendInt32(2)                      // count: imageSize + filename
+		b.appendInt32(fid(0x6c37c15c))        // documentAttributeImageSize
+		b.appendInt32(width)
+		b.appendInt32(height)
+		b.appendInt32(fid(0x15590068))        // documentAttributeFilename
+		serializeString(fileName, buffer: b, boxed: false)
+		serializeString("", buffer: b, boxed: false)   // message
+		b.appendInt64(randomId)               // random_id
+		return b.makeData()
+	}
+
 	// inputMediaUploadedDocument#37c9330 ... file:InputFile mime_type:string attributes:Vector<DocumentAttribute>
 	private static func appendUploadedVoice(_ b: Buffer, fileId: Int64, parts: Int32, duration: Int32, waveform: Data?) {
 		b.appendInt32(fid(0x037c9330))

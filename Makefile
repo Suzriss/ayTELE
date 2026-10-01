@@ -8,7 +8,7 @@ TWEAK_NAME = ayTELE
 $(TWEAK_NAME)_FILES = $(shell find Sources \( -name '*.swift' -o -name '*.m' -o -name '*.mm' -o -name '*.xm' -o -name '*.c' \))
 $(TWEAK_NAME)_SWIFTFLAGS = -ISources/tgapiC/include
 $(TWEAK_NAME)_CFLAGS = -fobjc-arc -ISources/tgapiC/include -Wno-deprecated-declarations -DAY_BUILD=\"$(shell git rev-parse --short HEAD 2>/dev/null || echo dev)\"
-$(TWEAK_NAME)_FRAMEWORKS = CoreServices AVFoundation CoreMedia Security Speech PhotosUI
+$(TWEAK_NAME)_FRAMEWORKS = CoreServices AVFoundation CoreMedia Security Speech PhotosUI Vision CoreImage UserNotifications
 $(TWEAK_NAME)_LOGOS_DEFAULT_GENERATOR = internal
 $(TWEAK_NAME)_RESOURCE_FILES = Sources/tgapi/Resources
 

@@ -162,12 +162,13 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
     FILE_FIXER = 3,
     FAKE_LOCATION = 4,
     CHAT_TWEAKS = 5,
-    LANGUAGE = 6,
-	CREDITS = 7,
+    EXTRAS = 6,
+    LANGUAGE = 7,
+	CREDITS = 8,
 };
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 8;
+    return 9;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -183,7 +184,9 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		case FAKE_LOCATION:
 		   return 2;
 		case CHAT_TWEAKS:
-		   return 3;
+		   return 10;
+		case EXTRAS:
+		   return 2;
 		case LANGUAGE:
 		   return 1;
 		case CREDITS:
@@ -209,6 +212,8 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		   return TGLoc(@"FAKE_LOCATION_SECTION_HEADER");
 		case CHAT_TWEAKS:
 		   return TGLoc(@"CHAT_SECTION_HEADER");
+		case EXTRAS:
+		   return TGLoc(@"EXTRAS_SECTION_HEADER");
 		case LANGUAGE:
 		   return TGLoc(@"LANGUAGE_SECTION_HEADER");
 		case CREDITS:
@@ -548,6 +553,18 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		return cell;
 	}
 
+	if (indexPath.section == CHAT_TWEAKS && indexPath.row == 9) { // Edit keyword list
+		cell = [self normalCellFromTableView:tableView];
+		cell.textLabel.text = TGLoc(@"KEYWORD_ALERT_EDIT_TITLE");
+		cell.detailTextLabel.text = TGLoc(@"KEYWORD_ALERT_EDIT_SUBTITLE");
+		cell.imageView.image = [UIImage systemImageNamed:@"bell.badge"];
+		cell.imageView.tintColor = [UIColor systemYellowColor];
+		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		cell.textLabel.numberOfLines = 0;
+		cell.detailTextLabel.numberOfLines = 0;
+		return cell;
+	}
+
 	if (indexPath.section == CHAT_TWEAKS) { // Chat tweaks
 		cell = [self switchCellFromTableView:tableView];
 		cell.imageView.image = nil;
@@ -564,12 +581,64 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 			cell.textLabel.text = TGLoc(@"VOICE_FILE_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"VOICE_FILE_SUBTITLE");
 		}
+		else if (indexPath.row == 3) {
+			cell.textLabel.text = TGLoc(@"CHAR_COUNTER_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"CHAR_COUNTER_SUBTITLE");
+		}
+		else if (indexPath.row == 4) {
+			cell.textLabel.text = TGLoc(@"FORMAT_BAR_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"FORMAT_BAR_SUBTITLE");
+		}
+		else if (indexPath.row == 5) {
+			cell.textLabel.text = TGLoc(@"READ_ALOUD_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"READ_ALOUD_SUBTITLE");
+		}
+		else if (indexPath.row == 6) {
+			cell.textLabel.text = TGLoc(@"KEYWORD_ALERT_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"KEYWORD_ALERT_SUBTITLE");
+		}
+		else if (indexPath.row == 7) {
+			cell.textLabel.text = TGLoc(@"TRANSLATE_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"TRANSLATE_SUBTITLE");
+		}
+		else if (indexPath.row == 8) {
+			cell.textLabel.text = TGLoc(@"STICKER_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"STICKER_SUBTITLE");
+		}
 
 		UISwitch *toggle = (UISwitch *)cell.accessoryView;
 		if (!toggle || ![toggle isKindOfClass:[UISwitch class]]) {
 			toggle = [[UISwitch alloc] init];
 		}
 
+		NSString *switchKey = [self switchKeyForIndexPath:indexPath];
+		toggle.on = [[NSUserDefaults standardUserDefaults] boolForKey:switchKey];
+		[toggle addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
+		toggle.tag = 1000 + (indexPath.section * 1000) + indexPath.row;
+		cell.accessoryView = toggle;
+
+		cell.textLabel.numberOfLines = 0;
+		cell.detailTextLabel.numberOfLines = 0;
+		return cell;
+	}
+
+	if (indexPath.section == EXTRAS) { // Power features
+		cell = [self switchCellFromTableView:tableView];
+		cell.imageView.image = nil;
+
+		if (indexPath.row == 0) {
+			cell.textLabel.text = TGLoc(@"SCREEN_BLUR_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"SCREEN_BLUR_SUBTITLE");
+		}
+		else if (indexPath.row == 1) {
+			cell.textLabel.text = TGLoc(@"MORE_ACCOUNTS_TITLE");
+			cell.detailTextLabel.text = TGLoc(@"MORE_ACCOUNTS_SUBTITLE");
+		}
+
+		UISwitch *toggle = (UISwitch *)cell.accessoryView;
+		if (!toggle || ![toggle isKindOfClass:[UISwitch class]]) {
+			toggle = [[UISwitch alloc] init];
+		}
 		NSString *switchKey = [self switchKeyForIndexPath:indexPath];
 		toggle.on = [[NSUserDefaults standardUserDefaults] boolForKey:switchKey];
 		[toggle addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
@@ -661,6 +730,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
                 case READ_RECEIPT: symbol = @"checkmark.seal.fill"; break;
                 case MISC:         symbol = @"wand.and.stars"; break;
                 case CHAT_TWEAKS:  symbol = @"hand.tap.fill"; break;
+                case EXTRAS:       symbol = @"sparkles"; break;
                 default: break;
             }
             if (symbol) {
@@ -703,6 +773,12 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 	if (indexPath.section == FAKE_LOCATION) { // Fake Location
 		if (indexPath.row == 1) {
 			[self showLocationSelector];
+		}
+	}
+
+	if (indexPath.section == CHAT_TWEAKS) { // Chat tweaks
+		if (indexPath.row == 9) {
+			[self showKeywordEditor];
 		}
 	}
 
@@ -807,6 +883,18 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
                 case 0: return kDoubleTapCopy;
                 case 1: return kSpeechToText;
                 case 2: return kVoiceFromFile;
+                case 3: return kCharCounter;
+                case 4: return kFormatBar;
+                case 5: return kReadAloud;
+                case 6: return kKeywordAlert;
+                case 7: return kTranslateOutgoing;
+                case 8: return kStickerFromImage;
+                default: return nil;
+            }
+        case EXTRAS:
+            switch (indexPath.row) {
+                case 0: return kScreenBlur;
+                case 1: return kMoreAccounts;
                 default: return nil;
             }
         default:
@@ -917,6 +1005,25 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		message:error.localizedDescription
 		preferredStyle:UIAlertControllerStyleAlert];
 	[alert addAction:[UIAlertAction actionWithTitle:TGLoc(@"OK") style:UIAlertActionStyleDefault handler:nil]];
+	[self presentViewController:alert animated:YES completion:nil];
+}
+
+// Keyword editor (#22): one text field holding the watched words, separated by commas or new lines.
+- (void)showKeywordEditor {
+	UIAlertController *alert = [UIAlertController alertControllerWithTitle:TGLoc(@"KEYWORD_ALERT_PROMPT")
+		message:TGLoc(@"KEYWORD_ALERT_EDIT_SUBTITLE")
+		preferredStyle:UIAlertControllerStyleAlert];
+	[alert addTextFieldWithConfigurationHandler:^(UITextField *field) {
+		field.placeholder = TGLoc(@"KEYWORD_ALERT_PLACEHOLDER");
+		field.text = [[NSUserDefaults standardUserDefaults] stringForKey:kKeywordList];
+		field.autocapitalizationType = UITextAutocapitalizationTypeNone;
+		field.clearButtonMode = UITextFieldViewModeWhileEditing;
+	}];
+	[alert addAction:[UIAlertAction actionWithTitle:TGLoc(@"OK") style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
+		NSString *text = alert.textFields.firstObject.text ?: @"";
+		[[NSUserDefaults standardUserDefaults] setObject:text forKey:kKeywordList];
+	}]];
+	[alert addAction:[UIAlertAction actionWithTitle:TGLoc(@"CANCEL") style:UIAlertActionStyleCancel handler:nil]];
 	[self presentViewController:alert animated:YES completion:nil];
 }
 
