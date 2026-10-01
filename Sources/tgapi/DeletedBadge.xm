@@ -688,8 +688,9 @@ static void placeChatEye(UIButton *eye) {
 	CGFloat size = eye.bounds.size.width;
 	// Stored as fractions of the view so it survives rotation and split view.
 	NSArray *saved = [[NSUserDefaults standardUserDefaults] arrayForKey:kChatEyePositionKey];
+	// Default to the top-right corner (just under the nav bar), not floating in the middle of the chat.
 	CGFloat fx = saved.count == 2 ? [saved[0] doubleValue] : 1.0;
-	CGFloat fy = saved.count == 2 ? [saved[1] doubleValue] : 0.3;
+	CGFloat fy = saved.count == 2 ? [saved[1] doubleValue] : 0.1;
 	CGFloat x = MAX(size / 2 + 8, MIN(bounds.width - size / 2 - 8, fx * bounds.width));
 	CGFloat y = MAX(view.safeAreaInsets.top + size / 2 + 8, MIN(bounds.height - view.safeAreaInsets.bottom - size / 2 - 8, fy * bounds.height));
 	eye.center = CGPointMake(x, y);
@@ -811,18 +812,6 @@ static void placeChatEye(UIButton *eye) {
 	NSObject *node = objc_getAssociatedObject(sender, kGestureNodeKey);
 	if (node) [self showNoteEditorForNode:node];
 }
-- (void)doubleTapCopy:(UITapGestureRecognizer *)gesture {
-	if (gesture.state != UIGestureRecognizerStateRecognized) return;
-	NSObject *node = objc_getAssociatedObject(gesture, kGestureNodeKey);
-	if (!node) return;
-	NSString *text = nil;
-	@try { text = [AYMessageDetails textWithNode:node]; } @catch (NSException *e) { return; }
-	if (text.length == 0) return;
-	[UIPasteboard generalPasteboard].string = text;
-	UIImpactFeedbackGenerator *fb = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight];
-	[fb impactOccurred];
-	presentToast([ayTELELocalization localizedStringForKey:@"COPIED_TOAST"]);
-}
 - (void)twoFingerTap:(UITapGestureRecognizer *)gesture {
 	if (gesture.state != UIGestureRecognizerStateRecognized) return;
 	NSObject *node = objc_getAssociatedObject(gesture, kGestureNodeKey);
@@ -873,30 +862,6 @@ static void installMessageGesture(ASDisplayNode *node) {
 	if (![view.gestureRecognizers containsObject:gesture]) [view addGestureRecognizer:gesture];
 }
 
-static const void *kCopyGestureKey = &kCopyGestureKey;
-
-// One-finger double-tap to copy the message text. Opt-in (kDoubleTapCopy): added when the
-// toggle is on and removed when it's off, so it never touches Telegram's own double-tap otherwise.
-static void installCopyGesture(ASDisplayNode *node) {
-	if (!node.isNodeLoaded) return;
-	UIView *view = node.view;
-	if (!view) return;
-	BOOL want = [[NSUserDefaults standardUserDefaults] boolForKey:kDoubleTapCopy];
-	UITapGestureRecognizer *gesture = objc_getAssociatedObject(node, kCopyGestureKey);
-	if (want) {
-		if (!gesture) {
-			gesture = [[UITapGestureRecognizer alloc] initWithTarget:[AYMessageActionHandler shared] action:@selector(doubleTapCopy:)];
-			gesture.numberOfTapsRequired = 2;
-			gesture.numberOfTouchesRequired = 1;
-			objc_setAssociatedObject(node, kCopyGestureKey, gesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-		}
-		objc_setAssociatedObject(gesture, kGestureNodeKey, node, OBJC_ASSOCIATION_ASSIGN);
-		if (![view.gestureRecognizers containsObject:gesture]) [view addGestureRecognizer:gesture];
-	} else if (gesture && [view.gestureRecognizers containsObject:gesture]) {
-		[view removeGestureRecognizer:gesture];
-	}
-}
-
 static void updateNoteBadge(ASDisplayNode *node, NSString *key) {
 	UIButton *badge = objc_getAssociatedObject(node, kNoteBadgeKey);
 	BOOL noted = key && [AYNotes hasNoteWithKey:key];
@@ -944,7 +909,6 @@ static void trackAndUpdate(ASDisplayNode *node) {
 	[trackedNodes addObject:node];
 	updateBadges(node);
 	installMessageGesture(node);
-	installCopyGesture(node);
 }
 
 // Chat item nodes don't override -layout, so ASDisplayNode's runs for them after ListView sizes them.

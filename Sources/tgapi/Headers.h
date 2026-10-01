@@ -54,12 +54,6 @@ void AYPresentToast(NSString *message);
 + (void)speak:(NSString *)text;
 @end
 
-// Scans an incoming update's raw TL bytes for the user's keywords; returns a matched snippet or nil
-// (KeywordAlert.swift, #22). Read-only — it never changes the bytes.
-@interface AYKeywordAlert : NSObject
-+ (NSString *)scan:(NSData *)data;
-@end
-
 @interface AYVoiceConverter : NSObject
 + (void)convertURL:(NSURL *)url
         completion:(void (^)(NSData *oggOpusData, NSTimeInterval duration, NSData *waveform, NSError *error))completion;
@@ -119,8 +113,11 @@ void AYCaptureRequestService(MTRequestMessageService *service);
 void AYCaptureOutgoingPeer(NSData *payload);
 
 // Uploads an OGG/Opus clip and sends it as a real voice message (no mic), via raw MTProto.
+// chatKey is the target chat's normalized key ("u<id>"/"g<id>"/"c<id>", from AYReceipts); the
+// matching InputPeer (captured from that chat's own traffic) is used so the voice note lands in the
+// chat the user is looking at, not Saved Messages. nil falls back to the most recent chat.
 @interface AYVoiceSend : NSObject
-+ (void)sendOGG:(NSData *)ogg duration:(int)duration waveform:(NSData *)waveform;
++ (void)sendOGG:(NSData *)ogg duration:(int)duration waveform:(NSData *)waveform chatKey:(NSString *)chatKey;
 @end
 
 // Shared raw-MTProto plumbing (DirectSendRunner.mm): issue a serialized request through the live
@@ -128,6 +125,9 @@ void AYCaptureOutgoingPeer(NSData *payload);
 // without extern "C" to match the ObjC++ definitions, like AYCaptureRequestService above.
 BOOL AYIssueRequest(NSData *payload, int functionId, void (^completed)(id result, MTRpcError *error));
 NSData *AYCurrentPeerOrSelf(void);
+// The InputPeer captured for a specific chat key ("u<id>"/"g<id>"/"c<id>"), or nil if that chat's
+// traffic hasn't been seen this session. Used to target the exact chat instead of the latest one.
+NSData *AYPeerForChatKey(NSString *key);
 
 // messages.translateText serializer / result reader (Translate.swift, #25).
 @interface AYTranslate : NSObject

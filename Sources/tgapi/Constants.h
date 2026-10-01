@@ -80,9 +80,6 @@
 #define FILE_PICKER_FIX_KEY @"ayTELEFixFilePicker"
 #define FILE_PICKER_PATH @"ayTELEFileFixUsingSomeUglyHacks"
 
-// Double-tap a message bubble to copy its text (opt-in; overrides Telegram's quick-react).
-#define kDoubleTapCopy @"ayTELEDoubleTapCopy"
-
 // Mic button above the chat text field: dictate with Apple speech recognition into the field.
 #define kSpeechToText @"ayTELESpeechToText"
 #define kSpeechLocale @"ayTELESpeechLocale"
@@ -99,10 +96,6 @@
 // "Read aloud" action in the two-finger message menu: speaks the message with AVSpeechSynthesizer (#29).
 #define kReadAloud @"ayTELEReadAloud"
 
-// Keyword alerts: a local notification when one of the user's words appears, even in muted chats (#22).
-#define kKeywordAlert @"ayTELEKeywordAlert"
-#define kKeywordList  @"ayTELEKeywords"
-
 // Privacy cover while the screen is being recorded / mirrored (#33).
 #define kScreenBlur @"ayTELEScreenBlur"
 
@@ -111,9 +104,6 @@
 
 // Allow voice/video-note playback speed beyond Telegram's own cap (#26).
 #define kFastPlayback @"ayTELEFastPlayback"
-
-// Sticker from a photo: cut the subject out with Vision and send it as a sticker (#42).
-#define kStickerFromImage @"ayTELEStickerFromImage"
 
 // Translate the draft before sending, via Telegram's own translateText (#25).
 #define kTranslateOutgoing @"ayTELETranslateOutgoing"

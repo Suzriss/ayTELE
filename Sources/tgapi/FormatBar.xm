@@ -112,9 +112,10 @@ void AYUpdateFormatBar(UITextView *textView, Class chatControllerClass) {
 	CGRect field = [textView convertRect:textView.bounds toView:host];
 	CGFloat barW = bar.bounds.size.width;
 	CGFloat barH = bar.bounds.size.height;
-	// Centered, one row above the mic / arrow buttons so they never overlap.
-	CGFloat cx = CGRectGetMidX(field);
-	cx = MAX(barW / 2 + 8, MIN(cx, host.bounds.size.width - barW / 2 - 8));
+	// Right-aligned above the mic / arrow buttons, sharing their trailing edge, one row higher so
+	// nothing overlaps — instead of floating in the centre of the screen.
+	CGFloat trailing = MIN(CGRectGetMaxX(field), host.bounds.size.width - 8);
+	CGFloat cx = MAX(barW / 2 + 8, trailing - barW / 2);
 	CGFloat cy = CGRectGetMinY(field) - 14 - 34 - 8 - barH / 2;
 	bar.center = CGPointMake(cx, cy);
 	bar.hidden = NO;

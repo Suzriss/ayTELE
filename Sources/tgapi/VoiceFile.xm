@@ -56,7 +56,7 @@ static BOOL isArmed(void) {
 static void refreshVoiceFileButton(UIButton *button) {
 	BOOL armed = isArmed();
 	UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:14 weight:UIImageSymbolWeightBold];
-	[button setImage:[UIImage systemImageNamed:armed ? @"waveform" : @"arrow.up" withConfiguration:config] forState:UIControlStateNormal];
+	[button setImage:[UIImage systemImageNamed:armed ? @"waveform" : @"arrow.up.doc.fill" withConfiguration:config] forState:UIControlStateNormal];
 	button.backgroundColor = armed ? [UIColor colorWithRed:0.18 green:0.72 blue:0.35 alpha:0.95] : [UIColor colorWithRed:0.16 green:0.55 blue:0.96 alpha:0.9];
 }
 
@@ -184,8 +184,12 @@ static void driveVoiceSend(void) {
 
 - (void)prepareURL:(NSURL *)url cleanup:(BOOL)cleanup {
 	AYPresentToast(VFLoc(@"VOICE_CONVERTING"));
-	// Direct send (iQTele's technique): convert to OGG/Opus, then upload + sendMedia over raw
-	// MTProto — no mic, no recorder. v1 lands in Saved Messages to prove the pipeline.
+	// The chat the user is in right now (the arrow was tapped there), so the voice note is sent to
+	// that chat and not Saved Messages. Resolved before the async conversion so it reflects the
+	// chat at pick time.
+	NSString *chatKey = nil;
+	@try { chatKey = [AYReceipts chatKeyWithController:lastChatController]; } @catch (NSException *e) {}
+	// Direct send (iQTele's technique): convert to OGG/Opus, then upload + sendMedia over raw MTProto.
 	[AYVoiceConverter convertURL:url completion:^(NSData *ogg, NSTimeInterval duration, NSData *waveform, NSError *error) {
 		if (cleanup) [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
 		if (ogg.length == 0) {
@@ -193,7 +197,7 @@ static void driveVoiceSend(void) {
 			return;
 		}
 		AYPresentToast(VFLoc(@"VOICE_FILE_SENDING"));
-		[AYVoiceSend sendOGG:ogg duration:(int)(duration + 0.5) waveform:waveform];
+		[AYVoiceSend sendOGG:ogg duration:(int)(duration + 0.5) waveform:waveform chatKey:chatKey];
 	}];
 }
 

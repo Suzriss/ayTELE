@@ -9,11 +9,6 @@
 @interface AYArchiveViewController : UITableViewController
 @end
 
-@interface AYVoiceConverter : NSObject
-+ (void)convertURL:(NSURL *)url
-        completion:(void (^)(NSData *oggOpusData, NSTimeInterval duration, NSData *waveform, NSError *error))completion;
-@end
-
 #ifndef AY_BUILD
 #define AY_BUILD "dev"
 #endif
@@ -178,13 +173,13 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		case READ_RECEIPT:
 		   return 2;
 		case MISC:
-		   return 7;
+		   return 6;
 		case FILE_FIXER:
 		   return 2;
 		case FAKE_LOCATION:
 		   return 2;
 		case CHAT_TWEAKS:
-		   return 10;
+		   return 6;
 		case EXTRAS:
 		   return 1;
 		case LANGUAGE:
@@ -402,17 +397,6 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		cell.detailTextLabel.numberOfLines = 0;
 		return cell;
 	}
-	else if (indexPath.section == 2 && indexPath.row == 6) { // MISC: convert audio -> voice note
-		cell = [self normalCellFromTableView:tableView];
-		cell.textLabel.text = TGLoc(@"VOICE_CONVERT_TITLE");
-		cell.detailTextLabel.text = TGLoc(@"VOICE_CONVERT_SUBTITLE");
-		cell.imageView.image = [UIImage systemImageNamed:@"waveform"];
-		cell.imageView.tintColor = [self dynamicColorBW];
-		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-		cell.textLabel.numberOfLines = 0;
-		cell.detailTextLabel.numberOfLines = 0;
-		return cell;
-	}
 	else if (indexPath.section == 2) { // MISC
 		cell = [self switchCellFromTableView:tableView];
 		cell.imageView.image = nil;
@@ -553,57 +537,45 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		return cell;
 	}
 
-	if (indexPath.section == CHAT_TWEAKS && indexPath.row == 9) { // Edit keyword list
-		cell = [self normalCellFromTableView:tableView];
-		cell.textLabel.text = TGLoc(@"KEYWORD_ALERT_EDIT_TITLE");
-		cell.detailTextLabel.text = TGLoc(@"KEYWORD_ALERT_EDIT_SUBTITLE");
-		cell.imageView.image = [UIImage systemImageNamed:@"bell.badge"];
-		cell.imageView.tintColor = [UIColor systemYellowColor];
-		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-		cell.textLabel.numberOfLines = 0;
-		cell.detailTextLabel.numberOfLines = 0;
-		return cell;
-	}
-
 	if (indexPath.section == CHAT_TWEAKS) { // Chat tweaks
 		cell = [self switchCellFromTableView:tableView];
 		cell.imageView.image = nil;
 
+		NSString *symbol = nil;
 		if (indexPath.row == 0) {
-			cell.textLabel.text = TGLoc(@"DOUBLE_TAP_COPY_TITLE");
-			cell.detailTextLabel.text = TGLoc(@"DOUBLE_TAP_COPY_SUBTITLE");
-		}
-		else if (indexPath.row == 1) {
 			cell.textLabel.text = TGLoc(@"SPEECH_TO_TEXT_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"SPEECH_TO_TEXT_SUBTITLE");
+			symbol = @"mic.fill";
 		}
-		else if (indexPath.row == 2) {
+		else if (indexPath.row == 1) {
 			cell.textLabel.text = TGLoc(@"VOICE_FILE_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"VOICE_FILE_SUBTITLE");
+			symbol = @"waveform";
 		}
-		else if (indexPath.row == 3) {
+		else if (indexPath.row == 2) {
 			cell.textLabel.text = TGLoc(@"CHAR_COUNTER_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"CHAR_COUNTER_SUBTITLE");
+			symbol = @"number";
 		}
-		else if (indexPath.row == 4) {
+		else if (indexPath.row == 3) {
 			cell.textLabel.text = TGLoc(@"FORMAT_BAR_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"FORMAT_BAR_SUBTITLE");
+			symbol = @"textformat";
 		}
-		else if (indexPath.row == 5) {
+		else if (indexPath.row == 4) {
 			cell.textLabel.text = TGLoc(@"READ_ALOUD_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"READ_ALOUD_SUBTITLE");
+			symbol = @"speaker.wave.2.fill";
 		}
-		else if (indexPath.row == 6) {
-			cell.textLabel.text = TGLoc(@"KEYWORD_ALERT_TITLE");
-			cell.detailTextLabel.text = TGLoc(@"KEYWORD_ALERT_SUBTITLE");
-		}
-		else if (indexPath.row == 7) {
+		else if (indexPath.row == 5) {
 			cell.textLabel.text = TGLoc(@"TRANSLATE_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"TRANSLATE_SUBTITLE");
+			symbol = @"globe";
 		}
-		else if (indexPath.row == 8) {
-			cell.textLabel.text = TGLoc(@"STICKER_TITLE");
-			cell.detailTextLabel.text = TGLoc(@"STICKER_SUBTITLE");
+
+		if (symbol) {
+			cell.imageView.image = [UIImage systemImageNamed:symbol];
+			cell.imageView.tintColor = AY_BLUE;
 		}
 
 		UISwitch *toggle = (UISwitch *)cell.accessoryView;
@@ -755,9 +727,6 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		else if (indexPath.row == 5) {
 			[self showArchive];
 		}
-		else if (indexPath.row == 6) {
-			[self startVoiceConversion];
-		}
 	}
 
 	if (indexPath.section == FILE_FIXER) { // File Picker Fix
@@ -769,12 +738,6 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 	if (indexPath.section == FAKE_LOCATION) { // Fake Location
 		if (indexPath.row == 1) {
 			[self showLocationSelector];
-		}
-	}
-
-	if (indexPath.section == CHAT_TWEAKS) { // Chat tweaks
-		if (indexPath.row == 9) {
-			[self showKeywordEditor];
 		}
 	}
 
@@ -876,15 +839,12 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
             }
         case CHAT_TWEAKS:
             switch (indexPath.row) {
-                case 0: return kDoubleTapCopy;
-                case 1: return kSpeechToText;
-                case 2: return kVoiceFromFile;
-                case 3: return kCharCounter;
-                case 4: return kFormatBar;
-                case 5: return kReadAloud;
-                case 6: return kKeywordAlert;
-                case 7: return kTranslateOutgoing;
-                case 8: return kStickerFromImage;
+                case 0: return kSpeechToText;
+                case 1: return kVoiceFromFile;
+                case 2: return kCharCounter;
+                case 3: return kFormatBar;
+                case 4: return kReadAloud;
+                case 5: return kTranslateOutgoing;
                 default: return nil;
             }
         case EXTRAS:
@@ -948,78 +908,6 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 - (void)showArchive {
 	AYArchiveViewController *ui = [[AYArchiveViewController alloc] initWithStyle:UITableViewStylePlain];
 	[self.navigationController pushViewController:ui animated:YES];
-}
-
-#pragma mark - Voice note conversion (#2)
-
-- (void)startVoiceConversion {
-	UIDocumentPickerViewController *picker = [[UIDocumentPickerViewController alloc]
-		initWithDocumentTypes:@[@"public.audio", @"public.movie"] inMode:UIDocumentPickerModeOpen];
-	picker.delegate = self;
-	picker.allowsMultipleSelection = NO;
-	[self presentViewController:picker animated:YES completion:nil];
-}
-
-- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
-	NSURL *url = urls.firstObject;
-	if (!url) return;
-
-	UIAlertController *progress = [UIAlertController alertControllerWithTitle:TGLoc(@"VOICE_CONVERTING") message:nil preferredStyle:UIAlertControllerStyleAlert];
-	[self presentViewController:progress animated:YES completion:nil];
-
-	BOOL scoped = [url startAccessingSecurityScopedResource];
-	[AYVoiceConverter convertURL:url completion:^(NSData *oggOpusData, NSTimeInterval duration, NSData *waveform, NSError *error) {
-		if (scoped) [url stopAccessingSecurityScopedResource];
-		[progress dismissViewControllerAnimated:YES completion:^{
-			if (error || oggOpusData.length == 0) {
-				[self showConversionError:error];
-				return;
-			}
-			[self exportConvertedVoice:oggOpusData sourceName:url.lastPathComponent];
-		}];
-	}];
-}
-
-- (void)exportConvertedVoice:(NSData *)oggData sourceName:(NSString *)sourceName {
-	NSString *base = sourceName.stringByDeletingPathExtension.length ? sourceName.stringByDeletingPathExtension : @"voice";
-	NSString *outName = [base stringByAppendingString:@".ogg"];
-	NSURL *outURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()] URLByAppendingPathComponent:outName];
-	NSError *writeError = nil;
-	if (![oggData writeToURL:outURL options:NSDataWritingAtomic error:&writeError]) {
-		[self showConversionError:writeError];
-		return;
-	}
-	UIDocumentPickerViewController *exporter = [[UIDocumentPickerViewController alloc]
-		initWithURL:outURL inMode:UIDocumentPickerModeExportToService];
-	exporter.delegate = self;
-	[self presentViewController:exporter animated:YES completion:nil];
-}
-
-- (void)showConversionError:(NSError *)error {
-	UIAlertController *alert = [UIAlertController alertControllerWithTitle:TGLoc(@"VOICE_CONVERT_FAILED")
-		message:error.localizedDescription
-		preferredStyle:UIAlertControllerStyleAlert];
-	[alert addAction:[UIAlertAction actionWithTitle:TGLoc(@"OK") style:UIAlertActionStyleDefault handler:nil]];
-	[self presentViewController:alert animated:YES completion:nil];
-}
-
-// Keyword editor (#22): one text field holding the watched words, separated by commas or new lines.
-- (void)showKeywordEditor {
-	UIAlertController *alert = [UIAlertController alertControllerWithTitle:TGLoc(@"KEYWORD_ALERT_PROMPT")
-		message:TGLoc(@"KEYWORD_ALERT_EDIT_SUBTITLE")
-		preferredStyle:UIAlertControllerStyleAlert];
-	[alert addTextFieldWithConfigurationHandler:^(UITextField *field) {
-		field.placeholder = TGLoc(@"KEYWORD_ALERT_PLACEHOLDER");
-		field.text = [[NSUserDefaults standardUserDefaults] stringForKey:kKeywordList];
-		field.autocapitalizationType = UITextAutocapitalizationTypeNone;
-		field.clearButtonMode = UITextFieldViewModeWhileEditing;
-	}];
-	[alert addAction:[UIAlertAction actionWithTitle:TGLoc(@"OK") style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
-		NSString *text = alert.textFields.firstObject.text ?: @"";
-		[[NSUserDefaults standardUserDefaults] setObject:text forKey:kKeywordList];
-	}]];
-	[alert addAction:[UIAlertAction actionWithTitle:TGLoc(@"CANCEL") style:UIAlertActionStyleCancel handler:nil]];
-	[self presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)showLanguageSelector {

@@ -4,7 +4,7 @@ import Foundation
 // iQTele uses: upload the OGG/Opus bytes with upload.saveFilePart, then messages.sendMedia with an
 // inputMediaUploadedDocument carrying the voice attributes. Serialization follows the layer-229
 // schema in ci/api.tl exactly; the ObjC side (AYVoiceSend) issues these through a captured
-// MTRequestMessageService. v1 targets Saved Messages (inputPeerSelf) to prove the pipeline.
+// MTRequestMessageService, targeting the chat the user is in (inputPeerSelf only as a fallback).
 @objc(AYDirectSend)
 public class AYDirectSend: NSObject {
 
