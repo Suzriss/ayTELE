@@ -1,7 +1,36 @@
 # ayTELE — وين وكفنا (للجلسة الجاية)
 
-> آخر جلسة: 2026-09-30 · الفرع `ci-test` · آخر دايلِب بالمجلد: `2d51877` (CI run `36782654126`، أخضر) 
+> آخر جلسة: 2026-10-01 · الفرع `ci-test` · آخر دايلِب بالمجلد: `535d81f` (CI run `36795753722`، أخضر) 
 > **حجي ويا المستخدم بالعراقي دائماً.** اقرأ هالملف أول شي، بعدين `TODO.md` (الخطة والمراجع) و`PROGRESS.md` (السجل القديم).
+
+---
+
+## 🎯🎯 جلسة 2026-10-01 — اختراق: «جدار Swift» مكسور + الإرسال المباشر كصوتية **اشتغل**
+
+> **هذا أهم درس بالمشروع كله. اقرأه قبل أي ميزة جاية.**
+
+### الاكتشاف (من تحليل iQTele — دايلِب تويك مثل مالنا، مو فورك)
+«جدار Swift» اللي چان مكتوب بكل مكان (ما نگدر نرسل/نحذف/نوصل لمسار ملف) **غلط**. iQTele يكسره من dylib بثلاث تقنيات:
+1. **طلبات MTProto خام** عبر `MTRequestMessageService` (ObjC، إحنا نهوكه أصلاً) — يرفع/يرسل بدون أي دالة Swift.
+2. **نداء دوال Swift مباشرة** برموزها المانغلد (الـ linker يربطها لأن الفريموركات محمّلة بنفس العملية): `Transaction.deleteMessages`, `getMessage`, `markMessageContentAsConsumedInteractively`, إلخ. (شفتها بـ `strings` على iQTele.)
+3. **قراءة حقول Swift مباشرة** عبر رموز الإزاحة (`Message.id/text/timestamp` بـ `...Wvd`).
+
+### ✅ انبنى واشتغل على الجهاز: الإرسال المباشر كصوتية (تقنية ١)
+- **المستخدم أكّد: الصوتية طلعت حقيقية بالرسائل المحفوظة.** الأنبوب كله شغّال end-to-end.
+- **الآلية:** تختار ملف/فيديو → `AYVoiceConverter convertURL:` يطلع OGG/Opus + مدة + موجة → **نرفع البايتات** بـ `upload.saveFilePart` (قطع 512KB) → **نرسل** `messages.sendMedia(inputMediaUploadedDocument + documentAttributeAudio voice)`. كله طلبات `MTRequest` حقيقية عبر الـ service.
+- **الملفات الجديدة:**
+  - `api_sources/DirectSend.swift` — `AYDirectSend`: يسلسل `saveFilePart` و`sendMedia` بطبقة 229 بالضبط (من `ci/api.tl`)، يدوي بالـ `Buffer`.
+  - `DirectSendRunner.mm` — `AYVoiceSend`: يقطّع OGG، يرفع كل جزء، وبعدها `sendMedia`. يمسك الـ service من `AYCaptureRequestService` (مربوط بهوك `addRequest:` بـ `Hooks.xm`).
+  - ربط: `VoiceFile.xm prepareURL` صار يسوي convert→AYVoiceSend (بدل تشغيل المايك).
+  - `Makefile` صار يشمل `*.mm`.
+- **ملاحظات تقنية مهمة للمرة الجاية:**
+  - `AYPresentToast`/`AYCaptureRequestService` معرّفة بـ `.xm`/`.mm` (ObjC++، أسماء C++ مانغلد) — أي ملف ينده عليهن لازم يكون `.mm` مو `.m` (وإلا لينكر إيرور).
+  - عدنا **مسلسِلات TL كاملة** بـ `api_sources` + `Buffer` + `serializeInt32/64/String/Bytes` — استعملهن لأي طلب جديد.
+  - `MTRequest`: `objc_getClass("MTRequest")` → alloc → `setPayload:metadata:shortMetadata:responseParser:` + `.completed` block + `[service addRequest:req]`. طلباتنا بلا `fakeData` فتمر `%orig` وتنرسل فعلاً.
+
+### ▶️ الخطوة الجاية المباشرة
+- **v1 يرسل للرسائل المحفوظة (`inputPeerSelf`) بس** — لإثبات الأنبوب. لازم نوجّهه **للمحادثة الحالية**: نحتاج `InputPeer` (peerId + accessHash). خيارات: (أ) نلتقط `InputPeer` من طلب صادر حديث لنفس المحادثة بهوك `addRequest:`؛ (ب) ننده دالة Swift `Transaction.getPeer` (تقنية ٢). الأسهل (أ).
+- بعدها نفس الأنبوب يفتح: **حفظ ملف الستوري/الفيديو الحقيقي** (نقرا الـ resource عبر تقنية ٢/٣ ونوصل مساره)، إرسال ترجمة، ستيكر، حذف محلي — كلهن صاروا ممكنين.
 
 ---
 
