@@ -194,3 +194,7 @@
 "VOICE_FILE_SENDING" = "⏳ 正在作为语音消息发送…";
 "VOICE_FILE_SWITCH_VOICE" = "将麦克风切换到语音模式（非视频），然后重新选择文件。";
 "SAVE_MEDIA_FRAME" = "✅ 已保存一帧（完整视频需要 Telegram 自带的保存）";
+
+// Direct voice send (raw MTProto)
+"VOICE_SEND_DONE" = "✅ 语音已发送到“收藏夹”";
+"VOICE_SEND_FAILED" = "无法发送语音消息";

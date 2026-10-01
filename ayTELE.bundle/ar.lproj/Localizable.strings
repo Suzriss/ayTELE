@@ -191,3 +191,7 @@
 "VOICE_FILE_SENDING" = "⏳ جاري الإرسال كرسالة صوتية…";
 "VOICE_FILE_SWITCH_VOICE" = "خلّي المايك بوضع الصوت (مو فيديو)، وبعدين اختر الملف مرة ثانية.";
 "SAVE_MEDIA_FRAME" = "✅ انحفظت لقطة (الفيديو الكامل يحتاج حفظ تيلگرام نفسه)";
+
+// Direct voice send (raw MTProto)
+"VOICE_SEND_DONE" = "✅ انرسلت الصوتية للرسائل المحفوظة";
+"VOICE_SEND_FAILED" = "ما نگدر نرسل الصوتية";

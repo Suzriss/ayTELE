@@ -184,14 +184,16 @@ static void driveVoiceSend(void) {
 
 - (void)prepareURL:(NSURL *)url cleanup:(BOOL)cleanup {
 	AYPresentToast(VFLoc(@"VOICE_CONVERTING"));
-	[AYVoiceConverter decodeURL:url completion:^(NSData *pcm, NSError *error) {
+	// Direct send (iQTele's technique): convert to OGG/Opus, then upload + sendMedia over raw
+	// MTProto — no mic, no recorder. v1 lands in Saved Messages to prove the pipeline.
+	[AYVoiceConverter convertURL:url completion:^(NSData *ogg, NSTimeInterval duration, NSData *waveform, NSError *error) {
 		if (cleanup) [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
-		if (!pcm) {
+		if (ogg.length == 0) {
 			AYPresentToast([NSString stringWithFormat:@"%@: %@", VFLoc(@"VOICE_CONVERT_FAILED"), error.localizedDescription ?: @""]);
 			return;
 		}
-		armPCM(pcm);
-		driveVoiceSend();  // record-and-send straight away, no hold needed
+		AYPresentToast(VFLoc(@"VOICE_FILE_SENDING"));
+		[AYVoiceSend sendOGG:ogg duration:(int)(duration + 0.5) waveform:waveform];
 	}];
 }
 

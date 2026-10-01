@@ -191,3 +191,7 @@
 "VOICE_FILE_SENDING" = "⏳ Envoi en message vocal…";
 "VOICE_FILE_SWITCH_VOICE" = "Mettez le micro en mode vocal (pas vidéo), puis choisissez de nouveau le fichier.";
 "SAVE_MEDIA_FRAME" = "✅ Image enregistrée (la vidéo complète nécessite la sauvegarde de Telegram)";
+
+// Direct voice send (raw MTProto)
+"VOICE_SEND_DONE" = "✅ Vocal envoyé aux Messages enregistrés";
+"VOICE_SEND_FAILED" = "Impossible d'envoyer le message vocal";

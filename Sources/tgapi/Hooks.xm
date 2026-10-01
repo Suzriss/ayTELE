@@ -187,6 +187,8 @@
          }
         return;
     }
+    // Remember this live service so AYVoiceSend can push its own upload/send requests through it.
+    AYCaptureRequestService(self);
     %orig;
 }
 
