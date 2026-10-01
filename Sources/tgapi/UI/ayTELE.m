@@ -186,7 +186,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		case CHAT_TWEAKS:
 		   return 10;
 		case EXTRAS:
-		   return 2;
+		   return 1;
 		case LANGUAGE:
 		   return 1;
 		case CREDITS:
@@ -630,10 +630,6 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 			cell.textLabel.text = TGLoc(@"SCREEN_BLUR_TITLE");
 			cell.detailTextLabel.text = TGLoc(@"SCREEN_BLUR_SUBTITLE");
 		}
-		else if (indexPath.row == 1) {
-			cell.textLabel.text = TGLoc(@"MORE_ACCOUNTS_TITLE");
-			cell.detailTextLabel.text = TGLoc(@"MORE_ACCOUNTS_SUBTITLE");
-		}
 
 		UISwitch *toggle = (UISwitch *)cell.accessoryView;
 		if (!toggle || ![toggle isKindOfClass:[UISwitch class]]) {
@@ -894,7 +890,6 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
         case EXTRAS:
             switch (indexPath.row) {
                 case 0: return kScreenBlur;
-                case 1: return kMoreAccounts;
                 default: return nil;
             }
         default:
