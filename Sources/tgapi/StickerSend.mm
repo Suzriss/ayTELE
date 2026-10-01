@@ -10,6 +10,18 @@
 // current chat over raw MTProto (same pipeline as the voice send). It sends a transparent image
 // document — a true WEBP sticker would need a WEBP encoder iOS doesn't ship, noted for later.
 
+// iOS 17+ foreground-instance-mask Vision API, absent from the 16.5 build SDK. Declared here so the
+// code compiles; the request class is resolved at runtime via NSClassFromString (no link-time class
+// symbol) and only reached under an @available(iOS 17.0, *) guard, so older systems never touch it.
+@interface VNInstanceMaskObservation : VNObservation
+@property (nonatomic, readonly) NSIndexSet *allInstances;
+- (CVPixelBufferRef)generateMaskedImageOfInstances:(NSIndexSet *)instances fromRequestHandler:(VNImageRequestHandler *)requestHandler croppedToInstancesExtent:(BOOL)cropResult error:(NSError **)error CF_RETURNS_RETAINED;
+@end
+
+@interface VNGenerateForegroundInstanceMaskRequest : VNImageBasedRequest
+@property (nonatomic, readonly, copy) NSArray<VNInstanceMaskObservation *> *results;
+@end
+
 @interface ayTELELocalization : NSObject
 + (NSString *)localizedStringForKey:(NSString *)key;
 @end
@@ -62,7 +74,9 @@ static void cutoutSubject(UIImage *image, void (^completion)(UIImage *cut)) {
 		@try {
 			if (@available(iOS 17.0, *)) {
 				VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCGImage:cg options:@{}];
-				VNGenerateForegroundInstanceMaskRequest *req = [[VNGenerateForegroundInstanceMaskRequest alloc] init];
+				// Resolve the class dynamically: the symbol isn't in the 16.5 SDK, so a direct
+				// reference would fail to link even though the guard keeps it off older systems.
+				VNGenerateForegroundInstanceMaskRequest *req = [[NSClassFromString(@"VNGenerateForegroundInstanceMaskRequest") alloc] init];
 				NSError *error = nil;
 				if ([handler performRequests:@[req] error:&error]) {
 					VNInstanceMaskObservation *obs = req.results.firstObject;
