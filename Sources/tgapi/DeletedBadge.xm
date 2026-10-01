@@ -509,24 +509,59 @@ static BOOL looksLikeVideoFile(NSString *path) {
 	return b[4] == 'f' && b[5] == 't' && b[6] == 'y' && b[7] == 'p';
 }
 
-// The cached file whose size is exactly `size` bytes and that is an MP4/MOV (the video being shown).
-static NSString *findVideoFileWithSize(long long size) {
-	if (size <= 0) return nil;
+// Roots to search for a cached media file: the app home and a couple of levels up (app-group /
+// shared containers), plus the account container that holds each postbox/media we found. A story
+// video is not always under postbox/media — it can sit in a sibling cache of that account.
+static NSArray<NSString *> *mediaSearchRoots(void) {
+	static NSArray *cached;
+	static dispatch_once_t once;
+	dispatch_once(&once, ^{
+		NSMutableOrderedSet<NSString *> *roots = [NSMutableOrderedSet orderedSet];
+		// Most precise first: the account container (parent of "postbox", i.e. two levels above
+		// postbox/media) and the shared container that holds all accounts and global caches.
+		for (NSString *mediaDir in postboxMediaDirs()) {
+			NSString *accountDir = [[mediaDir stringByDeletingLastPathComponent] stringByDeletingLastPathComponent];
+			if (accountDir.length) [roots addObject:accountDir];
+			NSString *sharedDir = [accountDir stringByDeletingLastPathComponent];  // .../accounts-metadata's parent
+			if (sharedDir.length) [roots addObject:sharedDir];
+		}
+		// The app's own sandbox (Library/Caches, tmp) in case a story is streamed to a short-term cache.
+		if (NSHomeDirectory()) [roots addObject:NSHomeDirectory()];
+		cached = [roots array];
+	});
+	return cached;
+}
+
+// The cached file whose size is exactly `size` bytes and that is the video being shown. We prefer
+// a file whose header is an MP4/QuickTime container, but an exact byte-size match this large is
+// specific enough to trust on its own, so we fall back to it. `debugOut` gets a short trace.
+static NSString *findVideoFileWithSize(long long size, NSString **debugOut) {
+	if (size <= 0) { if (debugOut) *debugOut = @"size<=0"; return nil; }
 	NSFileManager *fm = [NSFileManager defaultManager];
-	for (NSString *dir in postboxMediaDirs()) {
+	NSString *ftypMatch = nil;      // exact size AND looks like a video container
+	NSString *sizeOnlyMatch = nil;  // exact size, header not recognized
+	int matches = 0, scanned = 0;
+	NSMutableArray<NSString *> *sampleMatches = [NSMutableArray array];
+	for (NSString *dir in mediaSearchRoots()) {
 		NSDirectoryEnumerator *en = [fm enumeratorAtPath:dir];
-		NSString *rel;
-		int checked = 0;
-		for (rel in en) {
-			if (++checked > 200000) break;
-			NSString *full = [dir stringByAppendingPathComponent:rel];
-			NSDictionary *attrs = [fm attributesOfItemAtPath:full error:nil];
+		for (NSString *rel in en) {
+			if (++scanned > 600000) break;
+			NSDictionary *attrs = [en fileAttributes];  // no extra stat; provided by the enumerator
 			if ([attrs.fileType isEqualToString:NSFileTypeDirectory]) continue;
 			if ((long long)attrs.fileSize != size) continue;
-			if (looksLikeVideoFile(full)) return full;
+			matches++;
+			NSString *full = [dir stringByAppendingPathComponent:rel];
+			if (sampleMatches.count < 4) [sampleMatches addObject:[rel lastPathComponent]];
+			if (looksLikeVideoFile(full)) { ftypMatch = full; break; }
+			else if (!sizeOnlyMatch) sizeOnlyMatch = full;
 		}
+		if (ftypMatch) break;
 	}
-	return nil;
+	NSString *chosen = ftypMatch ?: sizeOnlyMatch;
+	if (debugOut) *debugOut = [NSString stringWithFormat:@"scanned %d, size-matches %d%@, %@",
+		scanned, matches, sampleMatches.count ? [@" [" stringByAppendingString:[[sampleMatches componentsJoinedByString:@","] stringByAppendingString:@"]"]] : @"",
+		ftypMatch ? @"ftyp hit" : (sizeOnlyMatch ? @"size-only hit" : @"no hit")];
+	return chosen;
 }
 
 @interface AYMediaSaveHandler : NSObject
@@ -611,9 +646,10 @@ static NSString *findVideoFileWithSize(long long size) {
 	// before the photo, because a video story also shows its still preview underneath.
 	if (size > 0) {
 		dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
-			NSString *path = findVideoFileWithSize(size);
+			NSString *dbg = nil;
+			NSString *path = findVideoFileWithSize(size, &dbg);
 			dispatch_async(dispatch_get_main_queue(), ^{
-				customLog(@"save: cache match for %lld bytes -> %@ (media dirs: %lu)", size, path.lastPathComponent ?: @"none", (unsigned long)postboxMediaDirs().count);
+				customLog(@"save: cache match for %lld bytes -> %@ (roots: %lu; %@)", size, path.lastPathComponent ?: @"none", (unsigned long)mediaSearchRoots().count, dbg ?: @"-");
 				if (path) [self saveVideoAtPath:path];
 				else [self commit:frame note:@"SAVE_MEDIA_FRAME"];
 			});
