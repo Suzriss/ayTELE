@@ -20,9 +20,21 @@ public class AYDirectSend: NSObject {
 		return b.makeData()
 	}
 
+	// upload.saveBigFilePart#de7b673d file_id:long file_part:int file_total_parts:int bytes:bytes = Bool;
+	// Required instead of saveFilePart once a file is over 10 MB.
+	@objc public static func saveBigFilePart(fileId: Int64, part: Int32, totalParts: Int32, chunk: Data) -> Data {
+		let b = Buffer()
+		b.appendInt32(fid(0xde7b673d))
+		b.appendInt64(fileId)
+		b.appendInt32(part)
+		b.appendInt32(totalParts)
+		serializeBytes(Buffer(data: chunk), buffer: b, boxed: false)
+		return b.makeData()
+	}
+
 	// messages.sendMedia with the uploaded file as a voice document. `peer` is the raw serialized
 	// InputPeer bytes (captured from an outgoing getHistory/readHistory, or inputPeerSelf as fallback).
-	@objc public static func sendVoice(fileId: Int64, parts: Int32, duration: Int32, waveform: Data?, randomId: Int64, peer: Data) -> Data {
+	@objc public static func sendVoice(fileId: Int64, parts: Int32, big: Bool, duration: Int32, waveform: Data?, randomId: Int64, peer: Data) -> Data {
 		let b = Buffer()
 		// messages.sendMedia#330e77f flags:# peer:InputPeer media:InputMedia message:string random_id:long ...
 		b.appendInt32(fid(0x0330e77f))
@@ -30,7 +42,7 @@ public class AYDirectSend: NSObject {
 		peer.withUnsafeBytes { raw in       // peer: InputPeer (already serialized)
 			if let base = raw.baseAddress { b.appendBytes(base, length: UInt(peer.count)) }
 		}
-		appendUploadedVoice(b, fileId: fileId, parts: parts, duration: duration, waveform: waveform)
+		appendUploadedVoice(b, fileId: fileId, parts: parts, big: big, duration: duration, waveform: waveform)
 		serializeString("", buffer: b, boxed: false)   // message
 		b.appendInt64(randomId)               // random_id
 		return b.makeData()
@@ -66,15 +78,23 @@ public class AYDirectSend: NSObject {
 	}
 
 	// inputMediaUploadedDocument#37c9330 ... file:InputFile mime_type:string attributes:Vector<DocumentAttribute>
-	private static func appendUploadedVoice(_ b: Buffer, fileId: Int64, parts: Int32, duration: Int32, waveform: Data?) {
+	private static func appendUploadedVoice(_ b: Buffer, fileId: Int64, parts: Int32, big: Bool, duration: Int32, waveform: Data?) {
 		b.appendInt32(fid(0x037c9330))
 		b.appendInt32(0)                      // flags: no thumb/stickers/ttl/spoiler
-		// file: inputFile#f52ff27f id:long parts:int name:string md5_checksum:string
-		b.appendInt32(fid(0xf52ff27f))
-		b.appendInt64(fileId)
-		b.appendInt32(parts)
-		serializeString("voice.ogg", buffer: b, boxed: false)
-		serializeString("", buffer: b, boxed: false)
+		if big {
+			// file: inputFileBig#fa4f0bb5 id:long parts:int name:string (files over 10 MB, no md5)
+			b.appendInt32(fid(0xfa4f0bb5))
+			b.appendInt64(fileId)
+			b.appendInt32(parts)
+			serializeString("voice.ogg", buffer: b, boxed: false)
+		} else {
+			// file: inputFile#f52ff27f id:long parts:int name:string md5_checksum:string
+			b.appendInt32(fid(0xf52ff27f))
+			b.appendInt64(fileId)
+			b.appendInt32(parts)
+			serializeString("voice.ogg", buffer: b, boxed: false)
+			serializeString("", buffer: b, boxed: false)
+		}
 		serializeString("audio/ogg", buffer: b, boxed: false)   // mime_type
 		// attributes: Vector<DocumentAttribute> = [documentAttributeAudio]
 		b.appendInt32(fid(0x1cb5c415))        // vector

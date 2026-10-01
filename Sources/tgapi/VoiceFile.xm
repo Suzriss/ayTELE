@@ -189,13 +189,18 @@ static void driveVoiceSend(void) {
 	// chat at pick time.
 	NSString *chatKey = nil;
 	@try { chatKey = [AYReceipts chatKeyWithController:lastChatController]; } @catch (NSException *e) {}
+	customLog(@"voice-file: picked %@ (chat controller=%@, chat=%@)", url.lastPathComponent,
+		lastChatController ? NSStringFromClass([lastChatController class]) : @"none", chatKey ?: @"unknown");
 	// Direct send (iQTele's technique): convert to OGG/Opus, then upload + sendMedia over raw MTProto.
 	[AYVoiceConverter convertURL:url completion:^(NSData *ogg, NSTimeInterval duration, NSData *waveform, NSError *error) {
 		if (cleanup) [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
 		if (ogg.length == 0) {
+			customLog(@"voice-file: conversion failed for %@: %@", url.lastPathComponent, error);
 			AYPresentToast([NSString stringWithFormat:@"%@: %@", VFLoc(@"VOICE_CONVERT_FAILED"), error.localizedDescription ?: @""]);
 			return;
 		}
+		customLog(@"voice-file: converted %@ -> %lu bytes ogg, %.1fs, waveform %lu bytes", url.lastPathComponent,
+			(unsigned long)ogg.length, duration, (unsigned long)waveform.length);
 		AYPresentToast(VFLoc(@"VOICE_FILE_SENDING"));
 		[AYVoiceSend sendOGG:ogg duration:(int)(duration + 0.5) waveform:waveform chatKey:chatKey];
 	}];

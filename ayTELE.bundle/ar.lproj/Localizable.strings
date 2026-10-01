@@ -234,3 +234,10 @@
 "STICKER_SENT" = "✅ انرسل";
 "STICKER_FAILED" = "ما نگدر نسوي الستيكر";
 "STICKER_NO_SUBJECT" = "ما لگينا شي نقصّه بالصورة";
+
+// Diagnostic log viewer
+"LOGS_TITLE" = "سجل التشخيص";
+"LOGS_SUBTITLE" = "شنو سوّت الأداة خطوة بخطوة. شاركه ويا المطوّر حتى نعرف وين انكسرت الميزة.";
+"LOGS_EMPTY" = "ماكو سجل بعد. جرّب الميزة الي ما تشتغل وارجع هنا.";
+"LOGS_CLEAR" = "مسح";
+"LOGS_SHARE" = "مشاركة";

@@ -74,6 +74,7 @@ void AYCaptureOutgoingPeer(NSData *payload) {
 	NSString *key = keyForInputPeer(peer);
 	if (key) {
 		if (!gPeerByKey) gPeerByKey = [NSMutableDictionary dictionary];
+		if (![gPeerByKey[key] isEqualToData:peer]) customLog(@"peer: learned %@ (%lu bytes, fn 0x%08x)", key, (unsigned long)peer.length, fid);
 		gPeerByKey[key] = peer;
 	}
 }
@@ -92,6 +93,9 @@ NSData *AYPeerForChatKey(NSString *key) {
 static void toast(NSString *key) {
 	AYPresentToast([ayTELELocalization localizedStringForKey:key]);
 }
+
+// Files above this must use upload.saveBigFilePart + inputFileBig (Telegram's 10 MB rule).
+static const NSUInteger kAYBigFileThreshold = 10 * 1024 * 1024;
 
 static long long randomLong(void) {
 	return ((long long)arc4random() << 32) | (long long)arc4random();
@@ -126,9 +130,17 @@ NSData *AYCurrentPeerOrSelf(void) { return currentPeerOrSelf(); }
 
 + (void)sendOGG:(NSData *)ogg duration:(int)duration waveform:(NSData *)waveform chatKey:(NSString *)chatKey {
 	MTRequestMessageService *service = gService;
-	if (ogg.length == 0 || !service) { toast(@"VOICE_SEND_FAILED"); return; }
+	if (ogg.length == 0 || !service) {
+		customLog(@"voice: cannot send (ogg=%lu bytes, service=%@)", (unsigned long)ogg.length, service ? @"yes" : @"none captured yet");
+		toast(@"VOICE_SEND_FAILED");
+		return;
+	}
 	// Prefer the InputPeer captured for this exact chat; fall back to the most recent chat, then self.
-	NSData *peer = AYPeerForChatKey(chatKey) ?: currentPeerOrSelf();
+	NSData *exact = AYPeerForChatKey(chatKey);
+	NSData *peer = exact ?: currentPeerOrSelf();
+	customLog(@"voice: sending %lu bytes, %ds, chat=%@ -> %@ (%@), known chats=%lu", (unsigned long)ogg.length, duration,
+		chatKey ?: @"?", keyForInputPeer(peer) ?: @"self", exact ? @"exact" : (peer.length > 4 ? @"latest chat" : @"Saved Messages fallback"),
+		(unsigned long)gPeerByKey.count);
 	long long fileId = randomLong();
 	NSUInteger partSize = 512 * 1024;
 	int parts = (int)((ogg.length + partSize - 1) / partSize);
@@ -140,16 +152,25 @@ NSData *AYCurrentPeerOrSelf(void) { return currentPeerOrSelf(); }
 		partSize:(NSUInteger)partSize duration:(int)duration waveform:(NSData *)waveform
 		peer:(NSData *)peer service:(MTRequestMessageService *)service {
 	if (index >= parts) {
-		[self sendMediaWithFileId:fileId parts:parts duration:duration waveform:waveform peer:peer service:service];
+		[self sendMediaWithFileId:fileId parts:parts big:ogg.length > kAYBigFileThreshold duration:duration
+			waveform:waveform peer:peer service:service];
 		return;
 	}
 	NSUInteger offset = (NSUInteger)index * partSize;
 	NSUInteger len = MIN(partSize, ogg.length - offset);
 	NSData *chunk = [ogg subdataWithRange:NSMakeRange(offset, len)];
-	NSData *payload = [AYDirectSend saveFilePartWithFileId:fileId part:index chunk:chunk];
-	MTRequest *req = makeRequest(payload, (int)0xb304a621, ^(id result, MTRpcError *error) {
+	// Telegram rejects saveFilePart for files over 10 MB; those go up as a "big" file instead.
+	BOOL big = ogg.length > kAYBigFileThreshold;
+	NSData *payload = big
+		? [AYDirectSend saveBigFilePartWithFileId:fileId part:index totalParts:parts chunk:chunk]
+		: [AYDirectSend saveFilePartWithFileId:fileId part:index chunk:chunk];
+	MTRequest *req = makeRequest(payload, big ? (int)0xde7b673d : (int)0xb304a621, ^(id result, MTRpcError *error) {
 		dispatch_async(dispatch_get_main_queue(), ^{
-			if (error) { toast(@"VOICE_SEND_FAILED"); return; }
+			if (error) {
+				customLog(@"voice: upload part %d/%d failed: %@", index + 1, parts, error);
+				toast(@"VOICE_SEND_FAILED");
+				return;
+			}
 			[self uploadPart:index + 1 ofTotal:parts fileId:fileId ogg:ogg partSize:partSize
 				duration:duration waveform:waveform peer:peer service:service];
 		});
@@ -157,12 +178,14 @@ NSData *AYCurrentPeerOrSelf(void) { return currentPeerOrSelf(); }
 	[service addRequest:req];
 }
 
-+ (void)sendMediaWithFileId:(long long)fileId parts:(int)parts duration:(int)duration
++ (void)sendMediaWithFileId:(long long)fileId parts:(int)parts big:(BOOL)big duration:(int)duration
 		waveform:(NSData *)waveform peer:(NSData *)peer service:(MTRequestMessageService *)service {
-	NSData *payload = [AYDirectSend sendVoiceWithFileId:fileId parts:parts duration:duration
+	NSData *payload = [AYDirectSend sendVoiceWithFileId:fileId parts:parts big:big duration:duration
 		waveform:waveform randomId:randomLong() peer:(peer ?: currentPeerOrSelf())];
 	MTRequest *req = makeRequest(payload, (int)0x0330e77f, ^(id result, MTRpcError *error) {
 		dispatch_async(dispatch_get_main_queue(), ^{
+			if (error) customLog(@"voice: sendMedia failed: %@", error);
+			else customLog(@"voice: sendMedia ok (%d part(s))", parts);
 			toast(error ? @"VOICE_SEND_FAILED" : @"VOICE_SEND_DONE");
 		});
 	});

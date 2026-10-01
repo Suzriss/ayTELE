@@ -102,7 +102,8 @@ void AYPresentToast(NSString *message);
 // Swift payload builder (DirectSend.swift): serializes layer-229 upload/send requests.
 @interface AYDirectSend : NSObject
 + (NSData *)saveFilePartWithFileId:(long long)fileId part:(int)part chunk:(NSData *)chunk;
-+ (NSData *)sendVoiceWithFileId:(long long)fileId parts:(int)parts duration:(int)duration waveform:(NSData *)waveform randomId:(long long)randomId peer:(NSData *)peer;
++ (NSData *)saveBigFilePartWithFileId:(long long)fileId part:(int)part totalParts:(int)totalParts chunk:(NSData *)chunk;
++ (NSData *)sendVoiceWithFileId:(long long)fileId parts:(int)parts big:(BOOL)big duration:(int)duration waveform:(NSData *)waveform randomId:(long long)randomId peer:(NSData *)peer;
 + (NSData *)sendImageDocumentWithFileId:(long long)fileId parts:(int)parts fileName:(NSString *)fileName mime:(NSString *)mime width:(int)width height:(int)height randomId:(long long)randomId peer:(NSData *)peer;
 @end
 

@@ -1,5 +1,6 @@
 #import "Headers.h"
 #import <objc/runtime.h>
+#import <AVFoundation/AVFoundation.h>
 
 // Badges drawn on chat message nodes:
 //  - a red trash badge for messages deleted remotely (see AYDeletedMarks), non-interactive.
@@ -390,6 +391,41 @@ static UIImageView *bestImageView(UIView *root, CGFloat minArea) {
 	return best;
 }
 
+// The largest decoded image drawn straight onto a layer (Telegram's display nodes set layer.contents
+// to a CGImage rather than using UIImageView), so photo stories save at full resolution.
+static CGImageRef bestLayerImage(CALayer *layer, CGFloat *bestArea) {
+	if (!layer || layer.hidden || layer.opacity < 0.01) return NULL;
+	CGImageRef best = NULL;
+	id contents = layer.contents;
+	if (contents && CFGetTypeID((__bridge CFTypeRef)contents) == CGImageGetTypeID()) {
+		CGImageRef img = (__bridge CGImageRef)contents;
+		CGFloat area = (CGFloat)CGImageGetWidth(img) * (CGFloat)CGImageGetHeight(img);
+		if (area > *bestArea) { best = img; *bestArea = area; }
+	}
+	for (CALayer *sub in layer.sublayers) {
+		CGImageRef deeper = bestLayerImage(sub, bestArea);
+		if (deeper) best = deeper;
+	}
+	return best;
+}
+
+// The local file behind a video that is playing through an AVPlayerLayer somewhere under layer.
+static NSURL *playingFileURL(CALayer *layer) {
+	if (!layer) return nil;
+	if ([layer isKindOfClass:[AVPlayerLayer class]]) {
+		AVAsset *asset = ((AVPlayerLayer *)layer).player.currentItem.asset;
+		if ([asset isKindOfClass:[AVURLAsset class]]) {
+			NSURL *url = ((AVURLAsset *)asset).URL;
+			if (url.isFileURL && [[NSFileManager defaultManager] fileExistsAtPath:url.path]) return url;
+		}
+	}
+	for (CALayer *sub in layer.sublayers) {
+		NSURL *found = playingFileURL(sub);
+		if (found) return found;
+	}
+	return nil;
+}
+
 // First descendant that is a kind of cls (the media content view, free of chrome).
 static UIView *firstDescendantOfClass(UIView *root, Class cls) {
 	if (!root || !cls) return nil;
@@ -502,6 +538,7 @@ static NSString *findVideoFileWithSize(long long size) {
 	UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), (void *)CFBridgingRetain(note ?: @"SAVE_MEDIA_DONE"));
 }
 + (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)ctx {
+	if (error) customLog(@"save: Photos refused the image: %@", error);
 	NSString *okKey = ctx ? (NSString *)CFBridgingRelease(ctx) : @"SAVE_MEDIA_DONE";
 	presentToast([ayTELELocalization localizedStringForKey:error ? @"SAVE_MEDIA_FAILED" : okKey]);
 }
@@ -511,6 +548,7 @@ static NSString *findVideoFileWithSize(long long size) {
 	NSError *err = nil;
 	[[NSFileManager defaultManager] copyItemAtPath:path toPath:tmp error:&err];
 	if (err || !UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(tmp)) {
+		customLog(@"save: video at %@ rejected (copy error=%@)", path.lastPathComponent, err);
 		[[NSFileManager defaultManager] removeItemAtPath:tmp error:nil];
 		presentToast([ayTELELocalization localizedStringForKey:@"SAVE_MEDIA_FAILED"]);
 		return;
@@ -518,40 +556,61 @@ static NSString *findVideoFileWithSize(long long size) {
 	UISaveVideoAtPathToSavedPhotosAlbum(tmp, self, @selector(video:didFinishSavingWithError:contextInfo:), (void *)CFBridgingRetain(tmp));
 }
 + (void)video:(NSString *)path didFinishSavingWithError:(NSError *)error contextInfo:(void *)ctx {
+	if (error) customLog(@"save: Photos refused the video: %@", error);
 	if (ctx) { NSString *tmp = (NSString *)CFBridgingRelease(ctx); [[NSFileManager defaultManager] removeItemAtPath:tmp error:nil]; }
 	presentToast([ayTELELocalization localizedStringForKey:error ? @"SAVE_MEDIA_FAILED" : @"SAVE_MEDIA_DONE"]);
 }
 // container: the view to read pixels from. reflect: the Swift viewer object to read the video size
 // from. contentClass: the media view to snapshot as a last resort. hide: our button, kept out of it.
 + (void)saveFromContainer:(UIView *)container reflect:(NSObject *)reflect contentClass:(Class)contentClass hide:(UIView *)hide {
-	if (!container) { [self commit:nil note:nil]; return; }
-	// 1) A photo: grab the displayed image at full resolution.
-	@try {
-		UIImageView *iv = bestImageView(container, 200.0 * 200.0);
-		if (iv && iv.image) { [self commit:iv.image note:@"SAVE_MEDIA_DONE"]; return; }
-	} @catch (NSException *e) {}
-	// A still frame of whatever is on screen — captured now on the main thread, used if the real
-	// video file can't be located (this method's own screen pixels can't be read off-thread).
-	UIImage *frame = nil;
-	@try {
-		UIView *content = contentClass ? firstDescendantOfClass(container, contentClass) : nil;
-		frame = snapshotOfView(content ?: container, hide);
-	} @catch (NSException *e) {}
-	// 2) A video: read its exact byte size, then match it against the Postbox cache off the main
-	// thread (the cache scan can be large) and save the real file; fall back to the frame.
+	if (!container) { customLog(@"save: no container view"); [self commit:nil note:nil]; return; }
+	UIView *content = contentClass ? firstDescendantOfClass(container, contentClass) : nil;
+	UIView *media = content ?: container;
+
+	// 1) A video playing from a local file: save that exact file.
+	NSURL *playing = nil;
+	@try { playing = playingFileURL(media.layer) ?: playingFileURL(container.layer); } @catch (NSException *e) {}
+	if (playing) {
+		customLog(@"save: playing file %@", playing.lastPathComponent);
+		[self saveVideoAtPath:playing.path];
+		return;
+	}
+
+	// Everything else that has to be read on the main thread, gathered up front.
 	long long size = 0;
 	@try { size = [AYMediaFile videoByteSizeFrom:reflect].longLongValue; } @catch (NSException *e) {}
+	UIImage *photo = nil;
+	@try {
+		UIImageView *iv = bestImageView(media, 200.0 * 200.0);
+		CGFloat layerArea = 200.0 * 200.0;
+		CGImageRef layerImage = bestLayerImage(media.layer, &layerArea);
+		CGFloat viewArea = iv.image ? iv.image.size.width * iv.image.scale * iv.image.size.height * iv.image.scale : 0;
+		if (layerImage && layerArea > viewArea) photo = [UIImage imageWithCGImage:layerImage];
+		else if (iv.image) photo = iv.image;
+	} @catch (NSException *e) {}
+	UIImage *frame = nil;
+	@try { frame = snapshotOfView(media, hide); } @catch (NSException *e) {}
+	customLog(@"save: viewer=%@ content=%@ videoSize=%lld photo=%.0fx%.0f",
+		NSStringFromClass([reflect class]), content ? NSStringFromClass([content class]) : @"-", size,
+		photo.size.width * photo.scale, photo.size.height * photo.scale);
+
+	// 2) A video: match its exact byte size against the Postbox cache off the main thread. Checked
+	// before the photo, because a video story also shows its still preview underneath.
 	if (size > 0) {
 		dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
 			NSString *path = findVideoFileWithSize(size);
 			dispatch_async(dispatch_get_main_queue(), ^{
+				customLog(@"save: cache match for %lld bytes -> %@ (media dirs: %lu)", size, path.lastPathComponent ?: @"none", (unsigned long)postboxMediaDirs().count);
 				if (path) [self saveVideoAtPath:path];
 				else [self commit:frame note:@"SAVE_MEDIA_FRAME"];
 			});
 		});
 		return;
 	}
-	// 3) Not a video we could size (or a photo we missed): keep the frame.
+
+	// 3) A photo at full resolution; 4) otherwise what is on screen.
+	if (photo) { [self commit:photo note:@"SAVE_MEDIA_DONE"]; return; }
+	customLog(@"save: no photo or video found, saving a screen frame");
 	[self commit:frame note:@"SAVE_MEDIA_FRAME"];
 }
 + (void)saveStory:(UIButton *)sender {

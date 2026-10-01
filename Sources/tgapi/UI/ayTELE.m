@@ -9,6 +9,9 @@
 @interface AYArchiveViewController : UITableViewController
 @end
 
+@interface AYLogViewController : UIViewController
+@end
+
 #ifndef AY_BUILD
 #define AY_BUILD "dev"
 #endif
@@ -173,7 +176,7 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		case READ_RECEIPT:
 		   return 2;
 		case MISC:
-		   return 6;
+		   return 7;
 		case FILE_FIXER:
 		   return 2;
 		case FAKE_LOCATION:
@@ -392,6 +395,18 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		cell.detailTextLabel.text = TGLoc(@"ARCHIVE_SETTINGS_SUBTITLE");
 		cell.imageView.image = [UIImage systemImageNamed:@"magnifyingglass"];
 		cell.imageView.tintColor = [self dynamicColorBW];
+		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		cell.textLabel.numberOfLines = 0;
+		cell.detailTextLabel.numberOfLines = 0;
+		return cell;
+	}
+	else if (indexPath.section == 2 && indexPath.row == 6) { // MISC: diagnostic log viewer
+		cell = [self normalCellFromTableView:tableView];
+		cell.textLabel.text = TGLoc(@"LOGS_TITLE");
+		cell.detailTextLabel.text = TGLoc(@"LOGS_SUBTITLE");
+		cell.imageView.image = [UIImage systemImageNamed:@"doc.text.magnifyingglass"];
+		cell.imageView.tintColor = AY_BLUE;
+		cell.accessoryView = nil; // reused cells may still carry the cache-size label
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		cell.textLabel.numberOfLines = 0;
 		cell.detailTextLabel.numberOfLines = 0;
@@ -726,6 +741,9 @@ typedef NS_ENUM(NSInteger, TABLE_VIEW_SECTIONS) {
 		}
 		else if (indexPath.row == 5) {
 			[self showArchive];
+		}
+		else if (indexPath.row == 6) {
+			[self.navigationController pushViewController:[AYLogViewController new] animated:YES];
 		}
 	}
 

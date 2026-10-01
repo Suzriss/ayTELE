@@ -63,9 +63,9 @@ const void *AYVoiceOwnWriterKey = &AYVoiceOwnWriterKey;
 
 // Decodes the first audio track of url to 48 kHz mono 16-bit PCM.
 + (NSData *)decodePCMFromURL:(NSURL *)url error:(NSError **)error {
-	AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:nil];
-	AVAssetTrack *track = [asset tracksWithMediaType:AVMediaTypeAudio].firstObject;
-	if (!track) {
+	AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:@{AVURLAssetPreferPreciseDurationAndTimingKey: @YES}];
+	NSArray<AVAssetTrack *> *tracks = [asset tracksWithMediaType:AVMediaTypeAudio];
+	if (tracks.count == 0) {
 		*error = [self errorWithReason:@"No audio track in file"];
 		return nil;
 	}
@@ -75,21 +75,30 @@ const void *AYVoiceOwnWriterKey = &AYVoiceOwnWriterKey;
 		*error = readerError ?: [self errorWithReason:@"Cannot read file"];
 		return nil;
 	}
+	// An explicit mono layout lets the reader down-mix stereo / 5.1 video soundtracks; without it
+	// the channel-count change is rejected for anything above two channels.
+	AudioChannelLayout layout = {0};
+	layout.mChannelLayoutTag = kAudioChannelLayoutTag_Mono;
 	NSDictionary *settings = @{
 		AVFormatIDKey: @(kAudioFormatLinearPCM),
 		AVSampleRateKey: @(kAYVoiceSampleRate),
 		AVNumberOfChannelsKey: @1,
+		AVChannelLayoutKey: [NSData dataWithBytes:&layout length:sizeof(layout)],
 		AVLinearPCMBitDepthKey: @16,
 		AVLinearPCMIsFloatKey: @NO,
 		AVLinearPCMIsBigEndianKey: @NO,
 		AVLinearPCMIsNonInterleaved: @NO,
 	};
-	AVAssetReaderTrackOutput *output = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:track outputSettings:settings];
-	output.alwaysCopiesSampleData = NO;
+	// Mix every audio track (videos can carry several) instead of trusting the first one.
+	AVAssetReaderOutput *output = [AVAssetReaderAudioMixOutput assetReaderAudioMixOutputWithAudioTracks:tracks audioSettings:settings];
 	if (![reader canAddOutput:output]) {
-		*error = [self errorWithReason:@"Unsupported audio format"];
-		return nil;
+		output = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:tracks.firstObject outputSettings:settings];
+		if (![reader canAddOutput:output]) {
+			*error = [self errorWithReason:@"Unsupported audio format"];
+			return nil;
+		}
 	}
+	output.alwaysCopiesSampleData = NO;
 	[reader addOutput:output];
 	if (![reader startReading]) {
 		*error = reader.error ?: [self errorWithReason:@"Read failed"];

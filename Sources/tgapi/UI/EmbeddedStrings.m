@@ -196,6 +196,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"STICKER_SENT": @"✅ انرسل",
 		@"STICKER_FAILED": @"ما نگدر نسوي الستيكر",
 		@"STICKER_NO_SUBJECT": @"ما لگينا شي نقصّه بالصورة",
+		@"LOGS_TITLE": @"سجل التشخيص",
+		@"LOGS_SUBTITLE": @"شنو سوّت الأداة خطوة بخطوة. شاركه ويا المطوّر حتى نعرف وين انكسرت الميزة.",
+		@"LOGS_EMPTY": @"ماكو سجل بعد. جرّب الميزة الي ما تشتغل وارجع هنا.",
+		@"LOGS_CLEAR": @"مسح",
+		@"LOGS_SHARE": @"مشاركة",
 	};
 	if ([code isEqualToString:@"cn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隐身模式",
@@ -376,6 +381,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"STICKER_SENT": @"✅ Sent",
 		@"STICKER_FAILED": @"Couldn't make the sticker",
 		@"STICKER_NO_SUBJECT": @"No subject found in the image",
+		@"LOGS_TITLE": @"Diagnostic log",
+		@"LOGS_SUBTITLE": @"What ayTELE did, step by step. Share it with the developer so a broken feature can be pinned down.",
+		@"LOGS_EMPTY": @"Nothing logged yet. Try the feature that is not working, then come back here.",
+		@"LOGS_CLEAR": @"Clear",
+		@"LOGS_SHARE": @"Share",
 	};
 	if ([code isEqualToString:@"en"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Ghost Mode",
@@ -557,6 +567,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"STICKER_SENT": @"✅ Sent",
 		@"STICKER_FAILED": @"Couldn't make the sticker",
 		@"STICKER_NO_SUBJECT": @"No subject found in the image",
+		@"LOGS_TITLE": @"Diagnostic log",
+		@"LOGS_SUBTITLE": @"What ayTELE did, step by step. Share it with the developer so a broken feature can be pinned down.",
+		@"LOGS_EMPTY": @"Nothing logged yet. Try the feature that is not working, then come back here.",
+		@"LOGS_CLEAR": @"Clear",
+		@"LOGS_SHARE": @"Share",
 	};
 	if ([code isEqualToString:@"fr"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Mode Fantôme",
@@ -737,6 +752,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"STICKER_SENT": @"✅ Sent",
 		@"STICKER_FAILED": @"Couldn't make the sticker",
 		@"STICKER_NO_SUBJECT": @"No subject found in the image",
+		@"LOGS_TITLE": @"Diagnostic log",
+		@"LOGS_SUBTITLE": @"What ayTELE did, step by step. Share it with the developer so a broken feature can be pinned down.",
+		@"LOGS_EMPTY": @"Nothing logged yet. Try the feature that is not working, then come back here.",
+		@"LOGS_CLEAR": @"Clear",
+		@"LOGS_SHARE": @"Share",
 	};
 	if ([code isEqualToString:@"it"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modalità Fantasma",
@@ -918,6 +938,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"STICKER_SENT": @"✅ Sent",
 		@"STICKER_FAILED": @"Couldn't make the sticker",
 		@"STICKER_NO_SUBJECT": @"No subject found in the image",
+		@"LOGS_TITLE": @"Diagnostic log",
+		@"LOGS_SUBTITLE": @"What ayTELE did, step by step. Share it with the developer so a broken feature can be pinned down.",
+		@"LOGS_EMPTY": @"Nothing logged yet. Try the feature that is not working, then come back here.",
+		@"LOGS_CLEAR": @"Clear",
+		@"LOGS_SHARE": @"Share",
 	};
 	if ([code isEqualToString:@"ja"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"ゴーストモード",
@@ -1099,6 +1124,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"STICKER_SENT": @"✅ Sent",
 		@"STICKER_FAILED": @"Couldn't make the sticker",
 		@"STICKER_NO_SUBJECT": @"No subject found in the image",
+		@"LOGS_TITLE": @"Diagnostic log",
+		@"LOGS_SUBTITLE": @"What ayTELE did, step by step. Share it with the developer so a broken feature can be pinned down.",
+		@"LOGS_EMPTY": @"Nothing logged yet. Try the feature that is not working, then come back here.",
+		@"LOGS_CLEAR": @"Clear",
+		@"LOGS_SHARE": @"Share",
 	};
 	if ([code isEqualToString:@"ru"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Режим призрака",
@@ -1280,6 +1310,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"STICKER_SENT": @"✅ Sent",
 		@"STICKER_FAILED": @"Couldn't make the sticker",
 		@"STICKER_NO_SUBJECT": @"No subject found in the image",
+		@"LOGS_TITLE": @"Diagnostic log",
+		@"LOGS_SUBTITLE": @"What ayTELE did, step by step. Share it with the developer so a broken feature can be pinned down.",
+		@"LOGS_EMPTY": @"Nothing logged yet. Try the feature that is not working, then come back here.",
+		@"LOGS_CLEAR": @"Clear",
+		@"LOGS_SHARE": @"Share",
 	};
 	if ([code isEqualToString:@"es"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Modo Fantasma",
@@ -1461,6 +1496,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"STICKER_SENT": @"✅ Sent",
 		@"STICKER_FAILED": @"Couldn't make the sticker",
 		@"STICKER_NO_SUBJECT": @"No subject found in the image",
+		@"LOGS_TITLE": @"Diagnostic log",
+		@"LOGS_SUBTITLE": @"What ayTELE did, step by step. Share it with the developer so a broken feature can be pinned down.",
+		@"LOGS_EMPTY": @"Nothing logged yet. Try the feature that is not working, then come back here.",
+		@"LOGS_CLEAR": @"Clear",
+		@"LOGS_SHARE": @"Share",
 	};
 	if ([code isEqualToString:@"tw"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"隱身模式",
@@ -1642,6 +1682,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"STICKER_SENT": @"✅ Sent",
 		@"STICKER_FAILED": @"Couldn't make the sticker",
 		@"STICKER_NO_SUBJECT": @"No subject found in the image",
+		@"LOGS_TITLE": @"Diagnostic log",
+		@"LOGS_SUBTITLE": @"What ayTELE did, step by step. Share it with the developer so a broken feature can be pinned down.",
+		@"LOGS_EMPTY": @"Nothing logged yet. Try the feature that is not working, then come back here.",
+		@"LOGS_CLEAR": @"Clear",
+		@"LOGS_SHARE": @"Share",
 	};
 	if ([code isEqualToString:@"vn"]) return @{
 		@"GHOST_MODE_SECTION_HEADER": @"Chế độ ma",
@@ -1823,6 +1868,11 @@ NSDictionary<NSString *, NSString *> *AYEmbeddedStrings(NSString *code) {
 		@"STICKER_SENT": @"✅ Sent",
 		@"STICKER_FAILED": @"Couldn't make the sticker",
 		@"STICKER_NO_SUBJECT": @"No subject found in the image",
+		@"LOGS_TITLE": @"Diagnostic log",
+		@"LOGS_SUBTITLE": @"What ayTELE did, step by step. Share it with the developer so a broken feature can be pinned down.",
+		@"LOGS_EMPTY": @"Nothing logged yet. Try the feature that is not working, then come back here.",
+		@"LOGS_CLEAR": @"Clear",
+		@"LOGS_SHARE": @"Share",
 	};
 	return nil;
 }

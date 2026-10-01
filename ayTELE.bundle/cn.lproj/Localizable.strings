@@ -237,3 +237,10 @@
 "STICKER_SENT" = "✅ Sent";
 "STICKER_FAILED" = "Couldn't make the sticker";
 "STICKER_NO_SUBJECT" = "No subject found in the image";
+
+// Diagnostic log viewer
+"LOGS_TITLE" = "Diagnostic log";
+"LOGS_SUBTITLE" = "What ayTELE did, step by step. Share it with the developer so a broken feature can be pinned down.";
+"LOGS_EMPTY" = "Nothing logged yet. Try the feature that is not working, then come back here.";
+"LOGS_CLEAR" = "Clear";
+"LOGS_SHARE" = "Share";

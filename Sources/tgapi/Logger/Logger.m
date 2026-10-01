@@ -87,6 +87,14 @@ static NSString *logFilePath() {
     return path;
 }
 
+NSString *AYLogFilePath(void) {
+	return logFilePath();
+}
+
+void AYClearLog(void) {
+	[[NSData data] writeToFile:logFilePath() atomically:YES];
+}
+
 // Static logging function
 void customLog(NSString *format, ...) {
 	static dispatch_once_t token;
