@@ -106,6 +106,14 @@ void AYPresentToast(NSString *message);
 + (NSData *)saveBigFilePartWithFileId:(long long)fileId part:(int)part totalParts:(int)totalParts chunk:(NSData *)chunk;
 + (NSData *)sendVoiceWithFileId:(long long)fileId parts:(int)parts big:(BOOL)big duration:(int)duration waveform:(NSData *)waveform randomId:(long long)randomId peer:(NSData *)peer;
 + (NSData *)sendImageDocumentWithFileId:(long long)fileId parts:(int)parts fileName:(NSString *)fileName mime:(NSString *)mime width:(int)width height:(int)height randomId:(long long)randomId peer:(NSData *)peer;
++ (NSData *)getDocumentFileWithFileId:(long long)fileId accessHash:(long long)accessHash fileReference:(NSData *)fileReference offset:(long long)offset limit:(int)limit;
+@end
+
+// Downloads a document (e.g. a streamed story video that is not kept as a file on disk) straight
+// from the server with chunked upload.getFile, then hands the assembled bytes back. completion runs
+// off the main thread; data is nil with a reason in err on failure.
+@interface AYStoryDownload : NSObject
++ (void)downloadFileId:(long long)fileId accessHash:(long long)accessHash fileRef:(NSData *)fileRef sizeHint:(long long)sizeHint completion:(void (^)(NSData *data, NSString *err))completion;
 @end
 
 // Records the live main-API request service so AYVoiceSend can issue its own requests through it.

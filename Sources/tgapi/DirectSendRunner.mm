@@ -242,3 +242,56 @@ NSData *AYCurrentPeerOrSelf(void) { return currentPeerOrSelf(); }
 }
 
 @end
+
+// Extracts the `bytes` field from an upload.file#096a18d5 reply (type:storage.FileType mtime:int
+// bytes:bytes). Returns nil (with a reason) for a CDN redirect or any unexpected shape.
+static NSData *parseUploadFileBytes(NSData *resp, NSString **err) {
+	if (resp.length < 12) { if (err) *err = [NSString stringWithFormat:@"short resp %lu", (unsigned long)resp.length]; return nil; }
+	const uint8_t *b = (const uint8_t *)resp.bytes;
+	uint32_t ctor = (uint32_t)b[0] | ((uint32_t)b[1] << 8) | ((uint32_t)b[2] << 16) | ((uint32_t)b[3] << 24);
+	if (ctor == 0xf18cda44) { if (err) *err = @"cdn redirect unsupported"; return nil; }
+	if (ctor != 0x096a18d5) { if (err) *err = [NSString stringWithFormat:@"ctor 0x%08x", ctor]; return nil; }
+	NSUInteger p = 12;  // skip ctor(4) + storage.FileType ctor(4) + mtime:int(4)
+	if (p >= resp.length) { if (err) *err = @"no bytes field"; return nil; }
+	uint32_t len; NSUInteger dataStart;
+	uint8_t first = b[p];
+	if (first <= 253) { len = first; dataStart = p + 1; }
+	else {
+		if (p + 4 > resp.length) { if (err) *err = @"bad len prefix"; return nil; }
+		len = (uint32_t)b[p+1] | ((uint32_t)b[p+2] << 8) | ((uint32_t)b[p+3] << 16);
+		dataStart = p + 4;
+	}
+	if (dataStart + len > resp.length) { if (err) *err = [NSString stringWithFormat:@"len %u > resp %lu", len, (unsigned long)resp.length]; return nil; }
+	return [resp subdataWithRange:NSMakeRange(dataStart, len)];
+}
+
+@implementation AYStoryDownload
++ (void)downloadFileId:(long long)fileId accessHash:(long long)accessHash fileRef:(NSData *)fileRef
+		sizeHint:(long long)sizeHint completion:(void (^)(NSData *, NSString *))completion {
+	NSMutableData *acc = [NSMutableData data];
+	const int limit = 512 * 1024;  // multiple of 1024, <= 1 MB
+	__block long long offset = 0;
+	__block void (^fetch)(void) = nil;
+	fetch = ^{
+		NSData *payload = [AYDirectSend getDocumentFileWithFileId:fileId accessHash:accessHash
+			fileReference:(fileRef ?: [NSData data]) offset:offset limit:limit];
+		BOOL issued = AYIssueRequest(payload, (int)0xbe5335be, ^(id result, MTRpcError *error) {
+			if (error) { completion(nil, [NSString stringWithFormat:@"getFile @%lld: %@", offset, error]); fetch = nil; return; }
+			NSString *perr = nil;
+			NSData *chunk = parseUploadFileBytes([result isKindOfClass:[NSData class]] ? result : nil, &perr);
+			if (!chunk) { completion(nil, perr ?: @"parse failed"); fetch = nil; return; }
+			[acc appendData:chunk];
+			offset += (long long)chunk.length;
+			BOOL done = chunk.length < (NSUInteger)limit || (sizeHint > 0 && (long long)acc.length >= sizeHint);
+			if (done || acc.length > 200 * 1024 * 1024 || offset > (long long)limit * 4000) {
+				completion(acc.length ? [acc copy] : nil, acc.length ? nil : @"empty download");
+				fetch = nil;
+			} else {
+				fetch();  // next chunk
+			}
+		});
+		if (!issued) { completion(nil, @"no service captured"); fetch = nil; }
+	};
+	fetch();
+}
+@end

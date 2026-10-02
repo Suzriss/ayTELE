@@ -498,6 +498,21 @@ static NSArray<NSString *> *postboxMediaDirs(void) {
 	return cached;
 }
 
+// Decodes a lowercase hex string (the file_reference) into bytes.
+static NSData *hexToData(NSString *hex) {
+	if (hex.length < 2) return [NSData data];
+	NSMutableData *out = [NSMutableData dataWithCapacity:hex.length / 2];
+	const char *c = hex.UTF8String;
+	for (NSUInteger i = 0; i + 1 < hex.length; i += 2) {
+		int hi = c[i], lo = c[i+1];
+		hi = (hi >= 'a') ? hi - 'a' + 10 : hi - '0';
+		lo = (lo >= 'a') ? lo - 'a' + 10 : lo - '0';
+		uint8_t byte = (uint8_t)((hi << 4) | lo);
+		[out appendBytes:&byte length:1];
+	}
+	return out;
+}
+
 // True when the first bytes look like an MP4/QuickTime container ("....ftyp").
 static BOOL looksLikeVideoFile(NSString *path) {
 	NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath:path];
@@ -600,6 +615,17 @@ static NSString *findVideoFileWithSize(long long size, long long fileId, NSStrin
 	}
 	UISaveVideoAtPathToSavedPhotosAlbum(tmp, self, @selector(video:didFinishSavingWithError:contextInfo:), (void *)CFBridgingRetain(tmp));
 }
+// Writes downloaded video bytes to a temp .mp4, then saves it the same way.
++ (void)saveVideoData:(NSData *)data {
+	NSString *tmp = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"ayTELE-%@.mp4", [NSUUID UUID].UUIDString]];
+	if (![data writeToFile:tmp atomically:YES] || !UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(tmp)) {
+		customLog(@"save: downloaded data not a saveable video (%lu bytes)", (unsigned long)data.length);
+		[[NSFileManager defaultManager] removeItemAtPath:tmp error:nil];
+		presentToast([ayTELELocalization localizedStringForKey:@"SAVE_MEDIA_FAILED"]);
+		return;
+	}
+	UISaveVideoAtPathToSavedPhotosAlbum(tmp, self, @selector(video:didFinishSavingWithError:contextInfo:), (void *)CFBridgingRetain(tmp));
+}
 + (void)video:(NSString *)path didFinishSavingWithError:(NSError *)error contextInfo:(void *)ctx {
 	if (error) customLog(@"save: Photos refused the video: %@", error);
 	if (ctx) { NSString *tmp = (NSString *)CFBridgingRelease(ctx); [[NSFileManager defaultManager] removeItemAtPath:tmp error:nil]; }
@@ -624,19 +650,26 @@ static NSString *findVideoFileWithSize(long long size, long long fileId, NSStrin
 	// Everything else that has to be read on the main thread, gathered up front. Reflect the viewer
 	// for the video's byte size; if that comes up empty, try the inner content view, whose component
 	// state is where the story item (and its media) actually lives.
-	long long size = 0, fileId = 0;
-	NSString *sizeDebug = nil;
-	@try {
-		NSString *r = [AYMediaFile videoByteSizeDebugFrom:reflect];
-		NSArray<NSString *> *parts = [r componentsSeparatedByString:@"|"];
-		size = parts.count > 0 ? parts[0].longLongValue : 0;
-		fileId = parts.count > 1 ? parts[1].longLongValue : 0;
+	// Resource descriptor of the story/secret video: "size|fileId|dc|accessHash|fileRefHex|debug".
+	__block long long size = 0, fileId = 0, accessHash = 0;
+	__block NSString *fileRefHex = @"";
+	__block NSString *sizeDebug = nil;
+	void (^parseInfo)(NSString *) = ^(NSString *r) {
+		NSArray<NSString *> *p = [r componentsSeparatedByString:@"|"];
+		size = p.count > 0 ? p[0].longLongValue : 0;
+		fileId = p.count > 1 ? p[1].longLongValue : 0;
+		accessHash = p.count > 3 ? p[3].longLongValue : 0;
+		fileRefHex = p.count > 4 ? p[4] : @"";
 		sizeDebug = r;
+	};
+	@try {
+		parseInfo([AYMediaFile videoByteSizeDebugFrom:reflect]);
 		if (size <= 0 && content) {
 			NSString *r2 = [AYMediaFile videoByteSizeDebugFrom:content];
-			NSArray<NSString *> *p2 = [r2 componentsSeparatedByString:@"|"];
-			long long s2 = p2.count > 0 ? p2[0].longLongValue : 0;
-			if (s2 > 0) { size = s2; fileId = p2.count > 1 ? p2[1].longLongValue : 0; sizeDebug = [@"content:" stringByAppendingString:r2]; }
+			if ([r2 componentsSeparatedByString:@"|"].firstObject.longLongValue > 0) {
+				parseInfo(r2);
+				sizeDebug = [@"content:" stringByAppendingString:r2];
+			}
 		}
 	} @catch (NSException *e) {}
 	UIImage *photo = nil;
@@ -661,11 +694,30 @@ static NSString *findVideoFileWithSize(long long size, long long fileId, NSStrin
 		dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
 			NSString *dbg = nil;
 			NSString *path = findVideoFileWithSize(size, fileId, &dbg);
+			if (path) {  // already on disk: save straight away
+				dispatch_async(dispatch_get_main_queue(), ^{
+					customLog(@"save: cache hit for %lld bytes (fileId %lld) -> %@", size, fileId, path.lastPathComponent);
+					[self saveVideoAtPath:path];
+				});
+				return;
+			}
+			// Not cached (a streamed story keeps no file): pull it from the server by its resource.
 			dispatch_async(dispatch_get_main_queue(), ^{
-				customLog(@"save: cache match for %lld bytes (fileId %lld) -> %@ (roots: %lu; %@)", size, fileId, path.lastPathComponent ?: @"none", (unsigned long)mediaSearchRoots().count, dbg ?: @"-");
-				if (path) [self saveVideoAtPath:path];
-				else [self commit:frame note:@"SAVE_MEDIA_FRAME"];
+				customLog(@"save: cache miss (fileId %lld) -> downloading (%@)", fileId, dbg ?: @"-");
 			});
+			if (fileId == 0) { dispatch_async(dispatch_get_main_queue(), ^{ [self commit:frame note:@"SAVE_MEDIA_FRAME"]; }); return; }
+			NSData *ref = hexToData(fileRefHex);
+			[AYStoryDownload downloadFileId:fileId accessHash:accessHash fileRef:ref sizeHint:size completion:^(NSData *data, NSString *err) {
+				dispatch_async(dispatch_get_main_queue(), ^{
+					if (data.length) {
+						customLog(@"save: downloaded %lu bytes -> saving video", (unsigned long)data.length);
+						[self saveVideoData:data];
+					} else {
+						customLog(@"save: download failed (%@), saving a frame", err ?: @"?");
+						[self commit:frame note:@"SAVE_MEDIA_FRAME"];
+					}
+				});
+			}];
 		});
 		return;
 	}

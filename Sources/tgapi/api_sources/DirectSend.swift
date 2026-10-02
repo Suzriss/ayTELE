@@ -32,6 +32,23 @@ public class AYDirectSend: NSObject {
 		return b.makeData()
 	}
 
+	// upload.getFile#be5335be flags:# location:InputFileLocation offset:long limit:int = upload.File
+	// location = inputDocumentFileLocation#bad07584 id:long access_hash:long file_reference:bytes thumb_size:string
+	// Pulls one chunk of a document (e.g. a streamed story video) straight from the server.
+	@objc public static func getDocumentFile(fileId: Int64, accessHash: Int64, fileReference: Data, offset: Int64, limit: Int32) -> Data {
+		let b = Buffer()
+		b.appendInt32(fid(0xbe5335be))        // upload.getFile
+		b.appendInt32(0)                      // flags: no precise, no cdn_supported
+		b.appendInt32(fid(0xbad07584))        // inputDocumentFileLocation
+		b.appendInt64(fileId)
+		b.appendInt64(accessHash)
+		serializeBytes(Buffer(data: fileReference), buffer: b, boxed: false)  // file_reference
+		serializeString("", buffer: b, boxed: false)   // thumb_size: "" = the full document
+		b.appendInt64(offset)
+		b.appendInt32(limit)
+		return b.makeData()
+	}
+
 	// messages.sendMedia with the uploaded file as a voice document. `peer` is the raw serialized
 	// InputPeer bytes (captured from an outgoing getHistory/readHistory, or inputPeerSelf as fallback).
 	@objc public static func sendVoice(fileId: Int64, parts: Int32, big: Bool, duration: Int32, waveform: Data?, randomId: Int64, peer: Data) -> Data {
