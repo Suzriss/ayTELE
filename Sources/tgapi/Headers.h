@@ -32,6 +32,11 @@ void AYPresentToast(NSString *message);
 + (void)backfillWithNode:(NSObject *)node;
 @end
 
+// Reads the intercepted Swift [MessageId] array (PostboxKeepDeleted.xm) and records badge keys.
+@interface AYPostboxKeep : NSObject
++ (void)recordArray:(NSUInteger)pointer;
+@end
+
 @interface AYEditHistory : NSObject
 @property (class, nonatomic, readonly) BOOL isEnabled;
 @property (class, nonatomic, readonly) BOOL shouldObserve;
