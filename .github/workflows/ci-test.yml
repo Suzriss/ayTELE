@@ -30,9 +30,20 @@ jobs:
         run: |
           make clean package FINALPACKAGE=1 STRIP=0 THEOS_PACKAGE_SCHEME=rootless
           make clean package FINALPACKAGE=1 STRIP=0
+      - name: Build roothide dylib
+        run: |
+          make clean package FINALPACKAGE=1 STRIP=0 THEOS_PACKAGE_SCHEME=roothide
+          mkdir -p out-dylib
+          DYLIB_PATH=$(find .theos/obj -name '*.dylib' | head -n1)
+          echo "Using dylib: $DYLIB_PATH"
+          cp "$DYLIB_PATH" out-dylib/ayTELE.dylib
       - uses: actions/upload-artifact@v4
         with:
           name: debs
           path: |
             packages/*.deb
             .theos/obj/**/*.dylib
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aytele-dylib
+          path: out-dylib/ayTELE.dylib

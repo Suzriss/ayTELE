@@ -51,6 +51,31 @@ void handleThreeFingerLongPress(UILongPressGestureRecognizer *gesture) {
 }
 @end
 
+// Rename the hijacked Settings row so it reads as a clear "ayTELE" button
+// instead of masquerading as Telegram's own "Support" row. We walk the row's
+// subnode tree and swap the visible text node whose string matches the row
+// title, keeping its original font/colour so it blends with the native list.
+static void ayRetitleRow(ASDisplayNode *node, NSString *fromTitle, NSString *toTitle) {
+    if (!node) return;
+    if ([node respondsToSelector:@selector(attributedText)] &&
+        [node respondsToSelector:@selector(setAttributedText:)]) {
+        NSAttributedString *attr = [(id)node attributedText];
+        if (attr.length > 0 && [attr.string isEqualToString:fromTitle]) {
+            NSDictionary *attrs = [attr attributesAtIndex:0 effectiveRange:NULL];
+            NSAttributedString *replacement =
+                [[NSAttributedString alloc] initWithString:toTitle attributes:attrs];
+            [(id)node setAttributedText:replacement];
+            node.accessibilityLabel = toTitle;
+            if ([node respondsToSelector:@selector(setNeedsDisplay)]) {
+                [node setNeedsDisplay];
+            }
+        }
+    }
+    for (ASDisplayNode *child in node.subnodes) {
+        ayRetitleRow(child, fromTitle, toTitle);
+    }
+}
+
 %hook ASDisplayNode
 %property (nonatomic, strong) UILongPressGestureRecognizer *longPressGesture;
 %property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
@@ -124,11 +149,15 @@ void handleThreeFingerLongPress(UILongPressGestureRecognizer *gesture) {
 
             if ([child.accessibilityLabel isEqualToString:localizedTitle]) {
 
+				// Relabel the row to "ayTELE" so it reads as an obvious, clearly named
+				// button in Settings instead of a hidden tap on "Support".
+				ayRetitleRow(mainNode, localizedTitle, @"ayTELE");
+
 				if (![mainNode.view.gestureRecognizers containsObject:mainNode.longPressGesture]) {
 					[mainNode.view addGestureRecognizer:mainNode.longPressGesture];
 				}
 
-				// A single tap on the "Support" row opens ayTELE, so it's discoverable
+				// A single tap on the ayTELE row opens the tool, so it's discoverable
 				// straight from Telegram's own Settings (not only via the gestures).
 				if (!mainNode.settingsTapGesture) {
 					mainNode.settingsTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:mainNode action:@selector(__handle5PleTap)];
