@@ -154,7 +154,7 @@
 "COPIED_TOAST" = "Copied";
 "KEEP_VIEW_ONCE_MEDIA_TITLE" = "Keep View-Once Media";
 "KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "Turn self-destructing and view-once photos/videos into regular messages you can reopen and save.";
-"MSG_ACTION_REVEAL_READ" = "👁️ Reveal Read";
+"MSG_ACTION_REVEAL_READ" = "Reveal Read";
 "REVEAL_READ_DONE" = "Read receipt sent";
 "REVEAL_READ_FAILED" = "Couldn't send the read receipt";
 "REVEAL_READ_NONE" = "No held receipt here — open a new message/story while blocking is on";
@@ -170,32 +170,32 @@
 "SPEECH_NOTHING" = "Didn't catch anything";
 "SPEECH_LANGUAGE_TITLE" = "Dictation Language";
 "EYE_CHAT_UNKNOWN" = "The eye can't tell which chat this is";
-"EYE_CHAT_SEEN" = "👁️ Reads here are sent now";
-"EYE_CHAT_HIDDEN" = "🙈 Reads here stay hidden";
+"EYE_CHAT_SEEN" = "Reads here are sent now";
+"EYE_CHAT_HIDDEN" = "Reads here stay hidden";
 "VOICE_FILE_TITLE" = "Voice from File";
 "VOICE_FILE_SUBTITLE" = "An arrow above the text field in chats: pick an audio or video, then record with Telegram's mic as usual. The file's audio goes out as the voice message instead of your voice.";
 "VOICE_FILE_HOWTO" = "Pick a file, then hold Telegram's mic (or lock it) — the file is sent as your voice message.";
-"VOICE_FILE_FROM_FILES" = "📁 From Files";
-"VOICE_FILE_FROM_PHOTOS" = "🖼️ From Photos (video)";
-"VOICE_FILE_AGAIN" = "🔁 Same file again";
+"VOICE_FILE_FROM_FILES" = "From Files";
+"VOICE_FILE_FROM_PHOTOS" = "From Photos (video)";
+"VOICE_FILE_AGAIN" = "Same file again";
 "VOICE_FILE_DISARM" = "Cancel the ready file";
-"VOICE_FILE_READY" = "✅ Ready — now record with the mic and send";
-"VOICE_FILE_INSERTED" = "🎙️ File inserted into the recording — release to send";
+"VOICE_FILE_READY" = "Ready — now record with the mic and send";
+"VOICE_FILE_INSERTED" = "File inserted into the recording — release to send";
 
 // Save button in story viewer and view-once / self-destruct viewer
 "SAVE_IN_VIEWERS_TITLE" = "Save Button in Stories & Temporary Media";
 "SAVE_IN_VIEWERS_SUBTITLE" = "Adds a Save button to the story viewer and the view-once / self-destruct viewer. Saves what's shown straight to Photos (full quality for photos, a frame for video).";
 "SAVE_MEDIA_BUTTON" = "Save";
-"SAVE_MEDIA_DONE" = "✅ Saved to Photos";
+"SAVE_MEDIA_DONE" = "Saved to Photos";
 "SAVE_MEDIA_FAILED" = "Couldn't save";
 
 // Direct voice send + video frame note
 "VOICE_FILE_SENDING" = "⏳ Sending as a voice message…";
 "VOICE_FILE_SWITCH_VOICE" = "Set the mic to voice mode (not video), then pick the file again.";
-"SAVE_MEDIA_FRAME" = "✅ Saved a frame (the full video needs Telegram's own save)";
+"SAVE_MEDIA_FRAME" = "Saved a frame (the full video needs Telegram's own save)";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ Voice message sent";
+"VOICE_SEND_DONE" = "Voice message sent";
 "VOICE_SEND_FAILED" = "Couldn't send the voice message";
 
 
@@ -206,7 +206,7 @@
 "FORMAT_BAR_SUBTITLE" = "A bar above the text field that wraps the selection: bold, italic, mono, strikethrough or spoiler.";
 "READ_ALOUD_TITLE" = "Read message aloud";
 "READ_ALOUD_SUBTITLE" = "Adds a Read aloud item to the two-finger message menu (on-device voice, no network).";
-"MSG_ACTION_READ_ALOUD" = "🔊 Read aloud";
+"MSG_ACTION_READ_ALOUD" = "Read aloud";
 "READ_ALOUD_EMPTY" = "No text in this message";
 "KEYWORD_ALERT_TITLE" = "Keyword alerts";
 "KEYWORD_ALERT_SUBTITLE" = "Get a notification when one of your words is mentioned, even in muted chats.";
@@ -233,7 +233,7 @@
 "STICKER_SUBTITLE" = "A scissors button above the text field: pick a photo, its background is removed, and it is sent to the chat.";
 "STICKER_WORKING" = "Processing the image…";
 "STICKER_SENDING" = "Sending…";
-"STICKER_SENT" = "✅ Sent";
+"STICKER_SENT" = "Sent";
 "STICKER_FAILED" = "Couldn't make the sticker";
 "STICKER_NO_SUBJECT" = "No subject found in the image";
 

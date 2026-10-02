@@ -1,5 +1,17 @@
 #import <UIKit/UIKit.h>
 #import "Headers.h"
+#import "ayTELEWelcome.h"
+
+// Walk to the top-most presented view controller so the welcome gate shows
+// above whatever Telegram has on screen at launch.
+static UIViewController *ayTopViewController(void) {
+	UIWindow *window = UIApplication.sharedApplication.keyWindow;
+	UIViewController *vc = window.rootViewController;
+	while (vc.presentedViewController && !vc.presentedViewController.isBeingDismissed) {
+		vc = vc.presentedViewController;
+	}
+	return vc;
+}
 
 // Menu Open
 @interface ASDisplayNode : NSObject
@@ -213,4 +225,15 @@ static void hook() {
             }
         });
 	});
+
+	// Mandatory first-launch gate: invite (require) the user to join the tool's
+	// Telegram channel. Shown once, on every activation until it has been shown.
+	[[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification
+	                                                  object:nil
+	                                                   queue:[NSOperationQueue mainQueue]
+	                                              usingBlock:^(NSNotification *n) {
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+			[ayTELEWelcomeViewController presentIfNeededFrom:ayTopViewController()];
+		});
+	}];
 }

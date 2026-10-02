@@ -2,51 +2,51 @@
     {
         "name": "Arabic",
         "code": "ar",
-        "flag": "🇸🇦"
+        "flag": ""
     },
     {
         "name": "Chinese",
         "code": "cn",
-        "flag": "🇨🇳"
+        "flag": ""
     },
     {
         "name": "English",
         "code": "en",
-        "flag": "🇺🇸"
+        "flag": ""
     },
     {
         "name": "French",
         "code": "fr",
-        "flag": "🇫🇷"
+        "flag": ""
     },
     {
         "name": "Italian",
         "code": "it",
-        "flag": "🇮🇹"
+        "flag": ""
     },
     {
         "name": "Japanese",
         "code": "ja",
-        "flag": "🇯🇵"
+        "flag": ""
     },
     {
         "name": "Russian",
         "code": "ru",
-        "flag": "🇷🇺"
+        "flag": ""
     },
     {
         "name": "Spanish",
         "code": "es",
-        "flag": "🇪🇸"
+        "flag": ""
     },
     {
         "name": "Taiwan",
         "code": "tw",
-        "flag": "🇹🇼"
+        "flag": ""
     },
     {
         "name": "Vietnamese",
         "code": "vn",
-        "flag": "🇻🇳"
+        "flag": ""
     }
 ]

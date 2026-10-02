@@ -156,7 +156,7 @@
 "COPIED_TOAST" = "Copied";
 "KEEP_VIEW_ONCE_MEDIA_TITLE" = "Conservar medios de una sola vista";
 "KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "Convierte fotos/vídeos temporales y de una sola vista en mensajes normales que puedes volver a abrir y guardar.";
-"MSG_ACTION_REVEAL_READ" = "👁️ Revelar lectura";
+"MSG_ACTION_REVEAL_READ" = "Revelar lectura";
 "REVEAL_READ_DONE" = "Confirmación de lectura enviada";
 "REVEAL_READ_FAILED" = "No se pudo enviar la confirmación";
 "REVEAL_READ_NONE" = "No hay confirmación retenida — abre un mensaje/historia nuevo con el bloqueo activado";
@@ -172,32 +172,32 @@
 "SPEECH_NOTHING" = "No se entendió nada";
 "SPEECH_LANGUAGE_TITLE" = "Idioma de dictado";
 "EYE_CHAT_UNKNOWN" = "El ojo no sabe qué chat es este";
-"EYE_CHAT_SEEN" = "👁️ Aquí ahora se envían las lecturas";
-"EYE_CHAT_HIDDEN" = "🙈 Aquí las lecturas quedan ocultas";
+"EYE_CHAT_SEEN" = "Aquí ahora se envían las lecturas";
+"EYE_CHAT_HIDDEN" = "Aquí las lecturas quedan ocultas";
 "VOICE_FILE_TITLE" = "Voz desde archivo";
 "VOICE_FILE_SUBTITLE" = "Una flecha sobre el campo de texto: elige un audio o video y graba con el micrófono de Telegram como siempre. Se envía el audio del archivo en lugar de tu voz.";
 "VOICE_FILE_HOWTO" = "Elige un archivo y mantén el micrófono de Telegram (o bloquéalo): el archivo se envía como mensaje de voz.";
-"VOICE_FILE_FROM_FILES" = "📁 Desde Archivos";
-"VOICE_FILE_FROM_PHOTOS" = "🖼️ Desde Fotos (video)";
-"VOICE_FILE_AGAIN" = "🔁 El mismo archivo otra vez";
+"VOICE_FILE_FROM_FILES" = "Desde Archivos";
+"VOICE_FILE_FROM_PHOTOS" = "Desde Fotos (video)";
+"VOICE_FILE_AGAIN" = "El mismo archivo otra vez";
 "VOICE_FILE_DISARM" = "Cancelar el archivo listo";
-"VOICE_FILE_READY" = "✅ Listo — ahora graba con el micrófono y envía";
-"VOICE_FILE_INSERTED" = "🎙️ Archivo insertado en la grabación — suelta para enviar";
+"VOICE_FILE_READY" = "Listo — ahora graba con el micrófono y envía";
+"VOICE_FILE_INSERTED" = "Archivo insertado en la grabación — suelta para enviar";
 
 // Save button in story viewer and view-once / self-destruct viewer
 "SAVE_IN_VIEWERS_TITLE" = "Botón Guardar en historias y medios temporales";
 "SAVE_IN_VIEWERS_SUBTITLE" = "Añade un botón Guardar al visor de historias y al visor de ver una vez/autodestructivo. Guarda lo que se muestra directamente en Fotos (calidad completa para fotos, un fotograma para vídeo).";
 "SAVE_MEDIA_BUTTON" = "Guardar";
-"SAVE_MEDIA_DONE" = "✅ Guardado en Fotos";
+"SAVE_MEDIA_DONE" = "Guardado en Fotos";
 "SAVE_MEDIA_FAILED" = "No se pudo guardar";
 
 // Direct voice send + video frame note
 "VOICE_FILE_SENDING" = "⏳ Enviando como mensaje de voz…";
 "VOICE_FILE_SWITCH_VOICE" = "Pon el micrófono en modo voz (no vídeo) y elige el archivo de nuevo.";
-"SAVE_MEDIA_FRAME" = "✅ Se guardó un fotograma (el vídeo completo requiere el guardado propio de Telegram)";
+"SAVE_MEDIA_FRAME" = "Se guardó un fotograma (el vídeo completo requiere el guardado propio de Telegram)";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ Mensaje de voz enviado";
+"VOICE_SEND_DONE" = "Mensaje de voz enviado";
 "VOICE_SEND_FAILED" = "No se pudo enviar el mensaje de voz";
 
 
@@ -208,7 +208,7 @@
 "FORMAT_BAR_SUBTITLE" = "A bar above the text field that wraps the selection: bold, italic, mono, strikethrough or spoiler.";
 "READ_ALOUD_TITLE" = "Read message aloud";
 "READ_ALOUD_SUBTITLE" = "Adds a Read aloud item to the two-finger message menu (on-device voice, no network).";
-"MSG_ACTION_READ_ALOUD" = "🔊 Read aloud";
+"MSG_ACTION_READ_ALOUD" = "Read aloud";
 "READ_ALOUD_EMPTY" = "No text in this message";
 "KEYWORD_ALERT_TITLE" = "Keyword alerts";
 "KEYWORD_ALERT_SUBTITLE" = "Get a notification when one of your words is mentioned, even in muted chats.";
@@ -235,7 +235,7 @@
 "STICKER_SUBTITLE" = "A scissors button above the text field: pick a photo, its background is removed, and it is sent to the chat.";
 "STICKER_WORKING" = "Processing the image…";
 "STICKER_SENDING" = "Sending…";
-"STICKER_SENT" = "✅ Sent";
+"STICKER_SENT" = "Sent";
 "STICKER_FAILED" = "Couldn't make the sticker";
 "STICKER_NO_SUBJECT" = "No subject found in the image";
 

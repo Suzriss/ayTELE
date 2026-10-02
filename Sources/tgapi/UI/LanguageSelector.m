@@ -92,7 +92,10 @@
 
     NSDictionary *languageData = self.languages[indexPath.row];
 
-    NSString *title = [NSString stringWithFormat:@"%@ %@", languageData[@"flag"], languageData[@"name"]];
+    NSString *flag = languageData[@"flag"];
+    NSString *title = (flag.length > 0)
+        ? [NSString stringWithFormat:@"%@ %@", flag, languageData[@"name"]]
+        : languageData[@"name"];
     cell.textLabel.text = title;
 
     if (![languageData[@"isValid"] boolValue]) {

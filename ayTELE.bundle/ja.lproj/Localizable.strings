@@ -154,7 +154,7 @@
 "COPIED_TOAST" = "Copied";
 "KEEP_VIEW_ONCE_MEDIA_TITLE" = "1回表示メディアを保持";
 "KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "時間制限付き・1回表示の写真/動画を、再表示・保存できる通常のメッセージにします。";
-"MSG_ACTION_REVEAL_READ" = "👁️ 既読を送信";
+"MSG_ACTION_REVEAL_READ" = "既読を送信";
 "REVEAL_READ_DONE" = "既読を送信しました";
 "REVEAL_READ_FAILED" = "既読を送信できませんでした";
 "REVEAL_READ_NONE" = "保留中の既読はありません — ブロック中に新しいメッセージ/ストーリーを開いてください";
@@ -170,32 +170,32 @@
 "SPEECH_NOTHING" = "聞き取れませんでした";
 "SPEECH_LANGUAGE_TITLE" = "音声入力の言語";
 "EYE_CHAT_UNKNOWN" = "このチャットを判別できません";
-"EYE_CHAT_SEEN" = "👁️ このチャットでは既読が送信されます";
-"EYE_CHAT_HIDDEN" = "🙈 このチャットでは既読を隠します";
+"EYE_CHAT_SEEN" = "このチャットでは既読が送信されます";
+"EYE_CHAT_HIDDEN" = "このチャットでは既読を隠します";
 "VOICE_FILE_TITLE" = "ファイルからボイス";
 "VOICE_FILE_SUBTITLE" = "チャット入力欄の上の矢印：音声か動画を選び、いつも通りTelegramのマイクで録音すると、声の代わりにファイルの音声が送られます。";
 "VOICE_FILE_HOWTO" = "ファイルを選んでからTelegramのマイクを長押し（またはロック）— ファイルがボイスメッセージとして送られます。";
-"VOICE_FILE_FROM_FILES" = "📁 ファイルから";
-"VOICE_FILE_FROM_PHOTOS" = "🖼️ 写真から（動画）";
-"VOICE_FILE_AGAIN" = "🔁 同じファイルをもう一度";
+"VOICE_FILE_FROM_FILES" = "ファイルから";
+"VOICE_FILE_FROM_PHOTOS" = "写真から（動画）";
+"VOICE_FILE_AGAIN" = "同じファイルをもう一度";
 "VOICE_FILE_DISARM" = "準備したファイルを取り消す";
-"VOICE_FILE_READY" = "✅ 準備完了 — マイクで録音して送信";
-"VOICE_FILE_INSERTED" = "🎙️ ファイルを録音に挿入しました — 指を離すと送信";
+"VOICE_FILE_READY" = "準備完了 — マイクで録音して送信";
+"VOICE_FILE_INSERTED" = "ファイルを録音に挿入しました — 指を離すと送信";
 
 // Save button in story viewer and view-once / self-destruct viewer
 "SAVE_IN_VIEWERS_TITLE" = "ストーリーと一時メディアに保存ボタン";
 "SAVE_IN_VIEWERS_SUBTITLE" = "ストーリービューアと一回表示／自動消去ビューアに保存ボタンを追加します。表示中の内容を直接「写真」に保存します（写真はフル画質、動画は1フレーム）。";
 "SAVE_MEDIA_BUTTON" = "保存";
-"SAVE_MEDIA_DONE" = "✅ 写真に保存しました";
+"SAVE_MEDIA_DONE" = "写真に保存しました";
 "SAVE_MEDIA_FAILED" = "保存できませんでした";
 
 // Direct voice send + video frame note
 "VOICE_FILE_SENDING" = "⏳ ボイスメッセージとして送信中…";
 "VOICE_FILE_SWITCH_VOICE" = "マイクを（ビデオでなく）音声モードにしてから、ファイルをもう一度選んでください。";
-"SAVE_MEDIA_FRAME" = "✅ 1フレームを保存しました（完全な動画はTelegramの保存が必要）";
+"SAVE_MEDIA_FRAME" = "1フレームを保存しました（完全な動画はTelegramの保存が必要）";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ ボイスメッセージを送信しました";
+"VOICE_SEND_DONE" = "ボイスメッセージを送信しました";
 "VOICE_SEND_FAILED" = "ボイスメッセージを送信できませんでした";
 
 
@@ -206,7 +206,7 @@
 "FORMAT_BAR_SUBTITLE" = "A bar above the text field that wraps the selection: bold, italic, mono, strikethrough or spoiler.";
 "READ_ALOUD_TITLE" = "Read message aloud";
 "READ_ALOUD_SUBTITLE" = "Adds a Read aloud item to the two-finger message menu (on-device voice, no network).";
-"MSG_ACTION_READ_ALOUD" = "🔊 Read aloud";
+"MSG_ACTION_READ_ALOUD" = "Read aloud";
 "READ_ALOUD_EMPTY" = "No text in this message";
 "KEYWORD_ALERT_TITLE" = "Keyword alerts";
 "KEYWORD_ALERT_SUBTITLE" = "Get a notification when one of your words is mentioned, even in muted chats.";
@@ -233,7 +233,7 @@
 "STICKER_SUBTITLE" = "A scissors button above the text field: pick a photo, its background is removed, and it is sent to the chat.";
 "STICKER_WORKING" = "Processing the image…";
 "STICKER_SENDING" = "Sending…";
-"STICKER_SENT" = "✅ Sent";
+"STICKER_SENT" = "Sent";
 "STICKER_FAILED" = "Couldn't make the sticker";
 "STICKER_NO_SUBJECT" = "No subject found in the image";
 

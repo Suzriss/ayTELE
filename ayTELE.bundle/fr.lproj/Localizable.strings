@@ -152,7 +152,7 @@
 "COPIED_TOAST" = "Copied";
 "KEEP_VIEW_ONCE_MEDIA_TITLE" = "Conserver les médias à vue unique";
 "KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "Transforme les photos/vidéos éphémères et à vue unique en messages normaux que vous pouvez rouvrir et enregistrer.";
-"MSG_ACTION_REVEAL_READ" = "👁️ Révéler la lecture";
+"MSG_ACTION_REVEAL_READ" = "Révéler la lecture";
 "REVEAL_READ_DONE" = "Accusé de lecture envoyé";
 "REVEAL_READ_FAILED" = "Échec de l'envoi de l'accusé de lecture";
 "REVEAL_READ_NONE" = "Aucun accusé retenu ici — ouvrez un nouveau message/story avec le blocage activé";
@@ -168,32 +168,32 @@
 "SPEECH_NOTHING" = "Rien n'a été compris";
 "SPEECH_LANGUAGE_TITLE" = "Langue de dictée";
 "EYE_CHAT_UNKNOWN" = "L'œil ne reconnaît pas cette discussion";
-"EYE_CHAT_SEEN" = "👁️ Les lectures sont envoyées ici";
-"EYE_CHAT_HIDDEN" = "🙈 Les lectures restent cachées ici";
+"EYE_CHAT_SEEN" = "Les lectures sont envoyées ici";
+"EYE_CHAT_HIDDEN" = "Les lectures restent cachées ici";
 "VOICE_FILE_TITLE" = "Vocal depuis un fichier";
 "VOICE_FILE_SUBTITLE" = "Une flèche au-dessus du champ de texte : choisissez un audio ou une vidéo, puis enregistrez avec le micro de Telegram. Le son du fichier part à la place de votre voix.";
 "VOICE_FILE_HOWTO" = "Choisissez un fichier, puis maintenez le micro de Telegram (ou verrouillez-le) — le fichier part en message vocal.";
-"VOICE_FILE_FROM_FILES" = "📁 Depuis Fichiers";
-"VOICE_FILE_FROM_PHOTOS" = "🖼️ Depuis Photos (vidéo)";
-"VOICE_FILE_AGAIN" = "🔁 Le même fichier";
+"VOICE_FILE_FROM_FILES" = "Depuis Fichiers";
+"VOICE_FILE_FROM_PHOTOS" = "Depuis Photos (vidéo)";
+"VOICE_FILE_AGAIN" = "Le même fichier";
 "VOICE_FILE_DISARM" = "Annuler le fichier prêt";
-"VOICE_FILE_READY" = "✅ Prêt — enregistrez avec le micro et envoyez";
-"VOICE_FILE_INSERTED" = "🎙️ Fichier inséré dans l'enregistrement — relâchez pour envoyer";
+"VOICE_FILE_READY" = "Prêt — enregistrez avec le micro et envoyez";
+"VOICE_FILE_INSERTED" = "Fichier inséré dans l'enregistrement — relâchez pour envoyer";
 
 // Save button in story viewer and view-once / self-destruct viewer
 "SAVE_IN_VIEWERS_TITLE" = "Bouton Enregistrer dans les stories et médias temporaires";
 "SAVE_IN_VIEWERS_SUBTITLE" = "Ajoute un bouton Enregistrer au lecteur de stories et au lecteur à vue unique/éphémère. Enregistre ce qui est affiché directement dans Photos (pleine qualité pour les photos, une image pour la vidéo).";
 "SAVE_MEDIA_BUTTON" = "Enregistrer";
-"SAVE_MEDIA_DONE" = "✅ Enregistré dans Photos";
+"SAVE_MEDIA_DONE" = "Enregistré dans Photos";
 "SAVE_MEDIA_FAILED" = "Échec de l'enregistrement";
 
 // Direct voice send + video frame note
 "VOICE_FILE_SENDING" = "⏳ Envoi en message vocal…";
 "VOICE_FILE_SWITCH_VOICE" = "Mettez le micro en mode vocal (pas vidéo), puis choisissez de nouveau le fichier.";
-"SAVE_MEDIA_FRAME" = "✅ Image enregistrée (la vidéo complète nécessite la sauvegarde de Telegram)";
+"SAVE_MEDIA_FRAME" = "Image enregistrée (la vidéo complète nécessite la sauvegarde de Telegram)";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ Message vocal envoyé";
+"VOICE_SEND_DONE" = "Message vocal envoyé";
 "VOICE_SEND_FAILED" = "Impossible d'envoyer le message vocal";
 
 
@@ -204,7 +204,7 @@
 "FORMAT_BAR_SUBTITLE" = "A bar above the text field that wraps the selection: bold, italic, mono, strikethrough or spoiler.";
 "READ_ALOUD_TITLE" = "Read message aloud";
 "READ_ALOUD_SUBTITLE" = "Adds a Read aloud item to the two-finger message menu (on-device voice, no network).";
-"MSG_ACTION_READ_ALOUD" = "🔊 Read aloud";
+"MSG_ACTION_READ_ALOUD" = "Read aloud";
 "READ_ALOUD_EMPTY" = "No text in this message";
 "KEYWORD_ALERT_TITLE" = "Keyword alerts";
 "KEYWORD_ALERT_SUBTITLE" = "Get a notification when one of your words is mentioned, even in muted chats.";
@@ -231,7 +231,7 @@
 "STICKER_SUBTITLE" = "A scissors button above the text field: pick a photo, its background is removed, and it is sent to the chat.";
 "STICKER_WORKING" = "Processing the image…";
 "STICKER_SENDING" = "Sending…";
-"STICKER_SENT" = "✅ Sent";
+"STICKER_SENT" = "Sent";
 "STICKER_FAILED" = "Couldn't make the sticker";
 "STICKER_NO_SUBJECT" = "No subject found in the image";
 

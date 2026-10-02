@@ -152,7 +152,7 @@
 "COPIED_TOAST" = "تم النسخ";
 "KEEP_VIEW_ONCE_MEDIA_TITLE" = "الاحتفاظ بوسائط العرض لمرة واحدة";
 "KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "تخلي الصور والفيديوهات المؤقتة و«العرض لمرة واحدة» رسائل عادية ما تنمسح وتگدر تحفظها.";
-"MSG_ACTION_REVEAL_READ" = "👁️ كشف القراءة";
+"MSG_ACTION_REVEAL_READ" = "كشف القراءة";
 "REVEAL_READ_DONE" = "انرسل إيصال القراءة";
 "REVEAL_READ_FAILED" = "ما انرسل الإيصال";
 "REVEAL_READ_NONE" = "ماكو إيصال محجوز هنا — لازم توصلك رسالة/ستوري جديدة وتفتحها والحجب شغّال";
@@ -168,32 +168,32 @@
 "SPEECH_NOTHING" = "ما سمعت شي";
 "SPEECH_LANGUAGE_TITLE" = "لغة الإملاء";
 "EYE_CHAT_UNKNOWN" = "العين ما عرفت هاي أي محادثة";
-"EYE_CHAT_SEEN" = "👁️ القراءة هنا صارت تنشاف";
-"EYE_CHAT_HIDDEN" = "🙈 القراءة هنا مخفية";
+"EYE_CHAT_SEEN" = "القراءة هنا صارت تنشاف";
+"EYE_CHAT_HIDDEN" = "القراءة هنا مخفية";
 "VOICE_FILE_TITLE" = "رسالة صوتية من ملف";
 "VOICE_FILE_SUBTITLE" = "سهم فوق حقل الكتابة بالمحادثات: تختار صوت أو فيديو، وبعدين تسجّل بمايك التلي عادي. ينرسل صوت الملف كرسالة صوتية بدل صوتك.";
 "VOICE_FILE_HOWTO" = "اختار ملف، وبعدين دوس على مايك التلي (أو قفّله) — الملف ينرسل كرسالة صوتية.";
-"VOICE_FILE_FROM_FILES" = "📁 من الملفات";
-"VOICE_FILE_FROM_PHOTOS" = "🖼️ من الاستوديو (فيديو)";
-"VOICE_FILE_AGAIN" = "🔁 نفس الملف مرة ثانية";
+"VOICE_FILE_FROM_FILES" = "من الملفات";
+"VOICE_FILE_FROM_PHOTOS" = "من الاستوديو (فيديو)";
+"VOICE_FILE_AGAIN" = "نفس الملف مرة ثانية";
 "VOICE_FILE_DISARM" = "إلغاء الملف الجاهز";
-"VOICE_FILE_READY" = "✅ جاهز — هسه سجّل بالمايك ودزّ";
-"VOICE_FILE_INSERTED" = "🎙️ الملف دخل بالتسجيل — اترك المايك حتى ينرسل";
+"VOICE_FILE_READY" = "جاهز — هسه سجّل بالمايك ودزّ";
+"VOICE_FILE_INSERTED" = "الملف دخل بالتسجيل — اترك المايك حتى ينرسل";
 
 // Save button in story viewer and view-once / self-destruct viewer
 "SAVE_IN_VIEWERS_TITLE" = "زر حفظ بالقصص والوسائط المؤقتة";
 "SAVE_IN_VIEWERS_SUBTITLE" = "يحط زر حفظ بعارض القصص وعارض «العرض لمرة وحدة»/ذاتي التدمير. يحفظ اللي معروض مباشرة بالصور (جودة كاملة للصور، لقطة للفيديو).";
 "SAVE_MEDIA_BUTTON" = "حفظ";
-"SAVE_MEDIA_DONE" = "✅ انحفظ بالصور";
+"SAVE_MEDIA_DONE" = "انحفظ بالصور";
 "SAVE_MEDIA_FAILED" = "ما نگدر نحفظ";
 
 // Direct voice send + video frame note
 "VOICE_FILE_SENDING" = "⏳ جاري الإرسال كرسالة صوتية…";
 "VOICE_FILE_SWITCH_VOICE" = "خلّي المايك بوضع الصوت (مو فيديو)، وبعدين اختر الملف مرة ثانية.";
-"SAVE_MEDIA_FRAME" = "✅ انحفظت لقطة (الفيديو الكامل يحتاج حفظ تيلگرام نفسه)";
+"SAVE_MEDIA_FRAME" = "انحفظت لقطة (الفيديو الكامل يحتاج حفظ تيلگرام نفسه)";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ انرسلت الصوتية";
+"VOICE_SEND_DONE" = "انرسلت الصوتية";
 "VOICE_SEND_FAILED" = "ما نگدر نرسل الصوتية";
 
 
@@ -204,7 +204,7 @@
 "FORMAT_BAR_SUBTITLE" = "شريط فوق حقل الكتابة يغلّف النص المحدّد: عريض، مائل، مونو، مشطوب، أو سبويلر.";
 "READ_ALOUD_TITLE" = "اقرأ الرسالة بصوت";
 "READ_ALOUD_SUBTITLE" = "يضيف خيار «اقرأ بصوت» لقائمة الضغطة بإصبعين على الرسالة (صوت الجهاز، بدون إنترنت).";
-"MSG_ACTION_READ_ALOUD" = "🔊 اقرأ بصوت";
+"MSG_ACTION_READ_ALOUD" = "اقرأ بصوت";
 "READ_ALOUD_EMPTY" = "ماكو نص بالرسالة";
 "KEYWORD_ALERT_TITLE" = "تنبيه بالكلمات";
 "KEYWORD_ALERT_SUBTITLE" = "يوصلك إشعار لمّا تنذكر وحدة من كلماتك، حتى لو المحادثة مكتومة.";
@@ -231,7 +231,7 @@
 "STICKER_SUBTITLE" = "زر مقص فوق حقل الكتابة: تختار صورة، تنقص الخلفية، وينرسل بالمحادثة.";
 "STICKER_WORKING" = "قاعد يعالج الصورة…";
 "STICKER_SENDING" = "قاعد يرسل…";
-"STICKER_SENT" = "✅ انرسل";
+"STICKER_SENT" = "انرسل";
 "STICKER_FAILED" = "ما نگدر نسوي الستيكر";
 "STICKER_NO_SUBJECT" = "ما لگينا شي نقصّه بالصورة";
 

@@ -154,7 +154,7 @@
 "COPIED_TOAST" = "Copied";
 "KEEP_VIEW_ONCE_MEDIA_TITLE" = "Giữ phương tiện xem một lần";
 "KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "Biến ảnh/video tự hủy và xem một lần thành tin nhắn thường có thể mở lại và lưu.";
-"MSG_ACTION_REVEAL_READ" = "👁️ Hiện đã đọc";
+"MSG_ACTION_REVEAL_READ" = "Hiện đã đọc";
 "REVEAL_READ_DONE" = "Đã gửi xác nhận đã đọc";
 "REVEAL_READ_FAILED" = "Không gửi được xác nhận đã đọc";
 "REVEAL_READ_NONE" = "Không có xác nhận bị giữ — hãy mở tin nhắn/tin mới khi đang chặn";
@@ -170,32 +170,32 @@
 "SPEECH_NOTHING" = "Không nghe được gì";
 "SPEECH_LANGUAGE_TITLE" = "Ngôn ngữ đọc chính tả";
 "EYE_CHAT_UNKNOWN" = "Không xác định được cuộc trò chuyện này";
-"EYE_CHAT_SEEN" = "👁️ Đã xem ở đây giờ sẽ được gửi";
-"EYE_CHAT_HIDDEN" = "🙈 Đã xem ở đây được ẩn";
+"EYE_CHAT_SEEN" = "Đã xem ở đây giờ sẽ được gửi";
+"EYE_CHAT_HIDDEN" = "Đã xem ở đây được ẩn";
 "VOICE_FILE_TITLE" = "Tin nhắn thoại từ tệp";
 "VOICE_FILE_SUBTITLE" = "Mũi tên phía trên ô nhập: chọn âm thanh hoặc video, rồi ghi âm bằng mic của Telegram như bình thường. Âm thanh của tệp được gửi thay cho giọng bạn.";
 "VOICE_FILE_HOWTO" = "Chọn tệp, rồi giữ mic của Telegram (hoặc khóa) — tệp sẽ được gửi như tin nhắn thoại.";
-"VOICE_FILE_FROM_FILES" = "📁 Từ Tệp";
-"VOICE_FILE_FROM_PHOTOS" = "🖼️ Từ Ảnh (video)";
-"VOICE_FILE_AGAIN" = "🔁 Dùng lại tệp đó";
+"VOICE_FILE_FROM_FILES" = "Từ Tệp";
+"VOICE_FILE_FROM_PHOTOS" = "Từ Ảnh (video)";
+"VOICE_FILE_AGAIN" = "Dùng lại tệp đó";
 "VOICE_FILE_DISARM" = "Hủy tệp đã sẵn sàng";
-"VOICE_FILE_READY" = "✅ Sẵn sàng — ghi âm bằng mic và gửi";
-"VOICE_FILE_INSERTED" = "🎙️ Đã chèn tệp vào bản ghi — thả tay để gửi";
+"VOICE_FILE_READY" = "Sẵn sàng — ghi âm bằng mic và gửi";
+"VOICE_FILE_INSERTED" = "Đã chèn tệp vào bản ghi — thả tay để gửi";
 
 // Save button in story viewer and view-once / self-destruct viewer
 "SAVE_IN_VIEWERS_TITLE" = "Nút Lưu trong Tin & phương tiện tạm thời";
 "SAVE_IN_VIEWERS_SUBTITLE" = "Thêm nút Lưu vào trình xem tin và trình xem xem một lần/tự hủy. Lưu nội dung đang hiển thị trực tiếp vào Ảnh (chất lượng đầy đủ cho ảnh, một khung hình cho video).";
 "SAVE_MEDIA_BUTTON" = "Lưu";
-"SAVE_MEDIA_DONE" = "✅ Đã lưu vào Ảnh";
+"SAVE_MEDIA_DONE" = "Đã lưu vào Ảnh";
 "SAVE_MEDIA_FAILED" = "Không thể lưu";
 
 // Direct voice send + video frame note
 "VOICE_FILE_SENDING" = "⏳ Đang gửi dưới dạng tin nhắn thoại…";
 "VOICE_FILE_SWITCH_VOICE" = "Đặt micro ở chế độ thoại (không phải video), rồi chọn lại tệp.";
-"SAVE_MEDIA_FRAME" = "✅ Đã lưu một khung hình (video đầy đủ cần chức năng lưu của Telegram)";
+"SAVE_MEDIA_FRAME" = "Đã lưu một khung hình (video đầy đủ cần chức năng lưu của Telegram)";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ Đã gửi tin nhắn thoại";
+"VOICE_SEND_DONE" = "Đã gửi tin nhắn thoại";
 "VOICE_SEND_FAILED" = "Không thể gửi tin nhắn thoại";
 
 
@@ -206,7 +206,7 @@
 "FORMAT_BAR_SUBTITLE" = "A bar above the text field that wraps the selection: bold, italic, mono, strikethrough or spoiler.";
 "READ_ALOUD_TITLE" = "Read message aloud";
 "READ_ALOUD_SUBTITLE" = "Adds a Read aloud item to the two-finger message menu (on-device voice, no network).";
-"MSG_ACTION_READ_ALOUD" = "🔊 Read aloud";
+"MSG_ACTION_READ_ALOUD" = "Read aloud";
 "READ_ALOUD_EMPTY" = "No text in this message";
 "KEYWORD_ALERT_TITLE" = "Keyword alerts";
 "KEYWORD_ALERT_SUBTITLE" = "Get a notification when one of your words is mentioned, even in muted chats.";
@@ -233,7 +233,7 @@
 "STICKER_SUBTITLE" = "A scissors button above the text field: pick a photo, its background is removed, and it is sent to the chat.";
 "STICKER_WORKING" = "Processing the image…";
 "STICKER_SENDING" = "Sending…";
-"STICKER_SENT" = "✅ Sent";
+"STICKER_SENT" = "Sent";
 "STICKER_FAILED" = "Couldn't make the sticker";
 "STICKER_NO_SUBJECT" = "No subject found in the image";
 

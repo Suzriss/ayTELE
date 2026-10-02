@@ -154,7 +154,7 @@
 "COPIED_TOAST" = "Copied";
 "KEEP_VIEW_ONCE_MEDIA_TITLE" = "Сохранять одноразовые медиа";
 "KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "Исчезающие и одноразовые фото/видео становятся обычными сообщениями, которые можно открыть снова и сохранить.";
-"MSG_ACTION_REVEAL_READ" = "👁️ Показать прочтение";
+"MSG_ACTION_REVEAL_READ" = "Показать прочтение";
 "REVEAL_READ_DONE" = "Отметка о прочтении отправлена";
 "REVEAL_READ_FAILED" = "Не удалось отправить отметку";
 "REVEAL_READ_NONE" = "Нет удержанной отметки — откройте новое сообщение/историю при включённой блокировке";
@@ -170,32 +170,32 @@
 "SPEECH_NOTHING" = "Ничего не распознано";
 "SPEECH_LANGUAGE_TITLE" = "Язык диктовки";
 "EYE_CHAT_UNKNOWN" = "Не удалось определить этот чат";
-"EYE_CHAT_SEEN" = "👁️ Здесь прочтение теперь видно";
-"EYE_CHAT_HIDDEN" = "🙈 Здесь прочтение скрыто";
+"EYE_CHAT_SEEN" = "Здесь прочтение теперь видно";
+"EYE_CHAT_HIDDEN" = "Здесь прочтение скрыто";
 "VOICE_FILE_TITLE" = "Голосовое из файла";
 "VOICE_FILE_SUBTITLE" = "Стрелка над полем ввода: выберите аудио или видео и запишите голосовое микрофоном Telegram как обычно. Вместо вашего голоса уйдёт звук файла.";
 "VOICE_FILE_HOWTO" = "Выберите файл, затем зажмите микрофон Telegram (или закрепите) — файл отправится как голосовое.";
-"VOICE_FILE_FROM_FILES" = "📁 Из Файлов";
-"VOICE_FILE_FROM_PHOTOS" = "🖼️ Из Фото (видео)";
-"VOICE_FILE_AGAIN" = "🔁 Тот же файл ещё раз";
+"VOICE_FILE_FROM_FILES" = "Из Файлов";
+"VOICE_FILE_FROM_PHOTOS" = "Из Фото (видео)";
+"VOICE_FILE_AGAIN" = "Тот же файл ещё раз";
 "VOICE_FILE_DISARM" = "Отменить готовый файл";
-"VOICE_FILE_READY" = "✅ Готово — запишите микрофоном и отправьте";
-"VOICE_FILE_INSERTED" = "🎙️ Файл вставлен в запись — отпустите, чтобы отправить";
+"VOICE_FILE_READY" = "Готово — запишите микрофоном и отправьте";
+"VOICE_FILE_INSERTED" = "Файл вставлен в запись — отпустите, чтобы отправить";
 
 // Save button in story viewer and view-once / self-destruct viewer
 "SAVE_IN_VIEWERS_TITLE" = "Кнопка сохранения в историях и временных медиа";
 "SAVE_IN_VIEWERS_SUBTITLE" = "Добавляет кнопку сохранения в просмотр историй и одноразовых/исчезающих медиа. Сохраняет показанное прямо в Фото (полное качество для фото, кадр для видео).";
 "SAVE_MEDIA_BUTTON" = "Сохранить";
-"SAVE_MEDIA_DONE" = "✅ Сохранено в Фото";
+"SAVE_MEDIA_DONE" = "Сохранено в Фото";
 "SAVE_MEDIA_FAILED" = "Не удалось сохранить";
 
 // Direct voice send + video frame note
 "VOICE_FILE_SENDING" = "⏳ Отправка голосовым…";
 "VOICE_FILE_SWITCH_VOICE" = "Переключите микрофон в голосовой режим (не видео) и выберите файл снова.";
-"SAVE_MEDIA_FRAME" = "✅ Сохранён кадр (полное видео требует сохранения самого Telegram)";
+"SAVE_MEDIA_FRAME" = "Сохранён кадр (полное видео требует сохранения самого Telegram)";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ Голосовое отправлено";
+"VOICE_SEND_DONE" = "Голосовое отправлено";
 "VOICE_SEND_FAILED" = "Не удалось отправить голосовое";
 
 
@@ -206,7 +206,7 @@
 "FORMAT_BAR_SUBTITLE" = "A bar above the text field that wraps the selection: bold, italic, mono, strikethrough or spoiler.";
 "READ_ALOUD_TITLE" = "Read message aloud";
 "READ_ALOUD_SUBTITLE" = "Adds a Read aloud item to the two-finger message menu (on-device voice, no network).";
-"MSG_ACTION_READ_ALOUD" = "🔊 Read aloud";
+"MSG_ACTION_READ_ALOUD" = "Read aloud";
 "READ_ALOUD_EMPTY" = "No text in this message";
 "KEYWORD_ALERT_TITLE" = "Keyword alerts";
 "KEYWORD_ALERT_SUBTITLE" = "Get a notification when one of your words is mentioned, even in muted chats.";
@@ -233,7 +233,7 @@
 "STICKER_SUBTITLE" = "A scissors button above the text field: pick a photo, its background is removed, and it is sent to the chat.";
 "STICKER_WORKING" = "Processing the image…";
 "STICKER_SENDING" = "Sending…";
-"STICKER_SENT" = "✅ Sent";
+"STICKER_SENT" = "Sent";
 "STICKER_FAILED" = "Couldn't make the sticker";
 "STICKER_NO_SUBJECT" = "No subject found in the image";
 

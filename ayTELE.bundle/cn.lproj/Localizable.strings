@@ -155,7 +155,7 @@
 "COPIED_TOAST" = "Copied";
 "KEEP_VIEW_ONCE_MEDIA_TITLE" = "保留阅后即焚媒体";
 "KEEP_VIEW_ONCE_MEDIA_SUBTITLE" = "将限时及阅后即焚的照片/视频变为可重复打开和保存的普通消息。";
-"MSG_ACTION_REVEAL_READ" = "👁️ 显示已读";
+"MSG_ACTION_REVEAL_READ" = "显示已读";
 "REVEAL_READ_DONE" = "已发送已读回执";
 "REVEAL_READ_FAILED" = "已读回执发送失败";
 "REVEAL_READ_NONE" = "这里没有被拦截的回执 — 请在拦截开启时打开新消息/动态";
@@ -171,32 +171,32 @@
 "SPEECH_NOTHING" = "没有识别到内容";
 "SPEECH_LANGUAGE_TITLE" = "听写语言";
 "EYE_CHAT_UNKNOWN" = "无法识别当前聊天";
-"EYE_CHAT_SEEN" = "👁️ 此聊天现在会发送已读";
-"EYE_CHAT_HIDDEN" = "🙈 此聊天的已读保持隐藏";
+"EYE_CHAT_SEEN" = "此聊天现在会发送已读";
+"EYE_CHAT_HIDDEN" = "此聊天的已读保持隐藏";
 "VOICE_FILE_TITLE" = "文件转语音";
 "VOICE_FILE_SUBTITLE" = "聊天输入框上方的箭头：选择音频或视频，然后照常用 Telegram 麦克风录音，发送的是文件的声音。";
 "VOICE_FILE_HOWTO" = "选择文件后按住 Telegram 麦克风（或锁定）——文件将作为语音消息发送。";
-"VOICE_FILE_FROM_FILES" = "📁 从文件";
-"VOICE_FILE_FROM_PHOTOS" = "🖼️ 从相册（视频）";
-"VOICE_FILE_AGAIN" = "🔁 再用同一个文件";
+"VOICE_FILE_FROM_FILES" = "从文件";
+"VOICE_FILE_FROM_PHOTOS" = "从相册（视频）";
+"VOICE_FILE_AGAIN" = "再用同一个文件";
 "VOICE_FILE_DISARM" = "取消已准备的文件";
-"VOICE_FILE_READY" = "✅ 已就绪——现在用麦克风录音并发送";
-"VOICE_FILE_INSERTED" = "🎙️ 文件已插入录音——松开即可发送";
+"VOICE_FILE_READY" = "已就绪——现在用麦克风录音并发送";
+"VOICE_FILE_INSERTED" = "文件已插入录音——松开即可发送";
 
 // Save button in story viewer and view-once / self-destruct viewer
 "SAVE_IN_VIEWERS_TITLE" = "在快拍和临时媒体中添加保存按钮";
 "SAVE_IN_VIEWERS_SUBTITLE" = "在快拍查看器和阅后即焚/一次性查看器中添加保存按钮。将显示的内容直接保存到照片（照片为完整画质，视频为一帧）。";
 "SAVE_MEDIA_BUTTON" = "保存";
-"SAVE_MEDIA_DONE" = "✅ 已保存到照片";
+"SAVE_MEDIA_DONE" = "已保存到照片";
 "SAVE_MEDIA_FAILED" = "无法保存";
 
 // Direct voice send + video frame note
 "VOICE_FILE_SENDING" = "⏳ 正在作为语音消息发送…";
 "VOICE_FILE_SWITCH_VOICE" = "将麦克风切换到语音模式（非视频），然后重新选择文件。";
-"SAVE_MEDIA_FRAME" = "✅ 已保存一帧（完整视频需要 Telegram 自带的保存）";
+"SAVE_MEDIA_FRAME" = "已保存一帧（完整视频需要 Telegram 自带的保存）";
 
 // Direct voice send (raw MTProto)
-"VOICE_SEND_DONE" = "✅ 语音消息已发送";
+"VOICE_SEND_DONE" = "语音消息已发送";
 "VOICE_SEND_FAILED" = "无法发送语音消息";
 
 
@@ -207,7 +207,7 @@
 "FORMAT_BAR_SUBTITLE" = "A bar above the text field that wraps the selection: bold, italic, mono, strikethrough or spoiler.";
 "READ_ALOUD_TITLE" = "Read message aloud";
 "READ_ALOUD_SUBTITLE" = "Adds a Read aloud item to the two-finger message menu (on-device voice, no network).";
-"MSG_ACTION_READ_ALOUD" = "🔊 Read aloud";
+"MSG_ACTION_READ_ALOUD" = "Read aloud";
 "READ_ALOUD_EMPTY" = "No text in this message";
 "KEYWORD_ALERT_TITLE" = "Keyword alerts";
 "KEYWORD_ALERT_SUBTITLE" = "Get a notification when one of your words is mentioned, even in muted chats.";
@@ -234,7 +234,7 @@
 "STICKER_SUBTITLE" = "A scissors button above the text field: pick a photo, its background is removed, and it is sent to the chat.";
 "STICKER_WORKING" = "Processing the image…";
 "STICKER_SENDING" = "Sending…";
-"STICKER_SENT" = "✅ Sent";
+"STICKER_SENT" = "Sent";
 "STICKER_FAILED" = "Couldn't make the sticker";
 "STICKER_NO_SUBJECT" = "No subject found in the image";
 
