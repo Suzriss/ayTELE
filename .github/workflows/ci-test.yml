@@ -30,13 +30,17 @@ jobs:
         run: |
           make clean package FINALPACKAGE=1 STRIP=0 THEOS_PACKAGE_SCHEME=rootless
           make clean package FINALPACKAGE=1 STRIP=0
-      - name: Build roothide dylib
+      - name: Export rootful dylib (for sideload injection)
         run: |
-          make clean package FINALPACKAGE=1 STRIP=0 THEOS_PACKAGE_SCHEME=roothide
+          # The rootful build is the last one above, so .theos/obj holds it.
+          # Sideloaded (non-jailbroken) apps must NOT depend on libroothide,
+          # so we export the rootful dylib — the same one ipa.yml injects.
           mkdir -p out-dylib
           DYLIB_PATH=$(find .theos/obj -name '*.dylib' | head -n1)
           echo "Using dylib: $DYLIB_PATH"
           cp "$DYLIB_PATH" out-dylib/ayTELE.dylib
+          echo "=== load commands referencing libroot/roothide (should be empty) ==="
+          otool -l out-dylib/ayTELE.dylib | grep -iE "libroot|roothide|jbroot" || echo "none (good)"
       - uses: actions/upload-artifact@v4
         with:
           name: debs
