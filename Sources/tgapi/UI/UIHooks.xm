@@ -16,6 +16,14 @@
 static ThreeFingerGestureHandler *gestureHandler = nil;
 static __weak TGLocalization *TGLocalizationShared = nil;
 
+// NOTE: this hook must be armed *before* the app builds its localization,
+// which happens very early at launch. It therefore lives in its own group
+// that the constructor initialises synchronously (see hook() below) instead
+// of inside the delayed %init used for the Swift UI nodes. If it were armed
+// late, TGLocalizationShared would stay nil, every [TGLocalizationShared get:]
+// would return nil, and the "ayTELE" Settings row + 5-tap Chats entry would
+// silently fall back to hard-coded English and fail to match the real rows.
+%group Localization
 %hook TGLocalization
 
 - (id)initWithVersion:(int)a code:(id)b dict:(id)c isActive:(BOOL)d {
@@ -26,6 +34,7 @@ static __weak TGLocalization *TGLocalizationShared = nil;
     return instance;
 }
 
+%end
 %end
 
 void showUI() {
@@ -176,6 +185,11 @@ static void ayRetitleRow(ASDisplayNode *node, NSString *fromTitle, NSString *toT
 
 __attribute__((constructor))
 static void hook() {
+	// Arm the localization hook straight away — the app creates its
+	// TGLocalization at launch, before the delayed %init below would run,
+	// so capturing it must not wait.
+	%init(Localization);
+
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 	 	%init(
 		    TabBarNode = objc_getClass("TabBarUI.TabBarNode"),
