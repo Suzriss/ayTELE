@@ -266,32 +266,34 @@ static NSData *parseUploadFileBytes(NSData *resp, NSString **err) {
 }
 
 @implementation AYStoryDownload
+// One 512 KB chunk, recursing via the method (not a self-capturing block, which ARC flags as a
+// retain cycle) until the file is complete.
++ (void)fetchChunkFileId:(long long)fileId accessHash:(long long)accessHash fileRef:(NSData *)fileRef
+		offset:(long long)offset sizeHint:(long long)sizeHint acc:(NSMutableData *)acc
+		completion:(void (^)(NSData *, NSString *))completion {
+	const int limit = 512 * 1024;  // multiple of 1024, <= 1 MB, never crosses a 1 MB boundary
+	NSData *payload = [AYDirectSend getDocumentFileWithFileId:fileId accessHash:accessHash
+		fileReference:(fileRef ?: [NSData data]) offset:offset limit:limit];
+	BOOL issued = AYIssueRequest(payload, (int)0xbe5335be, ^(id result, MTRpcError *error) {
+		if (error) { completion(nil, [NSString stringWithFormat:@"getFile @%lld: %@", offset, error]); return; }
+		NSString *perr = nil;
+		NSData *chunk = parseUploadFileBytes([result isKindOfClass:[NSData class]] ? result : nil, &perr);
+		if (!chunk) { completion(nil, perr ?: @"parse failed"); return; }
+		[acc appendData:chunk];
+		long long next = offset + (long long)chunk.length;
+		BOOL done = chunk.length < (NSUInteger)limit || (sizeHint > 0 && (long long)acc.length >= sizeHint);
+		if (done || acc.length > 200 * 1024 * 1024 || next > (long long)limit * 4000) {
+			completion(acc.length ? [acc copy] : nil, acc.length ? nil : @"empty download");
+		} else {
+			[self fetchChunkFileId:fileId accessHash:accessHash fileRef:fileRef offset:next
+				sizeHint:sizeHint acc:acc completion:completion];
+		}
+	});
+	if (!issued) completion(nil, @"no service captured");
+}
 + (void)downloadFileId:(long long)fileId accessHash:(long long)accessHash fileRef:(NSData *)fileRef
 		sizeHint:(long long)sizeHint completion:(void (^)(NSData *, NSString *))completion {
-	NSMutableData *acc = [NSMutableData data];
-	const int limit = 512 * 1024;  // multiple of 1024, <= 1 MB
-	__block long long offset = 0;
-	__block void (^fetch)(void) = nil;
-	fetch = ^{
-		NSData *payload = [AYDirectSend getDocumentFileWithFileId:fileId accessHash:accessHash
-			fileReference:(fileRef ?: [NSData data]) offset:offset limit:limit];
-		BOOL issued = AYIssueRequest(payload, (int)0xbe5335be, ^(id result, MTRpcError *error) {
-			if (error) { completion(nil, [NSString stringWithFormat:@"getFile @%lld: %@", offset, error]); fetch = nil; return; }
-			NSString *perr = nil;
-			NSData *chunk = parseUploadFileBytes([result isKindOfClass:[NSData class]] ? result : nil, &perr);
-			if (!chunk) { completion(nil, perr ?: @"parse failed"); fetch = nil; return; }
-			[acc appendData:chunk];
-			offset += (long long)chunk.length;
-			BOOL done = chunk.length < (NSUInteger)limit || (sizeHint > 0 && (long long)acc.length >= sizeHint);
-			if (done || acc.length > 200 * 1024 * 1024 || offset > (long long)limit * 4000) {
-				completion(acc.length ? [acc copy] : nil, acc.length ? nil : @"empty download");
-				fetch = nil;
-			} else {
-				fetch();  // next chunk
-			}
-		});
-		if (!issued) { completion(nil, @"no service captured"); fetch = nil; }
-	};
-	fetch();
+	[self fetchChunkFileId:fileId accessHash:accessHash fileRef:fileRef offset:0
+		sizeHint:sizeHint acc:[NSMutableData data] completion:completion];
 }
 @end
