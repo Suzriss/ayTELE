@@ -67,7 +67,7 @@ static void ayRetitleRow(ASDisplayNode *node, NSString *fromTitle, NSString *toT
             [(id)node setAttributedText:replacement];
             node.accessibilityLabel = toTitle;
             if ([node respondsToSelector:@selector(setNeedsDisplay)]) {
-                [node setNeedsDisplay];
+                [(id)node setNeedsDisplay];
             }
         }
     }
