@@ -29,12 +29,12 @@ jobs:
       - name: Build Package
         run: |
           make clean package FINALPACKAGE=1 STRIP=0 THEOS_PACKAGE_SCHEME=rootless
-          # The rootful dylib is what sideloaded (non-jailbroken) apps inject.
-          # The toolchain's default scheme is NOT rootful here — it links
-          # libroothide and calls jbroot(), which crashes a sideloaded app at
-          # launch (Library not loaded: @loader_path/.jbroot/usr/lib/libroothide.dylib).
-          # So force the rootful scheme explicitly.
-          make clean package FINALPACKAGE=1 STRIP=0 THEOS_PACKAGE_SCHEME=rootful
+          # The default scheme (no THEOS_PACKAGE_SCHEME) is rootful; 'rootful'
+          # is not a named scheme in this toolchain. The rootful dylib is the
+          # one sideloaded (non-jailbroken) apps inject — it must NOT link
+          # libroothide / call jbroot(), or it crashes at launch
+          # (Library not loaded: @loader_path/.jbroot/usr/lib/libroothide.dylib).
+          make clean package FINALPACKAGE=1 STRIP=0
       - name: Export rootful dylib (for sideload injection)
         run: |
           # The rootful build is the last one above, so .theos/obj holds it.
