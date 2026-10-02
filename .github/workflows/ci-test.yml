@@ -29,18 +29,25 @@ jobs:
       - name: Build Package
         run: |
           make clean package FINALPACKAGE=1 STRIP=0 THEOS_PACKAGE_SCHEME=rootless
-          make clean package FINALPACKAGE=1 STRIP=0
+          # The rootful dylib is what sideloaded (non-jailbroken) apps inject.
+          # The toolchain's default scheme is NOT rootful here — it links
+          # libroothide and calls jbroot(), which crashes a sideloaded app at
+          # launch (Library not loaded: @loader_path/.jbroot/usr/lib/libroothide.dylib).
+          # So force the rootful scheme explicitly.
+          make clean package FINALPACKAGE=1 STRIP=0 THEOS_PACKAGE_SCHEME=rootful
       - name: Export rootful dylib (for sideload injection)
         run: |
           # The rootful build is the last one above, so .theos/obj holds it.
-          # Sideloaded (non-jailbroken) apps must NOT depend on libroothide,
-          # so we export the rootful dylib — the same one ipa.yml injects.
           mkdir -p out-dylib
           DYLIB_PATH=$(find .theos/obj -name '*.dylib' | head -n1)
           echo "Using dylib: $DYLIB_PATH"
           cp "$DYLIB_PATH" out-dylib/ayTELE.dylib
-          echo "=== load commands referencing libroot/roothide (should be empty) ==="
-          otool -l out-dylib/ayTELE.dylib | grep -iE "libroot|roothide|jbroot" || echo "none (good)"
+          echo "=== checking for libroothide/jbroot linkage (must be none) ==="
+          if otool -l out-dylib/ayTELE.dylib | grep -iE "libroot|roothide|jbroot"; then
+            echo "ERROR: dylib still depends on roothide — it will crash a sideloaded app at launch." >&2
+            exit 1
+          fi
+          echo "none (good)"
       - uses: actions/upload-artifact@v4
         with:
           name: debs

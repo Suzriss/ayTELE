@@ -28,7 +28,7 @@ jobs:
                 scheme: [rootful, rootless, roothide]
                 include:
                   - scheme: rootful
-                    scheme_arg: ""
+                    scheme_arg: "THEOS_PACKAGE_SCHEME=rootful"
                   - scheme: rootless
                     scheme_arg: "THEOS_PACKAGE_SCHEME=rootless"
                   - scheme: roothide
