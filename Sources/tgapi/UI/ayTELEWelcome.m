@@ -34,7 +34,7 @@ static NSString *const kAYChannelDomain = @"ayTweak";
     [icon.heightAnchor constraintEqualToConstant:96].active = YES;
 
     UILabel *title = [UILabel new];
-    title.text = @"أدوات ايمن الناصري";
+    title.text = @"أدوات ay";
     title.font = [UIFont systemFontOfSize:26 weight:UIFontWeightBold];
     title.textColor = [UIColor whiteColor];
     title.textAlignment = NSTextAlignmentCenter;
